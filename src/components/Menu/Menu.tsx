@@ -14,6 +14,9 @@ const Menu = () => {
           <img src="/profile.svg" alt="" />
           <span className="listItemTitle">Business</span>
         </Link>
+      </div>
+      <div className="item">
+      <span className="title">MAIN</span>
         <Link to="/">
           <img src="/home.svg" alt="" />
           <span className="listItemTitle">Calls</span>
