@@ -9,16 +9,17 @@
         margin-bottom: 20px;
 
         .title {
-            font-size: 18px;
-            font-weight: 200;
+            font-size: 14px;
+            font-weight: 400;
             color: $soft-color;
-
+            text-transform: uppercase;
+            margin-bottom: 10px;
         }
 
         .listItem {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 20px;
             padding: 10px;
 
             &:hover {
