@@ -34,5 +34,29 @@ export const menu = [
                 icon: "/profile.svg"
             }
         ]
+    },
+    {
+        id: 3,
+        title: "analytics",
+        listItems: [
+            {
+                id: 1,
+                title: "Business",
+                url: "/business",
+                icon: "/profile.svg"
+            },
+            {
+                id: 2,
+                title: "Calls",
+                url: "/calls",
+                icon: "/profile.svg"
+            },
+            {
+                id: 3,
+                title: "Marketing",
+                url: "/marketing",
+                icon: "/profile.svg"
+            }
+        ]
     }
 ]
