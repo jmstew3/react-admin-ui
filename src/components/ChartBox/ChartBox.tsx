@@ -3,13 +3,13 @@ import './chartBox.scss';
 import { LineChart, Line, ResponsiveContainer, Tooltip } from 'recharts';
 
 type Props = {
-    color: string;
     icon: string;
     tile: string;
-    dataKey: string;
     number: number | string;
-    percentage: number;
+    color: string;
     chartData: object[];
+    dataKey: string;
+    percentage: number;
 }
 
 const ChartBox = (props) => {
