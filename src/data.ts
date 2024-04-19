@@ -258,3 +258,36 @@ export const topDealUsers = [
         }
     ]
   }
+
+  export const pieChartBoxData = {
+    title: "Leads By Source",
+    color: "#FF8042",
+    dataKey: "value",
+    chartData: [
+        { 
+            name: "Mobile", 
+            value: 400,
+            color: "#0088FE"
+        },
+        { 
+            name: "Laptop", 
+            value: 300,
+            color: "#00C49F"
+        },
+        { 
+            name: "Tablet", 
+            value: 300,
+            color: "#FFBB28"
+        },
+        { 
+            name: "Desktop",
+            value: 200,
+            color: "#FF8042"
+        },
+        { 
+            name: "Others", 
+            value: 100,
+            color: "#AF19FF"
+        }  
+    ]
+  }
