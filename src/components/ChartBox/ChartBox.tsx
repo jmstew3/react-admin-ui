@@ -28,9 +28,9 @@ const ChartBox = (props: Props) => {
                     <ResponsiveContainer width="99%" height="100%">
                         <LineChart data={props.chartData}>
                             <Tooltip
-                            contentStyle={{ background:"transparent", border:"none" }}
-                            labelStyle={{ display:"none" }}
-                            position={{ x: 30, y: 90 }}
+                                contentStyle={{ background: "transparent", border: "none" }}
+                                labelStyle={{ display: "none" }}
+                                position={{ x: 30, y: 90 }}
                             />
                             <Line
                                 type="monotone"
