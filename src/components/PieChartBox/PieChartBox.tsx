@@ -1,5 +1,5 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
-import './pieChartBar.scss';
+import './pieChartBox.scss';
 
 type Props = {
         title: string;
