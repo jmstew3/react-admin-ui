@@ -1,5 +1,6 @@
-import { DataGrid, GridColDef } from "@mui/x-data-grid"
+import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid"
 import "./dataTable.scss"
+import { Grid, debounce } from "@mui/material";
 
 const DataTable = () => {
 
@@ -58,6 +59,14 @@ const DataTable = () => {
               pageSize: 5,
             },
           },
+        }}
+        slots = {{ toolbar: GridToolbar}}
+        slotProps={{
+            toolbar: {
+                showQuickFilter: true,
+                // debounceMs:500 delays the search so that it doesn't search for each character on every key press
+                quickFilterProps: { debounceMs: 500},
+            },
         }}
         pageSizeOptions={[5]}
         checkboxSelection
