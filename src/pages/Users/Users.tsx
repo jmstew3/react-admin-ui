@@ -1,4 +1,5 @@
-import "users.scss"
+import DataTable from "../../components/DataTable/DataTable"
+import "./users.scss"
 
 function Users() {
   return (

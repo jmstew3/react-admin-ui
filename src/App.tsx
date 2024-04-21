@@ -12,6 +12,7 @@ import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import Menu from "./components/Menu/Menu";
 import Login from "./pages/Login/Login";
+import Users from "./pages/Users/Users";
 import "./styles/global.scss"
  
 function App() {
@@ -53,6 +54,10 @@ function App() {
         { 
           path: "/calls",
           element: <Calls />
+        },
+        { 
+          path: "/users",
+          element: <Users />
         },
       ]
     },
