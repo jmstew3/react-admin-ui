@@ -3,5 +3,10 @@
     .dataGrid {
         background: white;
         padding: 20px;
+
+        // Reverse default flex direction of toolbar container to swap Search and Export buttons
+        .MuiDataGrid-toolbarContainer {
+            flex-direction: row-reverse;
+        }
     }
 }

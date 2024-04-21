@@ -71,6 +71,9 @@ const DataTable = () => {
         pageSizeOptions={[5]}
         checkboxSelection
         disableRowSelectionOnClick
+        disableColumnFilter
+        disableDensitySelector
+        disableColumnSelector
       />
     </div>
   )
