@@ -49,6 +49,7 @@ const DataTable = () => {
   return (
     <div className="dataTable">
       <DataGrid
+        className="dataGrid"
         rows={rows}
         columns={columns}
         initialState={{
