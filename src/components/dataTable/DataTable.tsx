@@ -1,4 +1,4 @@
-import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid"
+import { DataGrid, GridColDef, GridToolbar, GridValueGetter } from "@mui/x-data-grid"
 import "./dataTable.scss"
 import { Grid, debounce } from "@mui/material";
 
@@ -31,7 +31,8 @@ const DataTable = () => {
           description: 'This column has a value getter and is not sortable.',
           sortable: false,
           width: 160,
-          valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
+          valueGetter: (params: GridValueGetterParams) =>
+            `${params.row.firstName || ''} ${params.row.lastName || ''}`,
         },
       ];
 
