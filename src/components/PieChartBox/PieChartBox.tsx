@@ -21,7 +21,7 @@ const PieChartBox = (props: Props) => {
                         />
                         <Pie
                             data={props.chartData}
-                            innerRadius={"70%"}
+                            innerRadius={"60%"}
                             outerRadius={"90%"}
                             fill={props.color}
                             paddingAngle={5}
@@ -36,8 +36,8 @@ const PieChartBox = (props: Props) => {
                         </Pie>
                     </PieChart>
                 </ResponsiveContainer>
-                </div>
-                <div className="options">
+            </div>
+            <div className="options">
                     {props.chartData.map((item) => (
                         <div className="option" key={item.name}>
                             <div className="title">
