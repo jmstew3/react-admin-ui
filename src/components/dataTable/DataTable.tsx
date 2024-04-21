@@ -1,5 +1,5 @@
 import { DataGrid, GridColDef } from "@mui/x-data-grid"
-import "dataTable.scss"
+import "./dataTable.scss"
 
 const DataTable = () => {
 
