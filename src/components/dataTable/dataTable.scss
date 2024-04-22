@@ -1,16 +1,5 @@
 .dataTable {
 
-    .MuiDataGrid-cell.MuiDataGrid-cell--textLeft {
-        display: flex;
-        align-items: center;
-    }
-
-    img {
-                width: 32px;
-                height: 32px;
-                border-radius: 50%;
-            }
-
     .dataGrid {
         background: white;
         padding: 20px;
@@ -19,5 +8,16 @@
         .MuiDataGrid-toolbarContainer {
             flex-direction: row-reverse;
         }
+
+        .MuiDataGrid-cell.MuiDataGrid-cell--textLeft {
+            display: flex;
+            align-items: center;
+        }
+    
+        img {
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 50%;
+                }
     }
 }
