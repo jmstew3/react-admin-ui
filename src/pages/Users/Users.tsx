@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { GridColDef } from "@mui/x-data-grid";
-import DataTable from "../../components/DataTable/DataTable";
 import { userRows } from "../../data";
+import DataTable from "../../components/DataTable/DataTable";
 import Add from "../../components/Add/Add";
 import "./users.scss";
 
@@ -67,7 +67,6 @@ const columns: GridColDef<(typeof rows)[number]>[] = [
 ];
 
 // DataTable component is used here which takes props that reference data in the database: data.ts
-
 const Users = () => {
 // state to handle the opening and closing of the Add component
   const [open, setOpen] = useState(false) 

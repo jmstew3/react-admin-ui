@@ -445,3 +445,86 @@ export const userRows = [
     phone: "(123) 456-7890",
   },
 ];
+
+export const products = [
+  {
+    id: 1,
+    img: "",
+    title: "Logitech MX Master 3",
+    color: "Graphite",
+    producer: "Logitech",
+    price: "$99.99",
+    createdAt: "01.20.2023",
+    inStock: true
+  },
+  {
+    id: 2,
+    img: "",
+    title: "Apple Magic Mouse 2",
+    color: "Silver",
+    producer: "Apple",
+    price: "$79.00",
+    createdAt: "05.03.2023",
+    inStock: false
+  },
+  {
+    id: 3,
+    img: "",
+    title: "Razer DeathAdder Elite",
+    color: "Black",
+    producer: "Razer",
+    price: "$49.99",
+    createdAt: "02.17.2023",
+    inStock: true
+  },
+  {
+    id: 4,
+    img: "",
+    title: "Microsoft Surface Mouse",
+    color: "Platinum",
+    producer: "Microsoft",
+    price: "$54.99",
+    createdAt: "03.12.2023",
+    inStock: false
+  },
+  {
+    id: 5,
+    img: "",
+    title: "Dell Wireless Mouse WM126",
+    color: "Red",
+    producer: "Dell",
+    price: "$16.99",
+    createdAt: "08.06.2023",
+    inStock: true
+  },
+  {
+    id: 6,
+    img: "",
+    title: "HP Z3700 Wireless Mouse",
+    color: "Black",
+    producer: "HP",
+    price: "$29.99",
+    createdAt: "04.25.2023",
+    inStock: true
+  },
+  {
+    id: 7,
+    img: "",
+    title: "Anker Ergonomic Optical USB Mouse",
+    color: "Matte Black",
+    producer: "Anker",
+    price: "$19.99",
+    createdAt: "02.01.2023",
+    inStock: true
+  },
+  {
+    id: 8,
+    img: "",
+    title: "Corsair Scimitar RGB Elite",
+    color: "Yellow",
+    producer: "Corsair",
+    price: "$79.99",
+    createdAt: "12.29.2023",
+    inStock: true
+  },
+];
