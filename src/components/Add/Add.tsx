@@ -1,6 +1,11 @@
 import "./add.scss";
 
-function Add() {
+type Props = {
+    // slug,
+    // columns,
+};
+
+function Add = (props: Props) => {
   return (
     <div className="add">
       Add
