@@ -9,11 +9,13 @@ const columns: GridColDef<(typeof rows)[number]>[] = [
     field: "id",
     headerName: "ID",
     width: 90,
+    type: "number"
   },
   {
-    field: "avatar",
+    field: "img",
     headerName: "Avatar",
     width: 100,
+    type: "string",
     renderCell: (params) => {
       return <img src={(params.value as string) || "/noavatar.png"} alt="" />;
     },
@@ -21,34 +23,37 @@ const columns: GridColDef<(typeof rows)[number]>[] = [
   {
     field: "firstName",
     headerName: "First name",
+    type: "string",
     width: 150,
-    editable: true,
+    editable: true
   },
   {
     field: "lastName",
     headerName: "Last name",
+    type: "string",
     width: 150,
-    editable: true,
+    editable: true
   },
   {
     field: "email",
     headerName: "Email",
     type: "string",
     width: 200,
-    editable: true,
+    editable: true
   },
   {
     field: "phone",
     headerName: "Phone",
     type: "string",
     width: 250,
-    editable: true,
+    editable: true
   },
   {
     field: "verified",
     headerName: "Verified",
-    width: 100,
     type: "boolean",
+    width: 100,
+    editable: false
   },
   // {
   //     field: 'fullName',
@@ -69,7 +74,7 @@ function Users() {
     <div className="users">
       <div className="info">
         <h1>Users</h1>
-        <button>Add New User</button> 
+        <button onClick={()=> setOpen(true)}>Add New User</button> 
       </div>
       <DataTable slug="users" columns={columns} rows={userRows} />
       { open && <Add slug="user" columns={columns} setOpen={setOpen} /> }
