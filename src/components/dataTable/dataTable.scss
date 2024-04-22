@@ -1,25 +1,38 @@
 .dataTable {
+  
+  .dataGrid {
+    background: white;
+    padding: 20px;
 
-    .dataGrid {
-        background: white;
-        padding: 20px;
-
-        // Reverse default flex direction of toolbar container to swap Search and Export buttons
-        .MuiDataGrid-toolbarContainer {
-            flex-direction: row-reverse;
-        }
-
-        .MuiDataGrid-cell.MuiDataGrid-cell--textLeft {
-            display: flex;
-            align-items: center;
-            line-height: 1.6;
-        }
-    
-        img {
-                    width: 32px;
-                    height: 32px;
-                    border-radius: 50%;
-                    object-fit: cover;
-                }
+    // reverse default flex direction of toolbar container to swap Search and Export buttons
+    .MuiDataGrid-toolbarContainer {
+      flex-direction: row-reverse;
     }
+
+    // center the avatar images in the cells
+    .MuiDataGrid-cell.MuiDataGrid-cell--textLeft {
+      display: flex;
+      align-items: center;
+      line-height: 1.6;
+    }
+
+    img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    
+    // styling for the items in the action column
+    .action {
+      display: flex;
+      gap: 15px;
+
+      img {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+      }
+    }
+  }
 }

@@ -78,7 +78,7 @@ function Users() {
                 <button>Add New User</button>
             </div>
             // DataTable component is used here which is pulling from the database in data.ts
-            <DataTable columns={columns} rows={userRows} />
+            <DataTable slug="users" columns={columns} rows={userRows} />
         </div>
     )
 }
