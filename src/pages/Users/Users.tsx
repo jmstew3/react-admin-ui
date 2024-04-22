@@ -2,6 +2,7 @@ import { useState } from "react";
 import { GridColDef } from "@mui/x-data-grid";
 import DataTable from "../../components/DataTable/DataTable";
 import { userRows } from "../../data";
+import Add from "../../components/Add/Add";
 import "./users.scss";
 
 const columns: GridColDef<(typeof rows)[number]>[] = [
