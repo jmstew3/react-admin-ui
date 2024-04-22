@@ -14,12 +14,14 @@ type Props = {
 };
 
 const DataTable = (props: Props) => {
+  // event handler function for deleting items by id
   const handleDelete = (id: number) => {
     //delete the item
     //axios.delete(`/api/${slug}/id`)
     console.log(id + " has been deleted!");
   };
-  // create a new column for modify and delete action buttons
+  
+  // create a new column to modify and delete action buttons
   const actionColumn: GridColdDef = {
     field: "action",
     headerName: "Action",
