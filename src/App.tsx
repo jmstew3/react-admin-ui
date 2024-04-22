@@ -13,6 +13,7 @@ import Footer from "./components/Footer/Footer";
 import Menu from "./components/Menu/Menu";
 import Login from "./pages/Login/Login";
 import Users from "./pages/Users/Users";
+import Products from "./pages/Products/Products";
 import "./styles/global.scss"
  
 function App() {
@@ -59,6 +60,10 @@ function App() {
           path: "/users",
           element: <Users />
         },
+        { 
+          path: "/products",
+          element: <Products />
+        }
       ]
     },
     {
