@@ -4,16 +4,16 @@ import {
   Outlet
 } from "react-router-dom";
 
-import Home from "./pages/Home/Home";
-import Marketing from "./pages/Marketing/Marketing";
-import Business from "./pages/Business/Business";
-import Calls from "./pages/Calls/Calls";
+import Home from "./pages/home/Home";
+import Marketing from "./pages/marketing/Marketing";
+import Business from "./pages/business/Business";
+import Calls from "./pages/calls/Calls";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import Menu from "./components/Menu/Menu";
-import Login from "./pages/Login/Login";
-import Users from "./pages/Users/Users";
-import Products from "./pages/Products/Products";
+import Login from "./pages/login/Login";
+import Users from "./pages/users/Users";
+import Products from "./pages/products/Products";
 import "./styles/global.scss"
  
 function App() {
