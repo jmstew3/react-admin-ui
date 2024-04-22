@@ -68,7 +68,7 @@ const columns: GridColDef<(typeof rows)[number]>[] = [
 
 // DataTable component is used here which takes props that reference data in the database: data.ts
 
-function Users() {
+const Users = () => {
 // state to handle the opening and closing of the Add component
   const [open, setOpen] = useState(false) 
   return (
