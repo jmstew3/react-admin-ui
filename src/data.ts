@@ -4,10 +4,10 @@ export const menu = [
     title: "main",
     listItems: [
       {
-          id: 1,
-          title: "Home",
-          url: "/",
-          icon: "/home.svg"
+        id: 1,
+        title: "Home",
+        url: "/",
+        icon: "/home.svg"
       }
     ]
   },
@@ -16,22 +16,22 @@ export const menu = [
     title: "menu",
     listItems: [
       {
-          id: 1,
-          title: "Business",
-          url: "/business",
-          icon: "/profile.svg"
+        id: 1,
+        title: "Business",
+        url: "/business",
+        icon: "/profile.svg"
       },
       {
-          id: 2,
-          title: "Calls",
-          url: "/calls",
-          icon: "/profile.svg"
+        id: 2,
+        title: "Calls",
+        url: "/calls",
+        icon: "/profile.svg"
       },
       {
-          id: 3,
-          title: "Marketing",
-          url: "/marketing",
-          icon: "/profile.svg"
+        id: 3,
+        title: "Marketing",
+        url: "/marketing",
+        icon: "/profile.svg"
       }
     ]
   },
@@ -58,10 +58,10 @@ export const menu = [
         icon: "/profile.svg"
       },
       {
-      id: 4,
-      title: "Users",
-      url: "/users",
-      icon: "/profile.svg"
+        id: 4,
+        title: "Users",
+        url: "/users",
+        icon: "/profile.svg"
       }
     ]
   }
@@ -199,32 +199,32 @@ export const barChartBoxRevenue = {
   dataKey: "profit",
   chartData: [
     {
-        name: "Sun",
-        profit: 4000,
+      name: "Sun",
+      profit: 4000,
     },
     {
-        name: "Mon",
-        profit: 3000,
+      name: "Mon",
+      profit: 3000,
     },
     {
-        name: "Tue",
-        profit: 2000,
+      name: "Tue",
+      profit: 2000,
     },
     {
-        name: "Wed",
-        profit: 2780,
+      name: "Wed",
+      profit: 2780,
     },
     {
-        name: "Thu",
-        profit: 1890,
+      name: "Thu",
+      profit: 1890,
     },
     {
-        name: "Fri",
-        profit: 2390,
+      name: "Fri",
+      profit: 2390,
     },
     {
-        name: "Sat",
-        profit: 3490,
+      name: "Sat",
+      profit: 3490,
     }
   ]
 }
@@ -234,34 +234,34 @@ export const barChartBoxVisit = {
   color: "#FF8042",
   dataKey: "visits",
   chartData: [
-      {
-          name: "Sun",
-          visits: 4000,
-      },
-      {
-          name: "Mon",
-          visits: 3000,
-      },
-      {
-          name: "Tue",
-          visits: 2000,
-      },
-      {
-          name: "Wed",
-          visits: 2780,
-      },
-      {
-          name: "Thu",
-          visits: 1890,
-      },
-      {
-          name: "Fri",
-          visits: 2390,
-      },
-      {
-          name: "Sat",
-          visits: 3490,
-      }
+    {
+      name: "Sun",
+      visits: 4000,
+    },
+    {
+      name: "Mon",
+      visits: 3000,
+    },
+    {
+      name: "Tue",
+      visits: 2000,
+    },
+    {
+      name: "Wed",
+      visits: 2780,
+    },
+    {
+      name: "Thu",
+      visits: 1890,
+    },
+    {
+      name: "Fri",
+      visits: 2390,
+    },
+    {
+      name: "Sat",
+      visits: 3490,
+    }
   ]
 }
 
@@ -270,30 +270,168 @@ export const pieChartBoxData = {
   color: "#FF8042",
   dataKey: "value",
   chartData: [
-      { 
-          name: "Mobile", 
-          value: 400,
-          color: "#0088FE"
-      },
-      { 
-          name: "Laptop", 
-          value: 300,
-          color: "#00C49F"
-      },
-      { 
-          name: "Tablet", 
-          value: 300,
-          color: "#FFBB28"
-      },
-      { 
-          name: "Desktop",
-          value: 200,
-          color: "#FF8042"
-      },
-      { 
-          name: "Others", 
-          value: 100,
-          color: "#AF19FF"
-      }  
+    {
+      name: "Mobile",
+      value: 400,
+      color: "#0088FE"
+    },
+    {
+      name: "Laptop",
+      value: 300,
+      color: "#00C49F"
+    },
+    {
+      name: "Tablet",
+      value: 300,
+      color: "#FFBB28"
+    },
+    {
+      name: "Desktop",
+      value: 200,
+      color: "#FF8042"
+    },
+    {
+      name: "Others",
+      value: 100,
+      color: "#AF19FF"
+    }
   ]
 }
+
+export const userRows = [
+  {
+    "id": 1,
+    "lastName": "Bennett",
+    "firstName": "Eliana",
+    "email": "example@gmail.com",
+    "avatar": "",
+    "verified": true,
+    "phone": "(123) 456-7890"
+  },
+  {
+    "id": 2,
+    "lastName": "Morrison",
+    "firstName": "Liam",
+    "email": "example@gmail.com",
+    "avatar": "",
+    "verified": false,
+    "phone": "(123) 456-7890"
+  },
+  {
+    "id": 3,
+    "lastName": "Fitzgerald",
+    "firstName": "Nora",
+    "email": "example@gmail.com",
+    "avatar": "",
+    "verified": false,
+    "phone": "(123) 456-7890"
+  },
+  {
+    "id": 4,
+    "lastName": "Quinn",
+    "firstName": "Oliver",
+    "email": "example@gmail.com",
+    "avatar": "",
+    "verified": true,
+    "phone": "(123) 456-7890"
+  },
+  {
+    "id": 5,
+    "lastName": "Blackwood",
+    "firstName": "Maya",
+    "email": "example@gmail.com",
+    "avatar": "",
+    "verified": false,
+    "phone": "(123) 456-7890"
+  },
+  {
+    "id": 6,
+    "lastName": "Hart",
+    "firstName": "Theo",
+    "email": "example@gmail.com",
+    "avatar": "",
+    "verified": true,
+    "phone": "(123) 456-7890"
+  },
+  {
+    "id": 7,
+    "lastName": "Cunningham",
+    "firstName": "Isabella",
+    "email": "example@gmail.com",
+    "avatar": "",
+    "verified": true,
+    "phone": "(123) 456-7890"
+  },
+  {
+    "id": 8,
+    "lastName": "Whitaker",
+    "firstName": "Henry",
+    "email": "example@gmail.com",
+    "avatar": "",
+    "verified": true,
+    "phone": "(123) 456-7890"
+  },
+  {
+    "id": 9,
+    "lastName": "Dunn",
+    "firstName": "Charlotte",
+    "email": "example@gmail.com",
+    "avatar": "",
+    "verified": true,
+    "phone": "(123) 456-7890"
+  },
+  {
+    "id": 10,
+    "lastName": "Hawkins",
+    "firstName": "Ethan",
+    "email": "example@gmail.com",
+    "avatar": "",
+    "verified": true,
+    "phone": "(123) 456-7890"
+  },
+  {
+    "id": 11,
+    "lastName": "Sullivan",
+    "firstName": "Zoe",
+    "email": "example@gmail.com",
+    "avatar": "",
+    "verified": true,
+    "phone": "(123) 456-7890"
+  },
+  {
+    "id": 12,
+    "lastName": "Bradley",
+    "firstName": "Jack",
+    "email": "example@gmail.com",
+    "avatar": "",
+    "verified": true,
+    "phone": "(123) 456-7890"
+  },
+  {
+    "id": 13,
+    "lastName": "Page",
+    "firstName": "Sophia",
+    "email": "example@gmail.com",
+    "avatar": "",
+    "verified": false,
+    "phone": "(123) 456-7890"
+  },
+  {
+    "id": 14,
+    "lastName": "Monroe",
+    "firstName": "Mason",
+    "email": "example@gmail.com",
+    "avatar": "",
+    "verified": false,
+    "phone": "(123) 456-7890"
+  },
+  {
+    "id": 15,
+    "lastName": "Davidson",
+    "firstName": "Ella",
+    "email": "example@gmail.com",
+    "avatar": "",
+    "verified": false,
+    "phone": "(123) 456-7890"
+  }
+];
