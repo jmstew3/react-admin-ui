@@ -15,6 +15,8 @@ import Login from "./pages/login/Login";
 import Users from "./pages/users/Users";
 import Products from "./pages/products/Products";
 import "./styles/global.scss"
+import Product from "./pages/product/Product";
+import User from "./pages/user/User";
  
 function App() {
 
@@ -63,6 +65,16 @@ function App() {
         { 
           path: "/products",
           element: <Products />
+        },
+        { 
+          // add :id to the end of the slug in order to go to a single user page
+          path: "/users/:id",
+          element: <User />
+        },
+        { 
+          // add :id to the end of the slug in order to go to a single product page
+          path: "/products/:id",
+          element: <Product />
         }
       ]
     },
