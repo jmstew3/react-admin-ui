@@ -1,11 +1,14 @@
+import Single from "../../components/Single/Single";
 import "./user.scss";
 
 const User = () => {
+
+  // Fetch data and send to Single Component
   return (
     <div className="user">
-      User
+      <Single />
     </div>
-  )
-}
+  );
+};
 
-export default User
+export default User;
