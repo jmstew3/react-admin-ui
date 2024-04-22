@@ -14,7 +14,18 @@ const DataTable = () => {
           width: 100,
           renderCell: (params) => {
             return <img src={params.value as string || "/noavatar.png"} alt="" />
-          }
+          },
+        },
+        { 
+          field: 'actions',
+          headerName: 'Actions',
+          width: 100,
+          renderCell: (params) => {
+            return <div className='action'>
+              <div className='view'>View</div>
+              <div className='delete'>Delete</div>
+            </div>;
+          },
         },
         {
           field: 'status',
