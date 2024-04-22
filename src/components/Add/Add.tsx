@@ -1,16 +1,21 @@
+import { GridColDef } from "@mui/x-data-grid";
 import "./add.scss";
 
 type Props = {
-    // slug,
-    // columns,
+    slug: string;
+    columns: GridColDef[];
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-function Add = (props: Props) => {
+const Add = (props: Props) => {
   return (
     <div className="add">
-      Add
+      <div className="modal">
+      <span className="close">X</span>
+      <h1>Add new {props.slug}</h1>
+      </div>
     </div>
   )
-}
+};
 
 export default Add
