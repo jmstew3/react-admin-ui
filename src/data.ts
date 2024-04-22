@@ -7,9 +7,9 @@ export const menu = [
         id: 1,
         title: "Home",
         url: "/",
-        icon: "/home.svg"
-      }
-    ]
+        icon: "/home.svg",
+      },
+    ],
   },
   {
     id: 2,
@@ -19,21 +19,21 @@ export const menu = [
         id: 1,
         title: "Business",
         url: "/business",
-        icon: "/profile.svg"
+        icon: "/profile.svg",
       },
       {
         id: 2,
         title: "Calls",
         url: "/calls",
-        icon: "/profile.svg"
+        icon: "/profile.svg",
       },
       {
         id: 3,
         title: "Marketing",
         url: "/marketing",
-        icon: "/profile.svg"
-      }
-    ]
+        icon: "/profile.svg",
+      },
+    ],
   },
   {
     id: 3,
@@ -43,83 +43,93 @@ export const menu = [
         id: 1,
         title: "Business",
         url: "/business",
-        icon: "/profile.svg"
+        icon: "/profile.svg",
       },
       {
         id: 2,
         title: "Calls",
         url: "/calls",
-        icon: "/profile.svg"
+        icon: "/profile.svg",
       },
       {
         id: 3,
         title: "Marketing",
         url: "/marketing",
-        icon: "/profile.svg"
+        icon: "/profile.svg",
       },
       {
         id: 4,
         title: "Users",
         url: "/users",
-        icon: "/profile.svg"
+        icon: "/profile.svg",
+      },
+    ],
+  },
+  {
+    id: 4,
+    title: "Experimental",
+    listItems: [
+      {
+        id: 1,
+        title: "Products",
+        url: "/products",
+        icon: "/profile.svg",
       }
-    ]
-  }
-]
-
+    ],
+  },
+];
 
 export const topDealUsers = [
   {
-    "id": 1,
-    "img": "https://images.pexels.com/photos/8405873/pexels-photo-8405873.jpeg?auto=compress&cs=tinysrgb&w=1600",
-    "username": "Elva McDonald",
-    "email": "elva@gmail.com",
-    "amount": "3.668"
+    id: 1,
+    img: "https://images.pexels.com/photos/8405873/pexels-photo-8405873.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    username: "Elva McDonald",
+    email: "elva@gmail.com",
+    amount: "3.668",
   },
   {
-    "id": 2,
-    "img": "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=1600",
-    "username": "Linnie Nelson",
-    "email": "linnie@gmail.com",
-    "amount": "3.256"
+    id: 2,
+    img: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    username: "Linnie Nelson",
+    email: "linnie@gmail.com",
+    amount: "3.256",
   },
   {
-    "id": 3,
-    "img": "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=1600",
-    "username": "Brent Reeves",
-    "email": "brent@gmail.com",
-    "amount": "2.998"
+    id: 3,
+    img: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    username: "Brent Reeves",
+    email: "brent@gmail.com",
+    amount: "2.998",
   },
   {
-    "id": 4,
-    "img": "https://images.pexels.com/photos/34577/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1600",
-    "username": "Mina Holmes",
-    "email": "mina@gmail.com",
-    "amount": "5.760"
+    id: 4,
+    img: "https://images.pexels.com/photos/34577/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1600",
+    username: "Mina Holmes",
+    email: "mina@gmail.com",
+    amount: "5.760",
   },
   {
-    "id": 5,
-    "img": "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=1600",
-    "username": "Clifford Ross",
-    "email": "clifford@gmail.com",
-    "amount": "1.340"
+    id: 5,
+    img: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    username: "Clifford Ross",
+    email: "clifford@gmail.com",
+    amount: "1.340",
   },
   {
-    "id": 6,
-    "img": "https://images.pexels.com/photos/374710/pexels-photo-374710.jpeg?auto=compress&cs=tinysrgb&w=1600",
-    "username": "Nellie Alvarez",
-    "email": "nellie@gmail.com",
-    "amount": "7.222"
+    id: 6,
+    img: "https://images.pexels.com/photos/374710/pexels-photo-374710.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    username: "Nellie Alvarez",
+    email: "nellie@gmail.com",
+    amount: "7.222",
   },
   {
-    "id": 7,
-    "img": "https://images.pexels.com/photos/2526108/pexels-photo-2526108.jpeg?auto=compress&cs=tinysrgb&w=1600",
-    "username": "Gordon Freeman",
-    "email": "gordon@gmail.com",
-    "amount": "4.987"
-  }
-]
-
+    id: 7,
+    img: "https://images.pexels.com/photos/2526108/pexels-photo-2526108.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    username: "Gordon Freeman",
+    email: "gordon@gmail.com",
+    amount: "4.987",
+  },
+];
 
 export const chartBoxUser = {
   color: "#8884d8",
@@ -225,9 +235,9 @@ export const barChartBoxRevenue = {
     {
       name: "Sat",
       profit: 3490,
-    }
-  ]
-}
+    },
+  ],
+};
 
 export const barChartBoxVisit = {
   title: "Total Visits",
@@ -261,9 +271,9 @@ export const barChartBoxVisit = {
     {
       name: "Sat",
       visits: 3490,
-    }
-  ]
-}
+    },
+  ],
+};
 
 export const pieChartBoxData = {
   title: "Leads By Source",
@@ -273,165 +283,165 @@ export const pieChartBoxData = {
     {
       name: "Mobile",
       value: 400,
-      color: "#0088FE"
+      color: "#0088FE",
     },
     {
       name: "Laptop",
       value: 300,
-      color: "#00C49F"
+      color: "#00C49F",
     },
     {
       name: "Tablet",
       value: 300,
-      color: "#FFBB28"
+      color: "#FFBB28",
     },
     {
       name: "Desktop",
       value: 200,
-      color: "#FF8042"
+      color: "#FF8042",
     },
     {
       name: "Others",
       value: 100,
-      color: "#AF19FF"
-    }
-  ]
-}
+      color: "#AF19FF",
+    },
+  ],
+};
 
 export const userRows = [
   {
-    "id": 1,
-    "lastName": "Bennett",
-    "firstName": "Eliana",
-    "email": "example@gmail.com",
-    "avatar": "",
-    "verified": true,
-    "phone": "(123) 456-7890"
+    id: 1,
+    lastName: "Bennett",
+    firstName: "Eliana",
+    email: "example@gmail.com",
+    avatar: "",
+    verified: true,
+    phone: "(123) 456-7890",
   },
   {
-    "id": 2,
-    "lastName": "Morrison",
-    "firstName": "Liam",
-    "email": "example@gmail.com",
-    "avatar": "",
-    "verified": false,
-    "phone": "(123) 456-7890"
+    id: 2,
+    lastName: "Morrison",
+    firstName: "Liam",
+    email: "example@gmail.com",
+    avatar: "",
+    verified: false,
+    phone: "(123) 456-7890",
   },
   {
-    "id": 3,
-    "lastName": "Fitzgerald",
-    "firstName": "Nora",
-    "email": "example@gmail.com",
-    "avatar": "",
-    "verified": false,
-    "phone": "(123) 456-7890"
+    id: 3,
+    lastName: "Fitzgerald",
+    firstName: "Nora",
+    email: "example@gmail.com",
+    avatar: "",
+    verified: false,
+    phone: "(123) 456-7890",
   },
   {
-    "id": 4,
-    "lastName": "Quinn",
-    "firstName": "Oliver",
-    "email": "example@gmail.com",
-    "avatar": "",
-    "verified": true,
-    "phone": "(123) 456-7890"
+    id: 4,
+    lastName: "Quinn",
+    firstName: "Oliver",
+    email: "example@gmail.com",
+    avatar: "",
+    verified: true,
+    phone: "(123) 456-7890",
   },
   {
-    "id": 5,
-    "lastName": "Blackwood",
-    "firstName": "Maya",
-    "email": "example@gmail.com",
-    "avatar": "",
-    "verified": false,
-    "phone": "(123) 456-7890"
+    id: 5,
+    lastName: "Blackwood",
+    firstName: "Maya",
+    email: "example@gmail.com",
+    avatar: "",
+    verified: false,
+    phone: "(123) 456-7890",
   },
   {
-    "id": 6,
-    "lastName": "Hart",
-    "firstName": "Theo",
-    "email": "example@gmail.com",
-    "avatar": "",
-    "verified": true,
-    "phone": "(123) 456-7890"
+    id: 6,
+    lastName: "Hart",
+    firstName: "Theo",
+    email: "example@gmail.com",
+    avatar: "",
+    verified: true,
+    phone: "(123) 456-7890",
   },
   {
-    "id": 7,
-    "lastName": "Cunningham",
-    "firstName": "Isabella",
-    "email": "example@gmail.com",
-    "avatar": "",
-    "verified": true,
-    "phone": "(123) 456-7890"
+    id: 7,
+    lastName: "Cunningham",
+    firstName: "Isabella",
+    email: "example@gmail.com",
+    avatar: "",
+    verified: true,
+    phone: "(123) 456-7890",
   },
   {
-    "id": 8,
-    "lastName": "Whitaker",
-    "firstName": "Henry",
-    "email": "example@gmail.com",
-    "avatar": "",
-    "verified": true,
-    "phone": "(123) 456-7890"
+    id: 8,
+    lastName: "Whitaker",
+    firstName: "Henry",
+    email: "example@gmail.com",
+    avatar: "",
+    verified: true,
+    phone: "(123) 456-7890",
   },
   {
-    "id": 9,
-    "lastName": "Dunn",
-    "firstName": "Charlotte",
-    "email": "example@gmail.com",
-    "avatar": "",
-    "verified": true,
-    "phone": "(123) 456-7890"
+    id: 9,
+    lastName: "Dunn",
+    firstName: "Charlotte",
+    email: "example@gmail.com",
+    avatar: "",
+    verified: true,
+    phone: "(123) 456-7890",
   },
   {
-    "id": 10,
-    "lastName": "Hawkins",
-    "firstName": "Ethan",
-    "email": "example@gmail.com",
-    "avatar": "",
-    "verified": true,
-    "phone": "(123) 456-7890"
+    id: 10,
+    lastName: "Hawkins",
+    firstName: "Ethan",
+    email: "example@gmail.com",
+    avatar: "",
+    verified: true,
+    phone: "(123) 456-7890",
   },
   {
-    "id": 11,
-    "lastName": "Sullivan",
-    "firstName": "Zoe",
-    "email": "example@gmail.com",
-    "avatar": "",
-    "verified": true,
-    "phone": "(123) 456-7890"
+    id: 11,
+    lastName: "Sullivan",
+    firstName: "Zoe",
+    email: "example@gmail.com",
+    avatar: "",
+    verified: true,
+    phone: "(123) 456-7890",
   },
   {
-    "id": 12,
-    "lastName": "Bradley",
-    "firstName": "Jack",
-    "email": "example@gmail.com",
-    "avatar": "",
-    "verified": true,
-    "phone": "(123) 456-7890"
+    id: 12,
+    lastName: "Bradley",
+    firstName: "Jack",
+    email: "example@gmail.com",
+    avatar: "",
+    verified: true,
+    phone: "(123) 456-7890",
   },
   {
-    "id": 13,
-    "lastName": "Page",
-    "firstName": "Sophia",
-    "email": "example@gmail.com",
-    "avatar": "",
-    "verified": false,
-    "phone": "(123) 456-7890"
+    id: 13,
+    lastName: "Page",
+    firstName: "Sophia",
+    email: "example@gmail.com",
+    avatar: "",
+    verified: false,
+    phone: "(123) 456-7890",
   },
   {
-    "id": 14,
-    "lastName": "Monroe",
-    "firstName": "Mason",
-    "email": "example@gmail.com",
-    "avatar": "",
-    "verified": false,
-    "phone": "(123) 456-7890"
+    id: 14,
+    lastName: "Monroe",
+    firstName: "Mason",
+    email: "example@gmail.com",
+    avatar: "",
+    verified: false,
+    phone: "(123) 456-7890",
   },
   {
-    "id": 15,
-    "lastName": "Davidson",
-    "firstName": "Ella",
-    "email": "example@gmail.com",
-    "avatar": "",
-    "verified": false,
-    "phone": "(123) 456-7890"
-  }
+    id: 15,
+    lastName: "Davidson",
+    firstName: "Ella",
+    email: "example@gmail.com",
+    avatar: "",
+    verified: false,
+    phone: "(123) 456-7890",
+  },
 ];
