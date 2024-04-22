@@ -8,7 +8,6 @@ type Props = {
 };
 
 const Add = (props: Props) => {
-    
   const handleSubmit = (e: React.FormEventHandler<HTMLFormElement>) => {
     // prevent the form from refreshing the page
     e.preventDefault();
