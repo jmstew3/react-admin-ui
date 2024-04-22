@@ -17,6 +17,12 @@ const DataTable = () => {
           }
         },
         {
+          field: 'status',
+          headerName: 'Status',
+          width: 100,
+          type: 'boolean'
+        },
+        {
           field: 'firstName',
           headerName: 'First name',
           width: 150,
@@ -46,15 +52,15 @@ const DataTable = () => {
       ];
 
       const rows = [
-        { id: 1, lastName: 'Snow', firstName: 'Jon', age: 14, avatar: ''},
-        { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 31, avatar: ''},
-        { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 31, avatar: ''},
-        { id: 4, lastName: 'Stark', firstName: 'Arya', age: 11, avatar: ''},
-        { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null, avatar: ''},
-        { id: 6, lastName: 'Melisandre', firstName: null, age: 150, avatar: ''},
-        { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44, avatar: ''},
-        { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36, avatar: ''},
-        { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65, avatar: ''}
+        { id: 1, lastName: 'Snow', firstName: 'Jon', age: 14, avatar: '', status: true},
+        { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 31, avatar: '', status: false},
+        { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 31, avatar: '', status: false},
+        { id: 4, lastName: 'Stark', firstName: 'Arya', age: 11, avatar: '', status: true},
+        { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null, avatar: '', status: false},
+        { id: 6, lastName: 'Melisandre', firstName: null, age: 150, avatar: '', status: true},
+        { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44, avatar: '', status: true},
+        { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36, avatar: '', status: true},
+        { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65, avatar: '', status: true}
       ];
 
   return (
