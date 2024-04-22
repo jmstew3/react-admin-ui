@@ -13,23 +13,34 @@
             margin-bottom: 20px;
             
             .topInfo {
-                display: flex;
+                display: grid;
+                grid-template-columns: auto 1fr;
                 align-items: center;
-                margin-bottom: 20px;
+                margin-bottom: 40px;
                 gap: 10px;
 
                 img {
+                    grid-row: span 2;
+                    grid-column: 1;
                     width: 125px;
                     height: 125px;
                     border-radius: 25%;
                     margin-right: 10px;
                     object-fit: cover;
                     object-position: center top;
+                    background-color: red;
+                }
+
+                h1 {
+                    grid-column: 2;
+                    font-size: 30px;
+                    font-weight: 600;
                 }
 
                 button {
+                    grid-column: 2;
                     height: 50px;
-                    width: auto;
+                    width: 145px;
                     padding: 10px;
                     border-radius: 10px;
                     border-style: none;
@@ -47,13 +58,32 @@
                 grid-column: 1 / auto;
                 gap: 10px;
                 font-size: 20px;
+
+                .item {
+          
+
+                    .itemTitle {
+                  
+                    }
+
+                    .itemValue {
+                        
+                    }
+                }
             }
+        }
+
+        hr {
+           width: 90%;
+           height: 0;
+           border: 0.5px solid grey;
+           margin: 20px 0px;
         }
     
         .chart {
-            display: grid;
-            grid-row: auto;
-            grid-column: 2 / auto;
+            margin-top: 50px;
+            width: 80%;
+            height: 400px;
         }
     }
 
@@ -63,45 +93,51 @@
         grid-column: 2;
 
         h2 {
-            margin-bottom: 40px;
+            font-weight: 800;
         }
 
-        .activities {
-            display: grid;
-            grid-row: auto;
-            grid-column: 1;
+        ul {
+            display: flex;
+            flex-direction: column;
             gap: 40px;
-            padding: 20px 0;
-            border-left: 2px solid rgba(218, 101, 101, 1);
-            
 
-            .activityBox {
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-                padding: 20px;
-                background-color: rgba(218, 101, 101, 0.2);
-                width: 65%;
+            li {
+
+                list-style: none;
                 position: relative;
+                width: 1px;
+                padding-top: 5px;
+                background-color:  rgba(218, 101, 101, 1);
 
-                h3 {
-                    font-size: 20px;
-                    letter-spacing: 0.025px;
-                    font-weight: 600;
-                }
-
-                span {
-                    color: grey
-                }
-
-                .dot {
-                    width: 15px;
-                    height: 15px;
-                    border-radius: 50%;
-                    background-color: rgba(218, 101, 101, 1);
+                // creates timeline dot
+                &::after {
+                    content: "";
                     position: absolute;
-                    top: 50%;
-                    left: -8px;
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 50%;
+                    background-color:  rgba(218, 101, 101, 1);
+                    transform: translateX(-50%);
+                }
+
+                .activity {
+                    display: flex;
+                    flex-direction: column;
+                    min-width: 600px;
+                    padding: 15px;
+                    background-color:  rgba(218, 101, 101, .25);
+                    gap: 10px;
+
+                    p {
+                        font-size: 20px;
+                        letter-spacing: 0.025px;
+                        font-weight: 600;
+                        line-height: 1.4;
+                    }
+
+                    time {
+                        color: grey
+                    }
                 }
             }
         }
