@@ -1,4 +1,4 @@
-import "./menu.scss"
+import "./menu.scss";
 import { Link } from "react-router-dom";
 import { menu } from "../../data";
 
@@ -10,14 +10,14 @@ const Menu = () => {
           <span className="title">{item.title}</span>
           {item.listItems.map((listItem) => (
             <Link to={listItem.url} className="listItem" key={listItem.id}>
-            <img src={listItem.icon} alt="" />
-            <span className="listItemTitle">{listItem.title}</span>
-          </Link>
+              <img src={listItem.icon} alt="" />
+              <span className="listItemTitle">{listItem.title}</span>
+            </Link>
           ))}
         </div>
       ))}
     </div>
   );
-}
+};
 
-export default Menu
+export default Menu;
