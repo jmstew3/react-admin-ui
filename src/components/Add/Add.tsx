@@ -19,18 +19,18 @@ const Add = (props: Props) => {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          },
-          
-          body: JSON.stringify({
-            id: 111,
-            img: "",
-            lastName: "Hello",
-            firstName: "Test",
-            email: "testme@@gmail.com",
-            phone: "(123) 456-7890",
-            createdAt: "01.02.2023",
-            verified: true,
-          }),
+        },
+
+        body: JSON.stringify({
+          id: 111,
+          img: "",
+          lastName: "Hello",
+          firstName: "Test",
+          email: "testme@@gmail.com",
+          phone: "(123) 456-7890",
+          createdAt: "01.02.2023",
+          verified: true,
+        }),
       });
     },
     onSuccess: () => {
@@ -43,7 +43,7 @@ const Add = (props: Props) => {
     e.preventDefault();
 
     // add new item
-    mutation.mutate()
+    mutation.mutate();
   };
 
   return (
