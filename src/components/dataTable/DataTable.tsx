@@ -16,7 +16,6 @@ type Props = {
 };
 
 const DataTable = (props: Props) => {
-
   // import useMutation and useQueryClient from react-query in order to delete items
   const queryClient = useQueryClient();
 
