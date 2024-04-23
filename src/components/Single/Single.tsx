@@ -21,7 +21,7 @@ type Props = {
   activities?: { time: string; text: string };
 };
 
-const Single = () => {
+const Single = (props: "Props") => {
   return (
     <div className="single">
       <div className="view">
