@@ -87,7 +87,7 @@
         }
     }
 
-    .activityContainer {
+    .activities {
         display: grid;
         grid-row: auto;
         grid-column: 2;
@@ -120,7 +120,7 @@
                     transform: translateX(-50%);
                 }
 
-                .activity {
+                div {
                     display: flex;
                     flex-direction: column;
                     min-width: 600px;
