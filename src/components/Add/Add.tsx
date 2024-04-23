@@ -44,6 +44,9 @@ const Add = (props: Props) => {
 
     // add new item
     mutation.mutate();
+
+    // automatically close the modal after button click/submission
+    props.setOpen(false);
   };
 
   return (
