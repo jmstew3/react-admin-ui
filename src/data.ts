@@ -553,7 +553,7 @@ export const products = [
 export const singleUser = {
   id: 1,
   title: "Jane Doe",
-  img: "",
+  img: "../../public/Images/solo-female-1-ai.png",
   info: {
     username: "Janedoe99",
     fullname: "Jane Doe",
