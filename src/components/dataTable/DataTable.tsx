@@ -14,6 +14,10 @@ type Props = {
 };
 
 const DataTable = (props: Props) => {
+
+  const queryClient = useQueryClient();
+
+  
   // event handler function for deleting items by id
   const handleDelete = (id: number) => {
     //delete the item

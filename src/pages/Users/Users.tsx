@@ -72,13 +72,13 @@ const Users = () => {
   // state to handle the opening and closing of the Add component
   const [open, setOpen] = useState(false);
 
-  const { isPending, error, data } = useQuery({
+  const { isLoading, data } = useQuery({
     queryKey: ['repoData'],
     queryFn: () =>
-      fetch('https://api.github.com/repos/TanStack/query').then((res) =>
-        res.json(),
+      fetch('http://localhost:5500/api/users').then(
+        (res) => res.json()
       ),
-  })
+  });
 
   return (
     <div className="users">
@@ -86,7 +86,11 @@ const Users = () => {
         <h1>Users</h1>
         <button onClick={() => setOpen(true)}>Add New User</button>
       </div>
-      <DataTable slug="users" columns={columns} rows={userRows} />
+      {isLoading ? (
+        "Loading..." 
+      ) : (
+        <DataTable slug="users" columns={columns} rows={data} />
+      )}
       {open && <Add slug="user" columns={columns} setOpen={setOpen} />}
     </div>
   );
