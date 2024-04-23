@@ -601,7 +601,7 @@ export const singleUser = {
         name: "Sat",
         visits: 3490,
         clicks: 4300,
-      }clicks
+      }
     ],
   },
   activities: [
@@ -635,6 +635,10 @@ export const singleUser = {
     }
   ]
 }
+
+
+
+
 export const singleProduct = {
   id: 1,
   title: "Playstation 5 Digital Edition",
