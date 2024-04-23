@@ -51,12 +51,19 @@ const columns: GridColDef<(typeof rows)[number]>[] = [
     editable: true,
   },
   {
+    field: "createdAt",
+    headerName: "Created At",
+    type: "string",
+    width: 100,
+    editable: false,
+  },
+  {
     field: "verified",
     headerName: "Verified",
     type: "boolean",
     width: 100,
     editable: false,
-  },
+  }
   // {
   //     field: 'fullName',
   //     headerName: 'Full name',
@@ -73,7 +80,7 @@ const Users = () => {
   const [open, setOpen] = useState(false);
 
   const { isLoading, data } = useQuery({
-    queryKey: ['repoData'],
+    queryKey: ['allusers'],
     queryFn: () =>
       fetch('http://localhost:5500/api/users').then(
         (res) => res.json()

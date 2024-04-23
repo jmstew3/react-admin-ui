@@ -5,7 +5,9 @@ import {
   GridValueGetter,
 } from "@mui/x-data-grid";
 import { Link } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import "./dataTable.scss";
+
 
 type Props = {
   columns: GridColDef[];
@@ -15,16 +17,26 @@ type Props = {
 
 const DataTable = (props: Props) => {
 
+  // import useMutation and useQueryClient from react-query in order to delete items
   const queryClient = useQueryClient();
 
-  
+  const mutation = useMutation({
+    mutationFn: (id: number) => {
+      return fetch(`http://localhost:5500/api/${props.slug}/${id}`, {
+        method: "delete",
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries([`all${props.slug}`]);
+    },
+  });
+
   // event handler function for deleting items by id
   const handleDelete = (id: number) => {
     //delete the item
-    //axios.delete(`/api/${slug}/id`)
-    console.log(id + " has been deleted!");
+    mutation.mutate(id);
   };
-  
+
   // create a new column to modify and delete action buttons
   const actionColumn: GridColdDef = {
     field: "action",
