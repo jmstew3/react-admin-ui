@@ -32,10 +32,10 @@ const Single = (props: Props) => {
             <button>Update</button>
           </div>
           <div className="details">
-            {Object.entries(props.info).map((item) => (
-              <div className="item" key={item[0]}>
-                <span className="itemTitle">{item[0]}</span>
-                <span className="itemValue">{item[1]}</span>
+            {Object.entries(props.info).map(([key, value]) => (
+              <div className="item" key={props.id}>
+                <span className="itemTitle">{`${key}: `}</span>
+                <span className="itemValue">{value}</span>
               </div>
             ))}
           </div>
