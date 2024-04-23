@@ -13,7 +13,7 @@
             display: grid;
             grid-row: auto;
             grid-column: 1 / auto;
-            margin-bottom: 20px;
+            margin-bottom: 00px;
             
             .topInfo {
                 display: grid;
@@ -38,6 +38,7 @@
                     grid-column: 2;
                     font-size: 40px;
                     font-weight: 700;
+                    margin-bottom: 5px;
                 }
 
                 button {
