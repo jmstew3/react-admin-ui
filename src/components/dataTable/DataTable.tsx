@@ -8,7 +8,6 @@ import { Link } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import "./dataTable.scss";
 
-
 type Props = {
   columns: GridColDef[];
   rows: object[];

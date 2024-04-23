@@ -3,8 +3,12 @@ import "./footer.scss"
 const Footer = () => {
   return (
     <div className="footer">
-      <span>Legitrix</span>
-      <span> ©2024 Legit Consulting Group. All rights reserved.</span>
+      <div className="logo">
+        <img src="public/legit-consulting-logo.png" alt="Legit Consulting Group logo" />
+        <hr className="vertical-line" />
+        <span className="title">Legitrix Business Intelligence™</span>
+      </div>
+      <span> ©{new Date().getFullYear()} Legit Consulting Group. All rights reserved.</span>
     </div>
   )
 }
