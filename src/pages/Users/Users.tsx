@@ -4,13 +4,14 @@ import { userRows } from "../../data";
 import DataTable from "../../components/DataTable/DataTable";
 import Add from "../../components/Add/Add";
 import "./users.scss";
+import { useQuery } from "@tanstack/react-query";
 
 const columns: GridColDef<(typeof rows)[number]>[] = [
   {
     field: "id",
     headerName: "ID",
     width: 90,
-    type: "number"
+    type: "number",
   },
   {
     field: "img",
@@ -26,35 +27,35 @@ const columns: GridColDef<(typeof rows)[number]>[] = [
     headerName: "First name",
     type: "string",
     width: 150,
-    editable: true
+    editable: true,
   },
   {
     field: "lastName",
     headerName: "Last name",
     type: "string",
     width: 150,
-    editable: true
+    editable: true,
   },
   {
     field: "email",
     headerName: "Email",
     type: "string",
     width: 200,
-    editable: true
+    editable: true,
   },
   {
     field: "phone",
     headerName: "Phone",
     type: "string",
     width: 250,
-    editable: true
+    editable: true,
   },
   {
     field: "verified",
     headerName: "Verified",
     type: "boolean",
     width: 100,
-    editable: false
+    editable: false,
   },
   // {
   //     field: 'fullName',
@@ -68,18 +69,27 @@ const columns: GridColDef<(typeof rows)[number]>[] = [
 
 // DataTable component is used here which takes props that reference data in the database: data.ts
 const Users = () => {
-// state to handle the opening and closing of the Add component
-  const [open, setOpen] = useState(false) 
+  // state to handle the opening and closing of the Add component
+  const [open, setOpen] = useState(false);
+
+  const { isPending, error, data } = useQuery({
+    queryKey: ['repoData'],
+    queryFn: () =>
+      fetch('https://api.github.com/repos/TanStack/query').then((res) =>
+        res.json(),
+      ),
+  })
+
   return (
     <div className="users">
       <div className="info">
         <h1>Users</h1>
-        <button onClick={()=> setOpen(true)}>Add New User</button> 
+        <button onClick={() => setOpen(true)}>Add New User</button>
       </div>
       <DataTable slug="users" columns={columns} rows={userRows} />
-      { open && <Add slug="user" columns={columns} setOpen={setOpen} /> }
+      {open && <Add slug="user" columns={columns} setOpen={setOpen} />}
     </div>
   );
-}
+};
 
 export default Users;
