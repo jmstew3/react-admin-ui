@@ -1,56 +1,66 @@
 @import "../../styles/responsive.scss";
 
 .topBox {
+  h1 {
+    margin-bottom: 40px;
 
-    h1 {
-        margin-bottom: 40px;
+    @include xxl {
+      font-size: 20px;
+    }
+  }
 
-        @include xxl {
-            font-size: 20px;
+  .list {
+    .listItem {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 30px;
+
+      .user {
+        display: flex;
+        gap: 20px;
+
+        img {
+          display: flex;
+          width: 40px;
+          height: 40px;
+          object-fit: cover;
+          border-radius: 50%;
+          margin-right: 5px;
+          margin-bottom: 10px;
+
+          @include lg {
+            display: none;
           }
-    }
-
-    .list {
-
-        .listItem {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 30px;
-
-            .user {
-                display: flex;
-                gap: 20px;
-
-                img {
-                    display: flex;
-                    width: 40px;
-                    height: 40px;
-                    object-fit: cover;
-                    border-radius: 50%;
-                    margin-right: 5px;
-                    margin-bottom: 10px;
-                }
-
-                .userDetails {
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    gap: 5px;
-
-                    .username {
-                        font-size: 14px;
-                        font-weight: 500;
-
-                    }
-
-                    .email {
-                        font-size: 12px;
-                        font-weight: 500;
-                    }
-                }
-                
-            }
+          @include md {
+            display: block;
+          }
         }
+
+        .userDetails {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          gap: 5px;
+
+          .username {
+            font-size: 14px;
+            font-weight: 500;
+          }
+
+          .email {
+            font-size: 12px;
+            font-weight: 500;
+
+            @include lg {
+                display: none;
+              }
+            //   @include md {
+            //     display: block;
+            //   }
+          }
+        }
+      }
     }
+  }
 }
