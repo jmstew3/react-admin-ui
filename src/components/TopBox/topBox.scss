@@ -1,7 +1,13 @@
+@import "../../styles/responsive.scss";
+
 .topBox {
 
     h1 {
         margin-bottom: 40px;
+
+        @include xxl {
+            font-size: 20px;
+          }
     }
 
     .list {
