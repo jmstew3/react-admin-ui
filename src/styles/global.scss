@@ -35,21 +35,21 @@
       overflow: hidden;
       padding-top: 50px;
   
-      @include xxl {
-        background-color: rgba(255, 0, 0, 0.15);
-      }
-      @include xl {
-        background-color: rgba(0, 255, 0, 0.15);
-      }
-      @include lg {
-        background-color: rgba(0, 0, 255, 0.15);
-      }
-      @include md {
-        background-color: rgba(255, 255, 0, 0.15);
-      }
-      @include sm {
-        background-color: rgba(255, 0, 255, 0.15);
-      }
+      // @include xxl {
+      //   background-color: rgba(255, 0, 0, 0.15);
+      // }
+      // @include xl {
+      //   background-color: rgba(0, 255, 0, 0.15);
+      // }
+      // @include lg {
+      //   background-color: rgba(0, 0, 255, 0.15);
+      // }
+      // @include md {
+      //   background-color: rgba(255, 255, 0, 0.15);
+      // }
+      // @include sm {
+      //   background-color: rgba(255, 0, 255, 0.15);
+      // }
   
       .menuContainer {
         width: 250px;
