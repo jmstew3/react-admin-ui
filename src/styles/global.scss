@@ -56,6 +56,10 @@
         padding: 5px 20px;
         border-right: 2px solid $soft-bg;
         height: 100vh;
+
+        @include lg {
+          width: max-content;
+        }
       }
   
       .contentContainer {
