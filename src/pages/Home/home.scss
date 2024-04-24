@@ -22,6 +22,9 @@
     @include md {
         grid-template-columns: repeat(1, 1fr);
     }
+    @include sm {
+        grid-template-rows: repeat(120px, auto);
+    }
 
     .box {
         padding: 20px;
@@ -45,6 +48,7 @@
 
         @include md {
             grid-column: span 1;
+            // display: none;
         }
     }
 
