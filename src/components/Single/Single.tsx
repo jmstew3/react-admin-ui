@@ -9,6 +9,16 @@ import {
 import { Tooltip } from "@mui/material";
 import "./single.scss";
 
+/* Why TS instead of JS? In JavaScript, which is a dynamically typed language, you can pass any type of data to a function or component without any restrictions. 
+  This flexibility can lead to bugs that are hard to track down, because a function or component might be expecting a certain type of data, but receives something different. 
+  TypeScript, on the other hand, is a statically typed superset of JavaScript. 
+  This means that you can specify the types of data that a function or component should receive. 
+  If you try to pass data of the wrong type, TypeScript will give you a compile-time error, making it easier to catch and fix bugs. 
+  In the context of React components, defining the structure of the properties (props) that a component is expected to receive can be very helpful. 
+  It makes it clear what data the component needs to function correctly, and ensures that the component is used correctly throughout your application. 
+  For example, if a component is expecting a prop named `title` of type `string`, but you accidentally pass a number, TypeScript will give you an error. 
+  This can help prevent bugs that might be caused by passing the wrong type of data to a component. */
+
 type Props = {
   id: number;
   img?: string;
