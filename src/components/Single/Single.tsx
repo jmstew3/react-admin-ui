@@ -21,6 +21,8 @@ type Props = {
   activities?: { time: string; text: string };
 };
 
+// Single will take props as an argument from User component in User.tsx
+
 const Single = (props: Props) => {
   return (
     <div className="single">
@@ -32,10 +34,10 @@ const Single = (props: Props) => {
             <button>Update</button>
           </div>
           <div className="details">
-            {Object.entries(props.info).map(([key, value]) => (
-              <div className="item" key={props.id}>
-                <span className="itemTitle">{`${key}: `}</span>
-                <span className="itemValue">{value}</span>
+            {Object.entries(props.info).map((item) => (
+              <div className="item" key={item[0]}>
+                <span className="itemTitle">{item[0]}</span>
+                <span className="itemValue">{item[1]}</span>
               </div>
             ))}
           </div>
@@ -47,6 +49,7 @@ const Single = (props: Props) => {
               <LineChart
                 width={500}
                 height={300}
+                // is props.chart.data because data is nested in chart object as per Props chart > data > object[]
                 data={props.chart.data}
                 margin={{
                   top: 5,
@@ -89,5 +92,8 @@ const Single = (props: Props) => {
     </div>
   );
 };
+
+/* the <Single /> component is exported to be used in User component and will accept props as an argument 
+  from {...singleUser} object within data.ts, resulting in <Single {...singleUser} /> in User component */
 
 export default Single;
