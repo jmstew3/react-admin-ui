@@ -71,22 +71,19 @@
         margin-bottom: 20px;
 
         .item {
+
           .itemTitle {
             font-weight: 600;
             text-transform: capitalize;
-          }
-
-          .itemValue {
           }
         }
       }
     }
 
     hr {
-      width: 90%;
+      width: 80%;
       height: 0;
       border: 0.5px solid grey;
-      margin: 20px 0px;
     }
 
     .chart {
@@ -142,15 +139,16 @@
           padding: 15px;
           background-color: rgba(218, 101, 101, 0.25);
           gap: 10px;
+          margin-right: 20%;
 
           @include xl {
-            width: 100%;
-          }
+            margin-right: 20%;
+        }
 
           p {
             font-size: 20px;
             letter-spacing: 0.025px;
-            font-weight: 600;
+            font-weight: 500;
             line-height: 1.4;
           }
 
