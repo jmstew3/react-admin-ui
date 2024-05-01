@@ -4,45 +4,45 @@ import './bigChartBox.scss';
 const data = [
     {
       name: 'Mon',
-      books: 4000,
-      clothes: 2400,
-      electronics: 2400,
+      upsell: 4000,
+      spend: 2400,
+      discounts: 2400,
     },
     {
       name: 'Tue',
-      books: 3000,
-      clothes: 1398,
-      electronics: 2210,
+      spend: 3000,
+      upsell: 1398,
+      discounts: 2210,
     },
     {
       name: 'Wed',
-      books: 2000,
-      clothes: 9800,
-      electronics: 2290,
+      spend: 2000,
+      upsell: 9800,
+      discounts: 2290,
     },
     {
       name: 'Thu',
-      books: 2780,
-      clothes: 3908,
-      electronics: 2000,
+      spend: 2780,
+      upsell: 3908,
+      discounts: 2000,
     },
     {
       name: 'Fri',
-      books: 1890,
-      clothes: 4800,
-      electronics: 2181,
+      spend: 1890,
+      upsell: 4800,
+      discounts: 2181,
     },
     {
       name: 'Sat',
-      books: 2390,
-      clothes: 3800,
-      electronics: 2500,
+      spend: 2390,
+      upsell: 3800,
+      discounts: 2500,
     },
     {
       name: 'Sun',
-      books: 3490,
-      clothes: 4300,
-      electronics: 2100,
+      spend: 3490,
+      spend: 4300,
+      discounts: 2100,
     },
   ];
 
@@ -68,21 +68,21 @@ function BigChartBox() {
             <Tooltip />
             <Area 
                 type="monotone" 
-                dataKey="books" 
+                dataKey="spend" 
                 stackId="1" 
                 stroke="#8884d8" 
                 fill="#8884d8"
             />
             <Area 
                 type="monotone" 
-                dataKey="clothes" 
+                dataKey="spend" 
                 stackId="1" 
                 stroke="#82ca9d" 
                 fill="#82ca9d"
             />
             <Area 
                 type="monotone" 
-                dataKey="electronics" 
+                dataKey="discounts" 
                 stackId="1" 
                 stroke="#ffc658" 
                 fill="#ffc658"

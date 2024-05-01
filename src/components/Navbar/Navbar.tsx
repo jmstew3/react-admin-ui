@@ -4,7 +4,7 @@ const Navbar = () => {
   return (
     <div className="navbar">
       <div className="logo">
-        <img src="public/legit-consulting-logo.png" alt="Legit Conuslting Group logo" />
+        <img src="/legit-consulting-logo.png" alt="Legit Conuslting Group logo" />
         <hr className="vertical-line" />
         <span className="title">Legitrix Business Intelligence™</span>
       </div>

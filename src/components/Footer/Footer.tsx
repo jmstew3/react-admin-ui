@@ -4,7 +4,7 @@ const Footer = () => {
   return (
     <div className="footer">
       <div className="logo">
-        <img src="public/legit-consulting-logo.png" alt="Legit Consulting Group logo" />
+        <img src="/legit-consulting-logo.png" alt="Legit Consulting Group logo" />
         <hr className="vertical-line" />
         <span className="title">Legitrix Business Intelligence™</span>
       </div>
