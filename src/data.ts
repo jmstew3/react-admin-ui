@@ -637,6 +637,10 @@ export const singleUser = {
 }
 
 
+export const tombStoneBox = {
+  
+}
+
 
 
 export const singleProduct = {
