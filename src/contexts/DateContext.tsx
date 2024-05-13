@@ -7,36 +7,33 @@ interface DateRange {
 
 interface DateContextType {
     dateRange: DateRange;
-    setDateRange: (newRange: DateRange) => void;
+    setDateRange: (newRange: DateRange | ((prevRange: DateRange) => DateRange)) => void;
 }
 
-// Create a context with an undefined initial value, as we will always use it within the provider
-const DateContext = createContext<DateContextType | undefined>(undefined);
+const defaultDateRange: DateRange = {
+    // fromDate: new Date().toISOString().split('T')[0],
+    // toDate: new Date().toISOString().split('T')[0]
+    fromDate: '2023-12-01',
+    toDate: '2023-12-31'
+};
 
-interface DateProviderProps {
-    children: ReactNode;
-    initialFromDate?: string;
-    initialToDate?: string;
-}
+const defaultContextValue: DateContextType = {
+    dateRange: defaultDateRange,
+    setDateRange: () => {}  // Placeholder
+};
 
-export const DateProvider: FunctionComponent<DateProviderProps> = ({ children, initialFromDate, initialToDate }) => {
-    const [dateRange, setDateRange] = useState<DateRange>({
-        fromDate: initialFromDate || new Date().toISOString().split('T')[0], // Defaults to today's date if not provided
-        toDate: initialToDate || new Date().toISOString().split('T')[0]     // Defaults to today's date if not provided
-    });
+export const DateContext = createContext<DateContextType>(defaultContextValue);
+
+export const DateProvider: FunctionComponent<{ children: ReactNode }> = ({ children }) => {
+    const [dateRange, setDateRangeState] = useState<DateRange>(defaultDateRange);
+
+    const setDateRange = (newRange: DateRange | ((prevRange: DateRange) => DateRange)) => {
+        setDateRangeState(prev => (typeof newRange === 'function' ? newRange(prev) : newRange));
+    };
 
     return (
         <DateContext.Provider value={{ dateRange, setDateRange }}>
             {children}
         </DateContext.Provider>
     );
-};
-
-// Hook to use the date context
-export const useDate = (): DateContextType => {
-    const context = useContext(DateContext);
-    if (!context) {
-        throw new Error('useDate must be used within a DateProvider');
-    }
-    return context;
 };

@@ -1,15 +1,17 @@
-import React, { useState, useContext } from 'react';
-import { DateContext } from '../../Contexts/DateContext';
+import React, { useContext, useEffect } from 'react';
+import { DateContext } from '../../contexts/DateContext';
 
 const FromToDatePicker = () => {
-  const { fromDate, toDate, setDateRange } = useContext(DateContext);
+  const { dateRange, setDateRange } = useContext(DateContext);
 
-  const handleFromDateChange = (event) => {
+  
+
+  const handleFromDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newFromDate = event.target.value;
     setDateRange(prev => ({ ...prev, fromDate: newFromDate }));
   };
 
-  const handleToDateChange = (event) => {
+  const handleToDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newToDate = event.target.value;
     setDateRange(prev => ({ ...prev, toDate: newToDate }));
   };
@@ -20,16 +22,17 @@ const FromToDatePicker = () => {
       <input
         type="date"
         id="from-date"
-        value={fromDate}
+        value={dateRange.fromDate}
         onChange={handleFromDateChange}
-      /> &nbsp;&nbsp;
+      />
+      &nbsp;&nbsp;
       <label htmlFor="to-date">To: </label>
       <input
         type="date"
         id="to-date"
-        value={toDate}
+        value={dateRange.toDate}
         onChange={handleToDateChange}
-        min={fromDate} // Ensure the "To" date cannot be before the "From" date
+        min={dateRange.fromDate} // Ensure the "To" date cannot be before the "From" date
       />
       &nbsp;&nbsp;<input type="submit" id="date-submit" value="Go" />
     </div>

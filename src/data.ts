@@ -74,13 +74,10 @@ export const menu = [
         title: "Products",
         url: "/products",
         icon: "/product.svg",
-      }
+      },
     ],
   },
 ];
-
-
-
 
 export const topDealUsers = [
   {
@@ -133,9 +130,6 @@ export const topDealUsers = [
     amount: "4.987",
   },
 ];
-
-
-
 
 export const chartBoxUser = {
   color: "#8884d8",
@@ -209,9 +203,6 @@ export const chartBoxConversion = {
   ],
 };
 
-
-
-
 export const barChartBoxRevenue = {
   title: "Profit Earned",
   color: "#8884d8",
@@ -247,9 +238,6 @@ export const barChartBoxRevenue = {
     },
   ],
 };
-
-
-
 
 export const barChartBoxVisit = {
   title: "Total Visits",
@@ -287,9 +275,6 @@ export const barChartBoxVisit = {
   ],
 };
 
-
-
-
 export const pieChartBoxData = {
   title: "Leads By Source",
   color: "#FF8042",
@@ -322,9 +307,6 @@ export const pieChartBoxData = {
     },
   ],
 };
-
-
-
 
 export const userRows = [
   {
@@ -473,7 +455,7 @@ export const products = [
     producer: "Logitech",
     price: "$99.99",
     createdAt: "01.20.2023",
-    inStock: true
+    inStock: true,
   },
   {
     id: 2,
@@ -483,7 +465,7 @@ export const products = [
     producer: "Apple",
     price: "$79.00",
     createdAt: "05.03.2023",
-    inStock: false
+    inStock: false,
   },
   {
     id: 3,
@@ -493,7 +475,7 @@ export const products = [
     producer: "Razer",
     price: "$49.99",
     createdAt: "02.17.2023",
-    inStock: true
+    inStock: true,
   },
   {
     id: 4,
@@ -503,7 +485,7 @@ export const products = [
     producer: "Microsoft",
     price: "$54.99",
     createdAt: "03.12.2023",
-    inStock: false
+    inStock: false,
   },
   {
     id: 5,
@@ -513,7 +495,7 @@ export const products = [
     producer: "Dell",
     price: "$16.99",
     createdAt: "08.06.2023",
-    inStock: true
+    inStock: true,
   },
   {
     id: 6,
@@ -523,7 +505,7 @@ export const products = [
     producer: "HP",
     price: "$29.99",
     createdAt: "04.25.2023",
-    inStock: true
+    inStock: true,
   },
   {
     id: 7,
@@ -533,7 +515,7 @@ export const products = [
     producer: "Anker",
     price: "$19.99",
     createdAt: "02.01.2023",
-    inStock: true
+    inStock: true,
   },
   {
     id: 8,
@@ -543,12 +525,9 @@ export const products = [
     producer: "Corsair",
     price: "$79.99",
     createdAt: "12.29.2023",
-    inStock: true
+    inStock: true,
   },
 ];
-
-
-
 
 export const singleUser = {
   id: 1,
@@ -601,7 +580,7 @@ export const singleUser = {
         name: "Sat",
         visits: 3490,
         clicks: 4300,
-      }
+      },
     ],
   },
   activities: [
@@ -632,16 +611,11 @@ export const singleUser = {
     {
       text: "Jane Doe reviewed a product",
       time: "3 months ago",
-    }
-  ]
-}
+    },
+  ],
+};
 
-
-export const tombStoneBox = {
-  
-}
-
-
+export const tombStoneBox = {};
 
 export const singleProduct = {
   id: 1,
@@ -725,6 +699,84 @@ export const singleProduct = {
     {
       text: "John Doe reviewed a product",
       time: "3 months ago",
-    }
-  ]
-}
+    },
+  ],
+};
+
+export const business = [
+  {
+    JobNumber: "1000317",
+    JobType: "MTU Heating - 1-9 - KY",
+    Campaign: "MPro FREE System Check",
+    CampaignCategory: "Digital - Email (M)",
+    Category: "HVAC",
+    Total: "0",
+    CompletionDate: "2023-12-15T00:00:00-05:00",
+    TotalRevenue: "0",
+    MemberStatus: "Inactive",
+    CustomerType: "Residential",
+    LocationAddress: "401 East 17th Street, Covington, KY 41014 USA",
+    CustomerAddress: "401 East 17th Street, Covington, KY 41014 USA",
+    CustomerName: "Matthew Brown",
+    CustomerId: "259573109",
+    SoldOn: null,
+    CreatedDate: "2023-01-27T00:00:00-05:00",
+    ScheduledDateYearMonth: "2023-12",
+    IsConverted: false,
+    LeadGeneratedFromSource: "Marketed Lead",
+    JobStatus: "Completed",
+    CallCampaign: null,
+    JobId: "311559987",
+    id: "311559987",
+  },
+  {
+    JobNumber: "1039829",
+    JobType: "MTU COMBO (Heat/Cool) 1-9",
+    Campaign: "Digital-ScheduleEngine-Texting",
+    CampaignCategory: "Digital - Schedule Engine (M)",
+    Category: "HVAC",
+    Total: "0",
+    CompletionDate: "2023-12-26T00:00:00-05:00",
+    TotalRevenue: "0",
+    MemberStatus: "Active",
+    CustomerType: "Residential",
+    LocationAddress: "2946 Fair Oak Road, Amelia, OH 45102 USA",
+    CustomerAddress: "2946 FAIROAK RD, AMELIA, OH 45102 USA",
+    CustomerName: "JASON SCARDINA (Employee)",
+    CustomerId: "22147405",
+    SoldOn: null,
+    CreatedDate: "2023-08-25T00:00:00-04:00",
+    ScheduledDateYearMonth: "2023-12",
+    IsConverted: false,
+    LeadGeneratedFromSource: "Marketed Lead",
+    JobStatus: "Completed",
+    CallCampaign: null,
+    JobId: "349515726",
+    id: "349515726",
+  },
+  {
+    JobNumber: "1040347",
+    JobType: "MTU Heating - 1-9",
+    Campaign: "Summer Heatwave- August 2023",
+    CampaignCategory: "Digital - Email (M)",
+    Category: "HVAC",
+    Total: "67",
+    CompletionDate: "2023-12-26T00:00:00-05:00",
+    TotalRevenue: "67",
+    MemberStatus: "Inactive",
+    CustomerType: "Residential",
+    LocationAddress: "2487 Trinity Drive, Middletown, OH 45044 USA",
+    CustomerAddress: "2487 Trinity Drive, Middletown, OH 45044 USA",
+    CustomerName: "Anuradha Sudame",
+    CustomerId: "143163682",
+    SoldOn: null,
+    CreatedDate: "2023-08-28T00:00:00-04:00",
+    ScheduledDateYearMonth: "2023-12",
+    IsConverted: false,
+    LeadGeneratedFromSource: "Marketed Lead",
+    JobStatus: "Completed",
+    CallCampaign: "November Specials- 2023",
+    JobId: "349847484",
+    id: "349847484",
+  },
+];

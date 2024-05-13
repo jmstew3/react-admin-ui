@@ -15,7 +15,9 @@ import useGetJobsCompleted from "../../hooks/useGetJobsCompleted"
 const Home = () => {
 
 const {jobsCompleted, combinedResults, summaryMetrics, bookingRate, cityMetrics, totalRevenue, totalJobs } = useGetJobsCompleted()
-const { fromDate, toDate } = useContext(DateContext);
+const { dateRange } = useContext(DateContext);
+console.log(dateRange);
+
   return (
     <div className="home">
       <div className="box box1"><TopBox /></div>
