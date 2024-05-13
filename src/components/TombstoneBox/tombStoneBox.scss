@@ -1,31 +1,29 @@
 @import "../../styles/responsive.scss";
-@import '../../styles/variables.scss';
-
+@import "../../styles/variables.scss";
 
 .tombStoneBox {
+  display: flex;
+  width: 100%;
+  gap: 20px;
+
+  .tombStone {
     display: flex;
+    flex-direction: column;
+    justify-content: start;
     width: 100%;
-    gap: 20px;
+    border: 1px solid $soft-bg;
+    border-radius: 10px;
+    gap: 10px;
+    padding: 20px;
 
-    .tombStone {
-        display: flex;
-        flex-direction: column;
-        justify-content: start;
-        width: 100%;
-        border: 1px solid $soft-bg;
-        border-radius: 10px;
-        gap: 10px;
-        padding: 20px;
-
-        h2 {
-            font-size: 20px;
-            font-weight: 400;
-        }
-
-        h3 {
-            font-size: 30px;
-            font-weight: 700;
-        }
+    h2 {
+      font-size: 20px;
+      font-weight: 400;
     }
 
+    h3 {
+      font-size: 30px;
+      font-weight: 700;
+    }
+  }
 }
