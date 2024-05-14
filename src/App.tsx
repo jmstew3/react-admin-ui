@@ -40,7 +40,13 @@ function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Layout />,
+      element: (
+        <QueryClientProvider client={queryClient}>
+          <DataProvider> {/* Wrap Layout with DataProvider */}
+            <Layout />
+          </DataProvider>
+        </QueryClientProvider>
+      ),
       children: [
         {
           path: "/",

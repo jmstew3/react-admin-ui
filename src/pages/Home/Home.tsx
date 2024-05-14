@@ -6,11 +6,9 @@ import BarChartBox from "../../components/BarChartBox/BarChartBox"
 import BigChartBox from "../../components/BigChartBox/BigChartBox"
 import TombStoneBox from "../../components/TombStoneBox/TombStoneBox"
 import { chartBoxUser, chartBoxProduct, chartBoxRevenue, chartBoxConversion, barChartBoxVisit, barChartBoxRevenue, pieChartBoxData, } from "../../data"
-import "./home.scss"
 import { DateContext } from "../../contexts/DateContext"
 import useGetJobsCompleted from "../../hooks/useGetJobsCompleted"
-
-
+import "./home.scss"
 
 const Home = () => {
 

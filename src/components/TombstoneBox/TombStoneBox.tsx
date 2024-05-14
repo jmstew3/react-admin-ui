@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import Business from "../../pages/business/Business";
 import "./tombStoneBox.scss";
 
 const TombStoneBox = () => {
@@ -22,7 +23,7 @@ const TombStoneBox = () => {
       <div className="tombStone tombStone4">
         <div className="title"></div>
         <h2>Booking Rate</h2>
-        <h3>39.1%</h3>
+        {/* <h3>{details.bookingRate}</h3> */}
       </div>
       <div className="tombStone tombStone5">
         <div className="title"></div>
