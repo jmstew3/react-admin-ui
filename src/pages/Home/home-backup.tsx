@@ -6,7 +6,6 @@ import BarChartBox from "../../components/BarChartBox/BarChartBox"
 import BigChartBox from "../../components/BigChartBox/BigChartBox"
 import TombStoneBox from "../../components/TombStoneBox/TombStoneBox"
 import TempChart from '../../components/TempChart/TempChart'
-import TempTable from '../../components/TempTable/TempTable'
 import { chartBoxUser, chartBoxProduct, chartBoxRevenue, chartBoxConversion, barChartBoxVisit, barChartBoxRevenue, pieChartBoxData, } from "../../data"
 import { DateContext } from "../../contexts/DateContext"
 
@@ -39,7 +38,6 @@ const { jobsCompletedCat } = useGetJobsCompletedByCat(dateRange.fromDate, dateRa
       
       <div className="box box8"><BarChartBox {...barChartBoxVisit}/></div>
       <div className="box box9"><BarChartBox {...barChartBoxRevenue}/></div>
-      <div className=""><TempTable/></div>
     </div>
   )
 }

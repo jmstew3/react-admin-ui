@@ -23,9 +23,9 @@ const useGetJobsCompletedDetails = (fromDate, toDate) => {
       });
   },[startDate, endDate]);
   
-  useEffect(()=>{
-    console.log(jobsCompletedDetails)
-  },[jobsCompletedDetails])
+//   useEffect(()=>{
+//     console.log(jobsCompletedDetails)
+//   },[jobsCompletedDetails])
   
   return { jobsCompletedDetails };
 };
