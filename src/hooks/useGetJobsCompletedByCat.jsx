@@ -16,18 +16,19 @@ const useGetJobsCompletedByCat = (fromDate, toDate) => {
   let endDate = formatDate(toDate)
 
   useEffect(()=> {
-    fetch(`https://legitrix-api-7de7446c8b7e.herokuapp.com/api/v1/blended/apollo?startDate=${startDate}&endDate=${endDate}`)
+    // fetch(`https://legitrix-api-7de7446c8b7e.herokuapp.com/api/v1/blended/apollo?startDate=${startDate}&endDate=${endDate}`)
+    fetch(`https://legitrix-api-7de7446c8b7e.herokuapp.com/api/v1/blended/apollo?startDate=12-01-2023&endDate=12-31-2023`)
       .then(response => response.json())
       .then(data => {        
-        setJobsCompletedDetails(data);
+        setjobsCompletedCat(data);
       });
   },[startDate, endDate]);
   
   useEffect(()=>{
-    console.log(jobsCompletedDetails)
-  },[jobsCompletedDetails])
+    console.log(jobsCompletedCat)
+  },[jobsCompletedCat])
   
-  return { jobsCompletedDetails };
+  return { jobsCompletedCat };
 };
 
 export default useGetJobsCompletedByCat;

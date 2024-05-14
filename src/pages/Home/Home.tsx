@@ -10,6 +10,7 @@ import { DateContext } from "../../contexts/DateContext"
 
 import "./home.scss"
 import useGetJobsCompletedDetails from '../../hooks/useGetJobsCompletedDetails';
+import useGetJobsCompletedByCat from '../../hooks/useGetJobsCompletedByCat'
 
 const Home = () => {
 
