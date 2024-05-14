@@ -1,5 +1,7 @@
+// App.tsx
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { DateProvider } from "./contexts/DateContext";
 
 import Home from "./pages/home/Home";
 import Marketing from "./pages/marketing/Marketing";
@@ -40,13 +42,7 @@ function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: (
-        <QueryClientProvider client={queryClient}>
-          <DataProvider> {/* Wrap Layout with DataProvider */}
-            <Layout />
-          </DataProvider>
-        </QueryClientProvider>
-      ),
+      element: <Layout />,
       children: [
         {
           path: "/",
@@ -90,7 +86,11 @@ function App() {
     },
   ]);
 
-  return <RouterProvider router={router} />;
+  return (
+    <DateProvider>
+      <RouterProvider router={router} />
+    </DateProvider>
+  );
 }
 
 export default App;
