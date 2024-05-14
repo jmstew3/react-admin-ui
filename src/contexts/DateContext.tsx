@@ -56,7 +56,11 @@ const DateProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     } catch (error) {
       console.error("Failed to fetch job details:", error);
     }
-  };  
+  };
+
+  useEffect(() => {
+    fetchJobDetails(dateRange.fromDate, dateRange.toDate);
+  }, [dateRange]);
 
   return (
     <DateContext.Provider value={{ dateRange, setDateRange, jobDetails, fetchJobDetails }}>

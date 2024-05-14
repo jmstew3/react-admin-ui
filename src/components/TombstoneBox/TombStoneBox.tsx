@@ -1,8 +1,14 @@
+import React, { useContext } from 'react';
 import { Link } from "react-router-dom";
-import Business from "../../pages/business/Business";
+import { DateContext } from "../../contexts/DateContext";
 import "./tombStoneBox.scss";
 
 const TombStoneBox = () => {
+    const { jobDetails, dateRange,setDateRange } = useContext(DateContext);
+    const handleDateChange = (newFromDate: string, newToDate: string) => {
+        setDateRange({ fromDate: newFromDate, toDate: newToDate});
+    };
+    
   return (
     <div className="tombStoneBox">
       <div className="tombStone tombStone1">
@@ -23,7 +29,13 @@ const TombStoneBox = () => {
       <div className="tombStone tombStone4">
         <div className="title"></div>
         <h2>Booking Rate</h2>
-        {/* <h3>{details.bookingRate}</h3> */}
+        {jobDetails ? (
+            <h3>
+                {`${jobDetails.bookingRate}%`}
+            </h3>
+        ) : (
+            <span>Loading...</span>
+        )}
       </div>
       <div className="tombStone tombStone5">
         <div className="title"></div>
