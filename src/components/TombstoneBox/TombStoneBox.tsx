@@ -1,38 +1,49 @@
-import React, { useContext } from "react";
-import { DateContext } from "../../contexts/DateContext";
+import { useContext } from "react";
+import { DateContext, DateContextType } from "../../contexts/DateContext";
 import "./tombStoneBox.scss";
 
-const TombStoneBox = () => {
-  const { jobDetails } = useContext(DateContext);
+interface TombStoneData {
+    title: string;
+    value: string;
+}
 
-  const tombstoneData = [
+interface TombStoneBoxProps {
+    data: {
+        totalRevenue: number;
+        totalUniqueContactsCount: number;
+        totalCompletedJobs: number;
+        bookingRate: string;
+    };
+}
+
+const TombStoneBox = ({ data } : TombStoneBoxProps) => {
+
+  console.log(data.totalRevenue);
+
+  const tombstoneData: TombStoneData[] = [
     {
       title: "Total Revenue",
-      value: jobDetails
-        ? `$${jobDetails.totalRevenue.toLocaleString()}`
+      value: data && data.totalRevenue !== undefined
+        ? `$${data.totalRevenue}`
         : "Loading...",
     },
     {
       title: "New Customers",
-      value: jobDetails
-        ? jobDetails.totalUniqueContactsCount.toLocaleString()
-        : "Loading...",
-    },
-    {
-      title: "Booked Jobs",
-      value: jobDetails
-        ? jobDetails.totalJobsBooked.toLocaleString()
+      value: data && data.totalUniqueContactsCount !== undefined
+        ? `${data.totalUniqueContactsCount}`
         : "Loading...",
     },
     {
       title: "Completed Jobs",
-      value: jobDetails
-        ? jobDetails.totalCompletedJobs.toLocaleString()
+      value: data && data.totalCompletedJobs !== undefined
+        ? data.totalCompletedJobs
         : "Loading...",
     },
     {
       title: "Booking Rate",
-      value: jobDetails ? `${jobDetails.bookingRate}%` : "Loading...",
+      value: data && data.bookingRate !== undefined
+        ? `${data.bookingRate}%`
+        : "Loading...",
     },
   ];
 

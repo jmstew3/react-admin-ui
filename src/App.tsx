@@ -13,9 +13,10 @@ import Menu from "./components/Menu/Menu";
 import Login from "./pages/login/Login";
 import Users from "./pages/users/Users";
 import Products from "./pages/products/Products";
-import "./styles/global.scss";
 import Product from "./pages/product/Product";
 import User from "./pages/user/User";
+
+import "./styles/global.scss";
 
 const queryClient = new QueryClient();
 

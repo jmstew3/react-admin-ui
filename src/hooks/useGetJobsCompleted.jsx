@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 
-function useGetJobsCompleted(startDate, endDate) {
+function useGetJobsCompleted(fromDate, toDate) {
   const [jobsCompleted, setJobsCompleted] = useState([]);
   const [combinedResults, setCombinedResults] = useState([]);
   const [summaryMetrics, setSummaryMetrics] = useState([]);
   const [cityMetrics, setCityMetrics] = useState([]); // New state for city-based metrics
 
   useEffect(() => {
-    fetch(`https://legitrix-api-7de7446c8b7e.herokuapp.com/api/v1/jobs-completed/apollo/LEGIT_Jobs_Completed?FromDate=12-01-2023&ToDate=12-31-2023`)
+    fetch(`https://legitrix-api-7de7446c8b7e.herokuapp.com/api/v1/jobs-completed/apollo/LEGIT_Jobs_Completed?FromDate=${fromDate}&ToDate=${toDate}`)
       .then(response => response.json())
       .then(data => {
         
