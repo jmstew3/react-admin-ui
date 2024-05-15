@@ -1,5 +1,6 @@
 import React from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import './tempTable.scss';
 
 const CityDataTable = () => {
     const cityData = [
@@ -13,6 +14,8 @@ const CityDataTable = () => {
     ];
 
     return (
+    <div className="tempTable">
+        <h1>Jobs Completed By Category</h1>
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
@@ -35,6 +38,7 @@ const CityDataTable = () => {
                 </TableBody>
             </Table>
         </TableContainer>
+    </div>
     );
 };
 

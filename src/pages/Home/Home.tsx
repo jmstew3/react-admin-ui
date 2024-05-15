@@ -28,18 +28,17 @@ const { jobsCompletedCat } = useGetJobsCompletedByCat(dateRange.fromDate, dateRa
 
   return (
     <div className="home">
-      <div className="box box1"><TopBox /></div>
       <div className="box box0"><TombStoneBox data={jobsCompletedDetails}/></div>
-      <div className="box box0"><TempChart /></div>=
-      <div className="box box2"><ChartBox {...chartBoxUser}/></div>
-      <div className="box box3"><ChartBox {...chartBoxProduct}/></div>
-      <div className="box box4"><PieChartBox {...pieChartBoxData}/></div>
-      <div className="box box5"><ChartBox {...chartBoxConversion}/></div>
-      <div className="box box6"><ChartBox {...chartBoxRevenue}/></div>
-      
+      <div className="box box1"><TopBox /></div>
+      <div className="box box2"><TempChart /></div>
+      <div className="box box3"><ChartBox {...chartBoxUser}/></div>
+      <div className="box box4"><ChartBox {...chartBoxProduct}/></div>
+      <div className="box box5"><PieChartBox {...pieChartBoxData}/></div>
+      <div className="box box6"><ChartBox {...chartBoxConversion}/></div>
+      <div className="box box7"><ChartBox {...chartBoxRevenue}/></div>
       <div className="box box8"><BarChartBox {...barChartBoxVisit}/></div>
       <div className="box box9"><BarChartBox {...barChartBoxRevenue}/></div>
-      <div className=""><TempTable/></div>
+      <div className="box box10"><TempTable /></div>
     </div>
   )
 }
