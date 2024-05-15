@@ -28,17 +28,17 @@ const { jobsCompletedCat } = useGetJobsCompletedByCat(dateRange.fromDate, dateRa
 
   return (
     <div className="home">
-      <div className="box box0"><TombStoneBox data={jobsCompletedDetails}/></div>
-      <div className="box box1"><TopBox /></div>
-      <div className="box box2"><TempChart /></div>
-      <div className="box box3"><ChartBox {...chartBoxUser}/></div>
-      <div className="box box4"><ChartBox {...chartBoxProduct}/></div>
-      <div className="box box5"><PieChartBox {...pieChartBoxData}/></div>
-      <div className="box box6"><ChartBox {...chartBoxConversion}/></div>
-      <div className="box box7"><ChartBox {...chartBoxRevenue}/></div>
-      <div className="box box8"><BarChartBox {...barChartBoxVisit}/></div>
-      <div className="box box9"><BarChartBox {...barChartBoxRevenue}/></div>
-      <div className="box box10"><TempTable /></div>
+      <div className="box box0"><TombStoneBox data={jobsCompletedDetails}/>Box 0</div>
+      <div className="box box1"><TopBox />Box 1</div>
+      <div className="box box2"><TempChart />Box 2</div>
+      <div className="box box3"><ChartBox {...chartBoxUser}/>Box 3</div>
+      <div className="box box4"><ChartBox {...chartBoxProduct}/>Box 4</div>
+      <div className="box box5"><PieChartBox {...pieChartBoxData}/>Box 5</div>
+      <div className="box box6"><ChartBox {...chartBoxConversion}/>Box 6</div>
+      <div className="box box7"><ChartBox {...chartBoxRevenue}/>Box 7</div>
+      <div className="box box8"><BarChartBox {...barChartBoxVisit}/>Box 8</div>
+      <div className="box box9"><BarChartBox {...barChartBoxRevenue}/>Box 9</div>
+      <div className="box box10"><TempTable />Box 10</div>
     </div>
   )
 }

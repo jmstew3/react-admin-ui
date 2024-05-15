@@ -1,4 +1,5 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import "./tempChart.scss";
 
 const TempChart = () => {
   const data = [
@@ -12,6 +13,8 @@ const TempChart = () => {
   ];
 
   return (
+    <div className="tempChart">
+        <h1>Jobs Completed By Category</h1>
     <ResponsiveContainer width="100%" height={400}>
       <BarChart
         data={data}
@@ -30,6 +33,7 @@ const TempChart = () => {
         <Bar yAxisId="right" dataKey="totalRevenue" fill="#82ca9d" name="Total Revenue" />
       </BarChart>
     </ResponsiveContainer>
+    </div>
   );
 };
 
