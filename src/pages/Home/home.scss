@@ -6,6 +6,13 @@
   gap: 20px;
   grid-template-columns: repeat(4, 1fr);
   grid-auto-rows: minmax(180px, auto);
+  grid-template-areas:
+    "header header header header"
+    "sidebar-left main-1 main-2 sidebar-right"
+    "sidebar-left main-3 main-4 sidebar-right"
+    "main-content main-content main-content main-content"
+    "main-5 main-5 main-6 main-6"
+    "footer footer footer footer";
 
   @include xxl {
     grid-template-columns: repeat(2, 1fr);
@@ -46,69 +53,46 @@
 
   // TombStoneBox
   .box0 {
-    grid-column: 1 / span 4;
-    grid-row: 1;
+    grid-area: header;
   }
 
-  // TopBox
   .box1 {
-    grid-column: span 1;
-    grid-row: span 1;
+    grid-area: sidebar-left;
   }
 
-  //TempChart
   .box2 {
-    grid-column: span 2;
-    grid-row: span 1;
+    grid-area: main-content;
   }
 
-  //ChartBoxUser
   .box3 {
-    grid-column: 4 / span 1;
-    grid-row: 3 / span 1;
+    grid-area: main-1;
   }
 
-  //ChartBox 
   .box4 {
-    grid-column: 4 / span 1;
-    grid-row: 2 / span 1;
+    grid-area: main-2;
   }
 
-  //PieChartBox
   .box5 {
-    // grid-row: 2;
-    // grid-column: 4;
+    grid-area: main-3;
   }
 
-  //ChartBox
   .box6 {
-
+    grid-area: main-4;
   }
 
-  //ChartBox
   .box7 {
-    // grid-column: 2 / span 2;
-    // grid-row: span 2;
-
-    @include md {
-      // grid-column: span 1;
-      // display: none;
-    }
+    grid-area: sidebar-right;
   }
 
-  //BarChartBox
   .box8 {
-
+    grid-area: main-5;
   }
 
-  //BarChartBox
   .box9 {
-
+    grid-area: main-6;
   }
 
-  //TempTable
   .box10 {
-    grid-row: 3;
-    grid-column: span 2;
+    grid-area: footer;
   }
 }

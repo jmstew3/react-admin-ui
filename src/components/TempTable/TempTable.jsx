@@ -15,7 +15,7 @@ const CityDataTable = () => {
 
     return (
     <div className="tempTable">
-        <h1>Jobs Completed By Category</h1>
+        <h1>Top-20 Revenue By Cities</h1>
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>

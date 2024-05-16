@@ -1,4 +1,4 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { ComposedChart, Bar, Line, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import "./tempChart.scss";
 
 const TempChart = () => {
@@ -12,26 +12,50 @@ const TempChart = () => {
     { monthYear: "2023-10", totalJobs: 4569, totalRevenue: 3112757.84, newCustomers: 3092 }
   ];
 
+//   return (
+//     <div className="tempChart">
+//         <h1>Jobs Completed By Category</h1>
+//     <ResponsiveContainer width="100%" height={400}>
+//       <BarChart
+//         data={data}
+//         margin={{
+//           top: 20, right: 30, left: 20, bottom: 5,
+//         }}
+//       >
+//         <CartesianGrid strokeDasharray="3 3" />
+//         <XAxis dataKey="monthYear" />
+//         <YAxis yAxisId="left" orientation="left" stroke="#8884d8" />
+//         <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" />
+//         <Tooltip />
+//         <Legend />
+//         <Bar yAxisId="left" dataKey="totalJobs" fill="#8884d8" name="Total Jobs" />
+//         <Bar yAxisId="left" dataKey="newCustomers" fill="#ffc658" name="New Customers" />
+//         <Bar yAxisId="right" dataKey="totalRevenue" fill="#82ca9d" name="Total Revenue" />
+//       </BarChart>
+//     </ResponsiveContainer>
+//     </div>
+//   );
+// };
   return (
     <div className="tempChart">
         <h1>Jobs Completed By Category</h1>
     <ResponsiveContainer width="100%" height={400}>
-      <BarChart
+      <ComposedChart
         data={data}
         margin={{
           top: 20, right: 30, left: 20, bottom: 5,
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="monthYear" />
-        <YAxis yAxisId="left" orientation="left" stroke="#8884d8" />
-        <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" />
+        <XAxis />
+        <YAxis />
         <Tooltip />
         <Legend />
-        <Bar yAxisId="left" dataKey="totalJobs" fill="#8884d8" name="Total Jobs" />
-        <Bar yAxisId="left" dataKey="newCustomers" fill="#ffc658" name="New Customers" />
-        <Bar yAxisId="right" dataKey="totalRevenue" fill="#82ca9d" name="Total Revenue" />
-      </BarChart>
+        <CartesianGrid stroke="#f5f5f5" />
+        <Area type="monotone" dataKey="totalJobs" fill="#8884d8" stroke="#8884d8" name="Total Jobs" />
+        <Bar dataKey="newCustomers" barSize={20} fill="#ffc658" name="New Customers" />
+        <Line type="monotone" dataKey="totalRevenue" stroke="#82ca9d" name="Total Revenue" />
+      </ComposedChart>
     </ResponsiveContainer>
     </div>
   );
