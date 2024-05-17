@@ -47,14 +47,15 @@ const TempChart = () => {
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis />
-        <YAxis />
+        <XAxis dataKey="monthYear" />
+        <YAxis yAxisId="right" orientation="left" stroke="#00c49f" />
+        <YAxis yAxisId="left" orientation="right" stroke="#8884D8" />
         <Tooltip />
         <Legend />
         <CartesianGrid stroke="#f5f5f5" />
-        <Area type="monotone" dataKey="totalJobs" fill="#8884d8" stroke="#8884d8" name="Total Jobs" />
-        <Bar dataKey="newCustomers" barSize={20} fill="#ffc658" name="New Customers" />
-        <Line type="monotone" dataKey="totalRevenue" stroke="#82ca9d" name="Total Revenue" />
+        <Bar yAxisId="left" dataKey="totalJobs" barSize={70} fill="#ffbb28" name="Total Jobs" />
+        <Bar yAxisId="left" dataKey="newCustomers" barSize={70} fill="#8884D8" name="New Customers" />
+        <Line yAxisId="right" type="monotone" dataKey="totalRevenue" fill="#00c49f" stroke="#00c49f" name="Total Revenue" />
       </ComposedChart>
     </ResponsiveContainer>
     </div>
