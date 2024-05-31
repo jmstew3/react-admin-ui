@@ -8,6 +8,8 @@
   grid-auto-rows: minmax(180px, auto);
   grid-template-areas:
     "header header header header"
+    "main-content-2 main-content-2 main-content-2 main-content-2"
+    "main-content-3 main-content-3 main-content-4 main-content-4"
     "sidebar-left main-1 main-2 sidebar-right"
     "sidebar-left main-3 main-4 sidebar-right"
     "main-content main-content main-content main-content"
@@ -61,11 +63,11 @@
   }
 
   .box2 {
-    grid-area: main-content;
+    grid-area: main-content-3;
   }
 
   .box3 {
-    grid-area: main-1;
+    grid-area: main-content-4;
   }
 
   .box4 {
@@ -93,6 +95,6 @@
   }
 
   .box10 {
-    grid-area: footer;
+    grid-area: main-content-2;
   }
 }

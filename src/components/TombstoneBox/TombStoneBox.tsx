@@ -18,13 +18,25 @@ interface TombStoneBoxProps {
 
 const TombStoneBox = ({ data } : TombStoneBoxProps) => {
 
+  function formatCurrency(amount) {
+    const number = parseFloat(amount);
+    if (isNaN(number)) {
+      console.error('Invalid amount:', amount); // Debug invalid amounts
+      return 'Invalid amount';
+    }
+    return number.toLocaleString('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    });
+  }
+
   console.log(data.totalRevenue);
 
   const tombstoneData: TombStoneData[] = [
     {
       title: "Total Revenue",
       value: data && data.totalRevenue !== undefined
-        ? `$${data.totalRevenue}`
+        ? `${formatCurrency(data.totalRevenue).slice(0,-3)}`
         : "Loading...",
     },
     {

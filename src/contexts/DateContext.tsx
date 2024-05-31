@@ -25,7 +25,7 @@ const DateContext = createContext<DateContextType | undefined>(undefined);
 
 const DateProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [dateRange, setDateRange] = useState<DateRange>({
-    fromDate: '2023-01-01', // Default start date
+    fromDate: '2023-12-01', // Default start date
     toDate: '2023-12-31',   // Default end date
   });
 
