@@ -7,7 +7,7 @@ function useGetJobsCompleted(fromDate, toDate) {
   const [cityMetrics, setCityMetrics] = useState([]); // New state for city-based metrics
 
   useEffect(() => {
-    fetch(`https://legitrix-api-7de7446c8b7e.herokuapp.com/api/v1/jobs-completed/apollo/jobs-completed/LEGIT_Jobs_Completed?startDate=${fromDate}&endDate=${toDate}`)
+    fetch(`https://legitrix-api-7de7446c8b7e.herokuapp.com/api/v1/jobs-completed/apollo/LEGIT_Jobs_Completed/all-jobs?startDate=${fromDate}&endDate=${toDate}`)
       .then(response => response.json())
       .then(data => {
         

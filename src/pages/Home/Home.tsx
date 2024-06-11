@@ -10,7 +10,8 @@ import TempTable from '../../components/TempTable/TempTable'
 import { chartBoxUser, chartBoxProduct, chartBoxRevenue, chartBoxConversion, barChartBoxVisit, barChartBoxRevenue, pieChartBoxData, } from "../../data"
 import { DateContext } from "../../contexts/DateContext"
 import BubbleMap from '../../components/BubbleMap/BubbleMap';
-
+import BubbleMapZipCodeRevenue from '../../components/BubbleMap/BubbleZipCodeRevenue';
+import BubbleZipTechCloseRate from '../../components/BubbleMap/BubbleZipTechCloseRate';
 
 import "./home.scss"
 import useGetJobsCompletedDetails from '../../hooks/useGetJobsCompletedDetails';
@@ -33,6 +34,8 @@ const { jobsCompletedCat } = useGetJobsCompletedByCat(dateRange.fromDate, dateRa
       
       <div className="box box2"><TempTable data={jobsCompletedCat} /></div>
       <div className="box box3"><BubbleMap data={zipCodeData} /></div>
+      <div className="box box4"><BubbleMapZipCodeRevenue data={zipCodeData} /></div>
+      <div className="box box5"><BubbleZipTechCloseRate data={zipCodeData} /></div>
 
       
 

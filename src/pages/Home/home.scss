@@ -10,6 +10,7 @@
     "header header header header"
     "main-content-2 main-content-2 main-content-2 main-content-2"
     "main-content-3 main-content-3 main-content-4 main-content-4"
+    "main-content-5 main-content-5 main-content-6 main-content-6"
     "sidebar-left main-1 main-2 sidebar-right"
     "sidebar-left main-3 main-4 sidebar-right"
     "main-content main-content main-content main-content"
@@ -71,11 +72,11 @@
   }
 
   .box4 {
-    grid-area: main-2;
+    grid-area: main-content-5;
   }
 
   .box5 {
-    grid-area: main-3;
+    grid-area: main-content-6;
   }
 
   .box6 {
