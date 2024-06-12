@@ -31,7 +31,6 @@ const { jobsCompletedCat } = useGetJobsCompletedByCat(dateRange.fromDate, dateRa
     <div className="home">
       <div className="box box0"><TombStoneBox data={jobsCompletedDetails}/></div>
       <div className="box box10"><TempChart /></div>
-      
       <div className="box box2"><TempTable data={jobsCompletedCat} /></div>
       <div className="box box3"><BubbleMap data={zipCodeData} /></div>
       <div className="box box4"><BubbleMapZipCodeRevenue data={zipCodeData} /></div>
