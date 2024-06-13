@@ -1,11 +1,14 @@
 import React from 'react';
 import { PieChart, Pie, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
+import './callsPieChart.scss';
+
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#FF6384', '#36A2EB', '#FFCE56', '#AFDCEC', '#F7464A', '#4D4D4D'];
 
 const CallsPieChart = ({ data }) => {
   return (
     <ResponsiveContainer width="100%" height={400}>
+      <h2>Calls By City</h2>
       <PieChart>
         <Pie
           data={data}

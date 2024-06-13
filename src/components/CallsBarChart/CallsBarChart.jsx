@@ -4,6 +4,7 @@ import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Respo
 const CallsBarChart = ({ data }) => {
   return (
     <ResponsiveContainer width="100%" height={400}>
+      <h2>Calls By City</h2>
       <ComposedChart
         data={data}
         margin={{

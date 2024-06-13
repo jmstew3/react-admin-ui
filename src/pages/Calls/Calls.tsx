@@ -5,6 +5,8 @@ import useGetCallChartData from "../../hooks/useGetCallChartData";
 import CallsTombstoneBox from "../../components/CallsTombstoneBox/CallsTombstonBox";
 import CallsBarChart from "../../components/CallsBarChart/CallsBarChart";
 import CallsPieChart from "../../components/CallsPieChart/CallsPieChart";
+import CallsComboChart from "../../components/CallsComboChart/CallsComboChart";
+
 import "./calls.scss";
 
 interface CallDetails {
@@ -78,7 +80,8 @@ const Calls = () => {
         />
       </div>
       <div className="box box1">
-        <CallsBarChart data={callChartDetails} />
+        <CallsBarChart data={callChartDetails} title="Calls by City"
+         />
       </div>
       <div className="box box2">
         <CallsPieChart data={callChartDetails} />
@@ -89,6 +92,9 @@ const Calls = () => {
           <p>{unknownCalls} calls</p>
         </div>
       )}
+      <div className="box box3">
+        <CallsComboChart data={callChartDetails} />
+      </div>
     </div>
   );
 };
