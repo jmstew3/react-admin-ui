@@ -6,7 +6,6 @@ import CallsTombstoneBox from "../../components/CallsTombstoneBox/CallsTombstonB
 import CallsBarChart from "../../components/CallsBarChart/CallsBarChart";
 import CallsPieChart from "../../components/CallsPieChart/CallsPieChart";
 import CallsComboChart from "../../components/CallsComboChart/CallsComboChart";
-
 import "./calls.scss";
 
 interface CallDetails {
