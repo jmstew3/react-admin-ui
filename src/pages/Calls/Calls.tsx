@@ -8,6 +8,14 @@ import CallsPieChart from "../../components/CallsPieChart/CallsPieChart";
 import CallsComboChart from "../../components/CallsComboChart/CallsComboChart";
 import "./calls.scss";
 
+
+import CallRailSummaryTable from "../../components/CallRailSummaryTable/CallRailSummaryTable";
+import CallRailMissedCallTombstone from "../../components/CallRailMissedCallTombstone/CallRailMissedCallTombstone";
+import CallRailFirstTimeCaller from "../../components/CallRailFirstTimeCaller/CallRailFirstTimeCaller";
+
+import CallRailCallKeywordTable from "../../components/CallRailCallKeywordTable/CallRailCallKeywordTable";
+import CallRailCallBrandSearch from "../../components/CallRailCallBrandSearch/CallRailCallBrandSearch";
+
 interface CallDetails {
   totalCalls: number;
   totalUniqueCalls: number;
@@ -31,6 +39,7 @@ interface DateContextType {
 
 const Calls = () => {
   const { dateRange } = useContext(DateContext) as DateContextType;
+
   const { callChartDetails, callChartisLoading, callChartError, unknownCalls } =
     useGetCallChartData(dateRange.fromDate, dateRange.toDate) as {
       callChartDetails: CallChartData[];
@@ -94,6 +103,23 @@ const Calls = () => {
       <div className="box box3">
         <CallsComboChart data={callChartDetails} />
       </div>
+
+      <br /><br />
+      <CallRailSummaryTable fromDate={dateRange.fromDate} toDate={dateRange.toDate}/>
+
+      <br /><br /> 
+      <CallRailMissedCallTombstone fromDate={dateRange.fromDate} toDate={dateRange.toDate} />
+      
+      <br /><br /> 
+      <CallRailFirstTimeCaller fromDate={dateRange.fromDate} toDate={dateRange.toDate} />
+
+      <br /><br />
+      <CallRailCallKeywordTable fromDate={dateRange.fromDate} toDate={dateRange.toDate} />
+        
+      <br /><br />
+      <CallRailCallBrandSearch fromDate={dateRange.fromDate} toDate={dateRange.toDate} />
+
+
     </div>
   );
 };

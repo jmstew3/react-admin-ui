@@ -35,48 +35,48 @@ export const menu = [
       },
     ],
   },
-  {
-    id: 3,
-    title: "analytics",
-    listItems: [
-      {
-        id: 1,
-        title: "Business",
-        url: "/business",
-        icon: "/chart.svg",
-      },
-      {
-        id: 2,
-        title: "Calls",
-        url: "/calls",
-        icon: "/phone.svg",
-      },
-      {
-        id: 3,
-        title: "Marketing",
-        url: "/marketing",
-        icon: "/marketing.svg",
-      },
-      {
-        id: 4,
-        title: "Users",
-        url: "/users",
-        icon: "/profile.svg",
-      },
-    ],
-  },
-  {
-    id: 4,
-    title: "Experimental",
-    listItems: [
-      {
-        id: 1,
-        title: "Products",
-        url: "/products",
-        icon: "/product.svg",
-      },
-    ],
-  },
+  // {
+  //   id: 3,
+  //   title: "analytics",
+  //   listItems: [
+  //     {
+  //       id: 1,
+  //       title: "Business",
+  //       url: "/business",
+  //       icon: "/chart.svg",
+  //     },
+  //     {
+  //       id: 2,
+  //       title: "Calls",
+  //       url: "/calls",
+  //       icon: "/phone.svg",
+  //     },
+  //     {
+  //       id: 3,
+  //       title: "Marketing",
+  //       url: "/marketing",
+  //       icon: "/marketing.svg",
+  //     },
+  //     {
+  //       id: 4,
+  //       title: "Users",
+  //       url: "/users",
+  //       icon: "/profile.svg",
+  //     },
+  //   ],
+  // },
+  // {
+  //   id: 4,
+  //   title: "Experimental",
+  //   listItems: [
+  //     {
+  //       id: 1,
+  //       title: "Products",
+  //       url: "/products",
+  //       icon: "/product.svg",
+  //     },
+  //   ],
+  // },
 ];
 
 export const topDealUsers = [
