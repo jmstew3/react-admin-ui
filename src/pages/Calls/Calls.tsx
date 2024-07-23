@@ -104,21 +104,23 @@ const Calls = () => {
         <CallsComboChart data={callChartDetails} />
       </div>
 
-      <br /><br />
-      <CallRailSummaryTable fromDate={dateRange.fromDate} toDate={dateRange.toDate}/>
-
-      <br /><br /> 
-      <CallRailMissedCallTombstone fromDate={dateRange.fromDate} toDate={dateRange.toDate} />
+      <div className="box summaryTable">
+        <CallRailSummaryTable fromDate={dateRange.fromDate} toDate={dateRange.toDate}/>
+      </div>
       
-      <br /><br /> 
-      <CallRailFirstTimeCaller fromDate={dateRange.fromDate} toDate={dateRange.toDate} />
+      <div className="box callRailTombstones">
+        <CallRailMissedCallTombstone fromDate={dateRange.fromDate} toDate={dateRange.toDate} />
+        <CallRailFirstTimeCaller fromDate={dateRange.fromDate} toDate={dateRange.toDate} />
+      </div>
 
-      <br /><br />
-      <CallRailCallKeywordTable fromDate={dateRange.fromDate} toDate={dateRange.toDate} />
-        
-      <br /><br />
-      <CallRailCallBrandSearch fromDate={dateRange.fromDate} toDate={dateRange.toDate} />
+      <div className="box keywordTable">
+        <CallRailCallKeywordTable fromDate={dateRange.fromDate} toDate={dateRange.toDate} />
+      </div>
 
+      <div className="box brandSearchTable">
+        <CallRailCallBrandSearch fromDate={dateRange.fromDate} toDate={dateRange.toDate} />
+      </div>
+    
 
     </div>
   );

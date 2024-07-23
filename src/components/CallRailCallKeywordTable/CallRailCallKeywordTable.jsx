@@ -17,17 +17,19 @@ const CallRailCallKeywordTable = ({ fromDate, toDate }) => {
         {
             title: 'Calls',
             dataIndex: 'calls',
-            key: 'calls'
+            key: 'calls',
+            sorter: (a, b) => b.calls - a.calls
         }
     ];
     
     return (
-        <div>
+        <div style={{width: '100%'}}>
             <Table
                 dataSource={callRailCallsByKeyword}
                 columns={columns}
                 rowKey={record => record.KEYWORDS}
                 pagination={false}
+                scroll={{ y: 500 }}
             />
         </div>
     );

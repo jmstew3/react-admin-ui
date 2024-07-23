@@ -10,6 +10,8 @@
     "header header header header"
     "main-1a main-1a main-1b main-1b"
     "main-2a main-2a main-2a main-2a"
+    "summaryTable summaryTable callRailTombstones callRailTombstones"
+    "keywordTable keywordTable brandSearchTable brandSearchTable"
     "main-content main-content main-content main-content"
     "main-5 main-5 main-6 main-6"
     "footer footer footer footer"
@@ -53,7 +55,23 @@
     }
   }
 
+  .brandSearchTable {
+    grid-area: brandSearchTable;
+  }
+
+  .keywordTable {
+    grid-area: keywordTable;
+  }
+
   // Assigning grid areas
+  .summaryTable {
+    grid-area: summaryTable;
+  }
+
+  .callRailTombstones {
+    grid-area: callRailTombstones;
+  }
+
   .box0 {
     grid-area: header;
   }

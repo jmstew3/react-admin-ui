@@ -37,7 +37,7 @@ const CallRailSummaryTable = ({ fromDate, toDate }) => {
   ];
 
   return (
-    <div>
+    <div style={{width: '100%'}}>
       <Table
         dataSource={callRailSummary}
         columns={columns}
