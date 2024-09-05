@@ -16,6 +16,8 @@ import Products from "./pages/products/Products";
 import Product from "./pages/product/Product";
 import User from "./pages/user/User";
 
+import Keywords from "./pages/keywords/Keywords";
+
 import "./styles/global.scss";
 
 const queryClient = new QueryClient();
@@ -48,6 +50,10 @@ function App() {
         {
           path: "/",
           element: <Home />,
+        },
+        {
+          path: "/keyword-volume/quarterly",
+          element: <Keywords />,
         },
         {
           path: "/marketing",

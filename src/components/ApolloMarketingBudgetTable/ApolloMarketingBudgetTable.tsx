@@ -45,7 +45,7 @@ const ApolloBudgetChart: React.FC = () => {
   return (
     <div style={{ width: '100%', height: 500 }}>
       <Typography variant="h4" component="h2" style={{ textAlign: 'center', marginBottom: '20px' }}>
-        Marketing Budget
+        2024 Marketing Budget
       </Typography>
       <ResponsiveContainer>
         <LineChart

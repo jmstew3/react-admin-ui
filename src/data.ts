@@ -1,6 +1,19 @@
-export const menu = [
+export const menu = 
+[
   {
     id: 1,
+    title: "Keyword Volume",
+    listItems: [
+      {
+        id: 1,
+        title: "Quarterly",
+        url: "/keyword-volume/quarterly",
+        icon: "/element.svg",
+      },
+    ],
+  },
+  {
+    id: 2,
     title: "main",
     listItems: [
       {
@@ -12,15 +25,15 @@ export const menu = [
     ],
   },
   {
-    id: 2,
+    id: 3,
     title: "menu",
     listItems: [
-      {
-        id: 1,
-        title: "Business",
-        url: "/business",
-        icon: "/chart.svg",
-      },
+      // {
+      //   id: 1,
+      //   title: "Business",
+      //   url: "/business",
+      //   icon: "/chart.svg",
+      // },
       {
         id: 2,
         title: "Calls",
