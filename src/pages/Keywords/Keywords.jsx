@@ -138,26 +138,26 @@ const Keywords = () => {
             {/* Pie Chart - Keyword Share (2024) */}
             <h2>2024 Brand Search Mkt Share | Apollo</h2>
             <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={pieChartData}
-                  dataKey="volume"
-                  nameKey="keyword_title"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={150}
-                  label
-                >
-                  {pieChartData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={pieColors[index % pieColors.length]}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
+  <PieChart>
+    <Pie
+      data={pieChartData}
+      dataKey="volume"
+      nameKey="keyword_title"
+      cx="50%"
+      cy="50%"
+      outerRadius={150}
+      label={(entry) => `${entry.keyword_title} MKT Data: ${entry.volume}`}
+    >
+      {pieChartData.map((entry, index) => (
+        <Cell
+          key={`cell-${index}`}
+          fill={pieColors[index % pieColors.length]}
+        />
+      ))}
+    </Pie>
+    {/* Tooltip moved */}
+  </PieChart>
+</ResponsiveContainer>
           </Box>
         </div>
       </div>
