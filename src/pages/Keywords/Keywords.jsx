@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import useGetKeywordData from "../../hooks/useGetKeywordData";
-import './Keywords.scss';
+import './keywords.scss';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 
