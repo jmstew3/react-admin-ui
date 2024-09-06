@@ -4,7 +4,6 @@ import './keywords.scss';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 
-
 const Keywords = () => {
   // Hook to get the keyword data
   const {
@@ -19,11 +18,11 @@ const Keywords = () => {
     const years = [2022, 2023, 2024]; // Define the years you want to display
     const quarters = ["Q1", "Q2", "Q3", "Q4"];
 
-    let dataByYear = [];
+    let dataByQuarterYear = [];
 
     years.forEach((year) => {
-      let yearData = { year: `${year}` }; // Create an object for each year
       quarters.forEach((quarter) => {
+        let quarterYear = `${quarter}-${year % 100}`; // Format quarter and year as Q1-22, Q2-22, etc.
         const sumVolume = keywordDataByQuarter[quarter]
           .filter((keyword) => {
             const keywordYear = parseInt(keyword.year, 10);
@@ -34,13 +33,14 @@ const Keywords = () => {
             return acc + volume;
           }, 0);
 
-        // Add the summed volume for the quarter to the current year object
-        yearData[`volume_${quarter}`] = sumVolume;
+        dataByQuarterYear.push({
+          quarterYear,
+          volume: sumVolume,
+        });
       });
-      dataByYear.push(yearData);
     });
 
-    return dataByYear;
+    return dataByQuarterYear;
   }, [keywordDataByQuarter]);
 
   // Data for the pie chart
@@ -118,15 +118,15 @@ const Keywords = () => {
               <BarChart
                 data={barChartData}
                 margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                barSize={30} // Adjust the size of the bars
+                barGap={5} // Adjust the gap between the bars
+                barCategoryGap="10%" // Adjust the gap between groups of bars
               >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="year" />
+                <XAxis dataKey="quarterYear" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="volume_Q1" fill={yearColors[2022]} name="Q1" />
-                <Bar dataKey="volume_Q2" fill={yearColors[2023]} name="Q2" />
-                <Bar dataKey="volume_Q3" fill={yearColors[2024]} name="Q3" />
-                <Bar dataKey="volume_Q4" fill={yearColors[2022]} name="Q4" />
+                <Bar dataKey="volume" fill="#8884d8" />
               </BarChart>
             </ResponsiveContainer>
           </Box>
