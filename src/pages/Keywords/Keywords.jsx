@@ -19,11 +19,11 @@ const Keywords = () => {
     const years = [2022, 2023, 2024]; // Define the years you want to display
     const quarters = ["Q1", "Q2", "Q3", "Q4"];
 
-    let dataByQuarter = [];
+    let dataByYear = [];
 
-    quarters.forEach((quarter) => {
-      let quarterData = { quarter }; // Object to hold data for each quarter
-      years.forEach((year) => {
+    years.forEach((year) => {
+      let yearData = { year: `${year}` }; // Create an object for each year
+      quarters.forEach((quarter) => {
         const sumVolume = keywordDataByQuarter[quarter]
           .filter((keyword) => {
             const keywordYear = parseInt(keyword.year, 10);
@@ -34,13 +34,13 @@ const Keywords = () => {
             return acc + volume;
           }, 0);
 
-        // Add the summed volume for the year to the current quarter object
-        quarterData[`volume_${year}`] = sumVolume;
+        // Add the summed volume for the quarter to the current year object
+        yearData[`volume_${quarter}`] = sumVolume;
       });
-      dataByQuarter.push(quarterData);
+      dataByYear.push(yearData);
     });
 
-    return dataByQuarter;
+    return dataByYear;
   }, [keywordDataByQuarter]);
 
   // Data for the pie chart
@@ -120,24 +120,13 @@ const Keywords = () => {
                 margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
               >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="quarter" />
+                <XAxis dataKey="year" />
                 <YAxis />
                 <Tooltip />
-                <Bar
-                  dataKey="volume_2022"
-                  fill={yearColors[2022]}
-                  name="2022"
-                />
-                <Bar
-                  dataKey="volume_2023"
-                  fill={yearColors[2023]}
-                  name="2023"
-                />
-                <Bar
-                  dataKey="volume_2024"
-                  fill={yearColors[2024]}
-                  name="2024"
-                />
+                <Bar dataKey="volume_Q1" fill={yearColors[2022]} name="Q1" />
+                <Bar dataKey="volume_Q2" fill={yearColors[2023]} name="Q2" />
+                <Bar dataKey="volume_Q3" fill={yearColors[2024]} name="Q3" />
+                <Bar dataKey="volume_Q4" fill={yearColors[2022]} name="Q4" />
               </BarChart>
             </ResponsiveContainer>
           </Box>
