@@ -6,8 +6,8 @@ export const menu =
     listItems: [
       {
         id: 1,
-        title: "Quarterly",
-        url: "/keyword-volume/quarterly",
+        title: "Search Volume",
+        url: "/keyword-volume/",
         icon: "/element.svg",
       },
     ],

@@ -1,100 +1,134 @@
-import { useMemo } from "react";
+import React, { useMemo } from 'react';
 import useGetKeywordData from "../../hooks/useGetKeywordData";
 import './keywords.scss';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import Card from '../../components/Keywords/Cards/Card';
+import CustomBarChart from '../Keywords/components/BarChart/BarChart';
+import CustomPieChart from '../Keywords/components/PieChart/PieChart';
+
+import TrafficTable from '../Keywords/components/Traffic/Traffic';
+import { Typography } from '@mui/material'; 
+
+// Import the video file
+import videoFile from '../../media/apollo-video.mp4';
 
 const Keywords = () => {
-  // Hook to get the keyword data
+  
   const {
     keywordData,
-    keywordDataByQuarter,
     keywordDataError,
     keywordDataisLoading,
   } = useGetKeywordData();
 
-  // Data for the bar chart
+  // Filter data for "Apollo" keyword_title
+  const apolloData = keywordData.filter(item => item.keyword_title === "Apollo");
+
+  // Filter data for "Apollo - Dayton"
+  const apolloDaytonData = keywordData.filter(item => item.keyword_title === "Apollo - Dayton");
+
+  // Filter data for "Cincinnati MKT Data"
+  const cincinnatiData = keywordData.filter(item => item.keyword_title === "Cincinnati MKT Data");
+
+  // Filter out Apollo, Apollo - Dayton, and Cincinnati MKT Data for competitors
+  const competitorData = keywordData.filter(
+    item => item.keyword_title !== "Apollo" && item.keyword_title !== "Apollo - Dayton" && item.keyword_title !== "Cincinnati MKT Data"
+  );
+
+  // Sum up the Cincinnati search volume
+  const cincinnatiSearchVolume = cincinnatiData.reduce((total, item) => total + parseInt(item.month_year_search_volume, 10), 0);
+
+  // Sum up Apollo search volume across all years
+  // Sum up Apollo search volume for July 2024
+const apolloSearchVolume = apolloData
+.filter(item => item.year === "2024" && parseInt(item.month, 10) === 7)
+.reduce((total, item) => total + parseInt(item.month_year_search_volume, 10), 0);
+
+  // Sum up Apollo - Dayton search volume across all years
+  const apolloDaytonSearchVolume = apolloDaytonData.reduce((total, item) => total + parseInt(item.month_year_search_volume, 10), 0);
+
+  // Sum up Apollo search volume for 2024 (first 8 months)
+  const apollo2024SearchVolume = apolloData.filter(item => item.year === "2024" && parseInt(item.month, 10) <= 8)
+    .reduce((total, item) => total + parseInt(item.month_year_search_volume, 10), 0);
+
+  // Sum up Apollo search volume for 2023 (first 8 months)
+  const apollo2023SearchVolume = apolloData.filter(item => item.year === "2023" && parseInt(item.month, 10) <= 8)
+    .reduce((total, item) => total + parseInt(item.month_year_search_volume, 10), 0);
+
+  // Calculate Apollo YoY growth
+  const apolloYoYGrowth = apollo2023SearchVolume > 0
+    ? (((apollo2024SearchVolume - apollo2023SearchVolume) / apollo2023SearchVolume) * 100).toFixed(2)
+    : 0;
+
+  // Calculate total search volume (including Apollo, Apollo - Dayton, Cincinnati, and competitors)
+  const totalSearchVolume = keywordData.reduce((total, item) => total + parseInt(item.month_year_search_volume, 10), 0);
+
+  // Calculate Cincinnati market share
+  const cincinnatiMarketShare = totalSearchVolume > 0
+    ? ((cincinnatiSearchVolume / totalSearchVolume) * 100).toFixed(2)
+    : 0;
+
+  // Calculate Apollo - Dayton market share
+  const apolloDaytonMarketShare = totalSearchVolume > 0
+    ? ((apolloDaytonSearchVolume / totalSearchVolume) * 100).toFixed(2)
+    : 0;
+
+  // Group Apollo data by month and year for Jan 2022 to Aug 2024 for BarChart
   const barChartData = useMemo(() => {
-    const years = [2022, 2023, 2024]; // Define the years you want to display
-    const quarters = ["Q1", "Q2", "Q3", "Q4"];
+    const dataMap = {};
 
-    let dataByQuarterYear = [];
+    apolloData.forEach(item => {
+      const year = parseInt(item.year, 10);
+      const month = parseInt(item.month, 10);
+      const monthYear = `${year}-${month < 10 ? `0${month}` : month}`; // Format month-year (e.g., "2022-01")
 
-    years.forEach((year) => {
-      quarters.forEach((quarter) => {
-        let quarterYear = `${quarter}-${year % 100}`; // Format quarter and year as Q1-22, Q2-22, etc.
-        const sumVolume = keywordDataByQuarter[quarter]
-          .filter((keyword) => {
-            const keywordYear = parseInt(keyword.year, 10);
-            return keyword.keyword_title === "Apollo" && keywordYear === year;
-          })
-          .reduce((acc, curr) => {
-            const volume = parseFloat(curr.month_year_search_volume) || 0;
-            return acc + volume;
-          }, 0);
-
-        dataByQuarterYear.push({
-          quarterYear,
-          volume: sumVolume,
-        });
-      });
-    });
-
-    return dataByQuarterYear;
-  }, [keywordDataByQuarter]);
-
-  // Data for the pie chart
-  const pieChartData = useMemo(() => {
-    const data2024 = keywordData.filter((keyword) => {
-      const keywordYear = parseInt(keyword.year, 10);
-      return keywordYear === 2024;
-    });
-
-    const summedVolumes = data2024.reduce((acc, curr) => {
-      const title = curr.keyword_title;
-      const volume = parseFloat(curr.month_year_search_volume) || 0;
-
-      if (!acc[title]) {
-        acc[title] = 0;
+      if (year >= 2022 && (year < 2024 || (year === 2024 && month <= 8))) {
+        if (!dataMap[monthYear]) {
+          dataMap[monthYear] = 0;
+        }
+        dataMap[monthYear] += parseInt(item.month_year_search_volume, 10);
       }
-      acc[title] += volume;
+    });
 
-      return acc;
-    }, {});
+    // Convert dataMap to array format for Recharts
+    return Object.keys(dataMap).map(monthYear => ({
+      monthYear,
+      searchVolume: dataMap[monthYear],
+    }));
+  }, [apolloData]);
 
-    const sortedVolumes = Object.entries(summedVolumes)
-      .map(([keyword_title, volume]) => ({ keyword_title, volume }))
-      .sort((a, b) => b.volume - a.volume);
+  const competitorsSearchVolumes = useMemo(() => {
+    const volumeMap = {};
+  
+    // Filter data to include only July 2024
+    competitorData.forEach(item => {
+      if (item.year === "2024" && parseInt(item.month, 10) === 7) {
+        if (!volumeMap[item.keyword_title]) {
+          volumeMap[item.keyword_title] = 0;
+        }
+        volumeMap[item.keyword_title] += parseInt(item.month_year_search_volume, 10);
+      }
+    });
+  
+    // Sort by search volume and get the top 5 competitors
+    const sortedCompetitors = Object.keys(volumeMap)
+      .sort((a, b) => volumeMap[b] - volumeMap[a])
+      .slice(0, 5)
+      .map(title => ({ name: title, searchVolume: volumeMap[title] }));
+  
+    // Calculate search volume for "Other" competitors
+    // This includes competitors not in the top 5
+    const otherSearchVolume = Object.keys(volumeMap)
+      .filter(title => !sortedCompetitors.map(comp => comp.name).includes(title))
+      .reduce((total, title) => total + volumeMap[title], 0);
+  
+    return { sortedCompetitors, otherSearchVolume };
+  }, [competitorData]);
+  
 
-    const apolloAndTopCompetitors = sortedVolumes.slice(0, 7);
-
-    const othersVolume = sortedVolumes
-      .slice(7)
-      .reduce((acc, curr) => acc + curr.volume, 0);
-
-    const finalPieData = [
-      ...apolloAndTopCompetitors,
-      { keyword_title: "Other", volume: othersVolume },
-    ];
-
-    return finalPieData;
-  }, [keywordData]);
-
-  const yearColors = {
-    2022: "#8884d8",
-    2023: "#82ca9d",
-    2024: "#ffc658",
-  };
-
-  const pieColors = [
-    "#8884d8",
-    "#82ca9d",
-    "#ffc658",
-    "#d84a8b",
-    "#4da8d8",
-    "#a84d58",
-    "#d8a84d",
-    "#cccccc",
+  // Create data array for the Pie chart
+  const pieChartData = [
+    { name: 'Apollo', searchVolume: apolloSearchVolume },
+    ...competitorsSearchVolumes.sortedCompetitors,
+    { name: 'Other', searchVolume: competitorsSearchVolumes.otherSearchVolume }
   ];
 
   if (keywordDataisLoading) {
@@ -107,84 +141,52 @@ const Keywords = () => {
 
   return (
     <div className="keywords">
-      <h1>Apollo Q1 2024 Snapshot</h1>
+      <div className="cards">
+        {/* Cincinnati Search Volume Card */}
+        <Card title="Cincinnati Search Volume" volume={cincinnatiSearchVolume} />
+
+        {/* Cincinnati Market Share Card */}
+        <Card title="Cincinnati Market Share" volume={`${cincinnatiMarketShare}%`} />
+
+        {/* Apollo YoY Growth Card */}
+        <Card title="Apollo YoY Growth" volume={`${apolloYoYGrowth}%`} />
+
+        {/* Apollo - Dayton Search Volume Card */}
+        <Card title="Apollo - Dayton Search Volume" volume={apolloDaytonSearchVolume} />
+
+        {/* Apollo - Dayton Market Share Card */}
+        <Card title="Apollo - Dayton Market Share" volume={`${apolloDaytonMarketShare}%`} />
+      </div>
+
       <div className="keywords-flex-container">
         <div className="container-left">
-          {/* Bar Chart */}
-          <Box sx={{ width: "100%", height: 400, marginBottom: 4 }}>
-            {/* Bar Chart - Apollo Search Volume by Year and Quarter */}
-            <h2>Apollo Brand Searches by Quarter</h2>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={barChartData}
-                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                barSize={30} // Adjust the size of the bars
-                barGap={5} // Adjust the gap between the bars
-                barCategoryGap="10%" // Adjust the gap between groups of bars
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="quarterYear" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="volume" fill="#8884d8" />
-              </BarChart>
-            </ResponsiveContainer>
-          </Box>
+          {/* Bar Chart for Apollo Monthly Search Volume */}
+          <CustomBarChart data={barChartData} />
         </div>
 
         <div className="container-right">
-          {/* Pie Chart */}
-          <Box sx={{ width: "100%", height: 400, marginBottom: 4 }}>
-            {/* Pie Chart - Keyword Share (2024) */}
-            <h2>2024 Brand Search Mkt Share | Apollo</h2>
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={pieChartData}
-                  dataKey="volume"
-                  nameKey="keyword_title"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={150}
-                  label={(entry) =>
-                    `${entry.keyword_title} MKT Data: ${entry.volume}`
-                  }
-                >
-                  {pieChartData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={pieColors[index % pieColors.length]}
-                    />
-                  ))}
-                </Pie>
-                {/* Tooltip moved */}
-              </PieChart>
-            </ResponsiveContainer>
-          </Box>
+          <CustomPieChart data={pieChartData} />
         </div>
       </div>
 
-      {/* Table for Pie Chart Data */}
-      <TableContainer component={Paper}>
-        <Table aria-label="keyword data table">
-          <TableHead>
-            <TableRow>
-              <TableCell>Keyword Title</TableCell>
-              <TableCell align="right">Search Volume</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {pieChartData.map((row, index) => (
-              <TableRow key={index}>
-                <TableCell component="th" scope="row">
-                  {row.keyword_title}
-                </TableCell>
-                <TableCell align="right">{row.volume}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <div className="keywords-flex-container">
+        <div className="container-left">
+          <TrafficTable />
+        </div>
+        <div className="container-right">
+          {/* HTML5 Video Player */}
+          <div style={{ marginTop: '20px' }}>
+            {/* <Typography style={{ marginLeft: '40px', marginBottom: '20px' }} variant="h6">Current Creative</Typography> */}
+            <video width="640" controls>
+              <source src={videoFile} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+      </div>
+
+      
+      <br />      
     </div>
   );
 };

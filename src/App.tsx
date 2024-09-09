@@ -17,6 +17,7 @@ import Product from "./pages/product/Product";
 import User from "./pages/user/User";
 
 import Keywords from "./pages/keywords/Keywords";
+import Quarterly from "./pages/keywords/Quarterly";
 
 import "./styles/global.scss";
 
@@ -52,8 +53,12 @@ function App() {
           element: <Home />,
         },
         {
-          path: "/keyword-volume/quarterly",
+          path: "/keyword-volume/",
           element: <Keywords />,
+        },
+        {
+          path: "/keyword-volume/quarterly",
+          element: <Quarterly />,
         },
         {
           path: "/marketing",
