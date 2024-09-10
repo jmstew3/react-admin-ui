@@ -10,6 +10,12 @@ export const menu =
         url: "/keyword-volume/",
         icon: "/element.svg",
       },
+      {
+        id: 2,
+        title: "Keyword List",
+        url: "/keyword-list/",
+        icon: "/element.svg",
+      }
     ],
   },
   {
