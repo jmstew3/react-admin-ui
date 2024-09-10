@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import useGetKeywordData from "../../hooks/useGetKeywordData";
+import useGetBudgetData from "../../hooks/useGetBudgetData";
 import './keywords.scss';
 import Card1 from '../../components/Keywords/Cards/Card-1';
 import Card2 from '../../components/Keywords/Cards/Card-2';
@@ -7,6 +8,10 @@ import Card3 from '../../components/Keywords/Cards/Card-3';
 import Card4 from '../../components/Keywords/Cards/Card-4';
 import CustomBarChart from '../Keywords/components/BarChart/BarChart';
 import CustomPieChart from '../Keywords/components/PieChart/PieChart';
+
+import BudgetPieChart from './components/Budgets/BudgetPieChart';
+import BudgetTable from './components/Budgets/BudgetTable';
+import BudgetLinChart from './components/Budgets/BudgetLineChart';
 
 import TrafficTable from '../Keywords/components/Traffic/Traffic';
 import { Typography } from '@mui/material'; 
@@ -23,12 +28,25 @@ const Keywords = () => {
   } = useGetKeywordData();
 
     
+  const {
+    budgetData, 
+    budgetDataError, 
+    budgetDataisLoading
+  } = useGetBudgetData();
 
+
+
+    const apolloBudgetData = budgetData.filter(item => item.brand === "Apollo");
+    // console.log(apolloBudgetData);
+
+    // if(budgetData){
+    //     console.log(budgetData);
+    // }
 
     const apolloData = keywordData.filter(item => item.keyword_title === "Apollo");
     const totalSummedKSV = keywordData.reduce((acc, item) => acc + parseInt(item.month_year_search_volume), 0);
 
-    const apolloDaytonData = keywordData.filter(item => item.keyword_title === "Apollo - Dayton");
+    const apolloDaytonData = keywordData.filter(item => item.keyword_title === "Apollo - Dayton" && item.budetIem !== null);
     
 
 
@@ -68,9 +86,35 @@ const Keywords = () => {
         <div className="container-right">
           <CustomPieChart data={keywordData} />
         </div>
-      </div>
+      </div>      
 
-      <div className="keywords-flex-container">
+        <h1>2024 Budgets</h1>
+        <br />
+        
+
+        <br />
+
+        <div className="keywords-flex-container">
+        <div className="container-left">
+            <BudgetLinChart budgetData={budgetData} />
+        </div>
+        <div className="container-right">
+
+            {apolloBudgetData.length > 0 ? (
+                <BudgetPieChart budgetData={apolloBudgetData} />
+            ) : (
+                p => <p>Loading...</p>
+            )}
+
+        </div>
+        </div>
+        <br />
+        <BudgetTable budgetData={apolloBudgetData} />
+            
+            
+
+        <br />      
+        <div className="keywords-flex-container">
         <div className="container-left">
           <TrafficTable />
         </div>
@@ -85,9 +129,6 @@ const Keywords = () => {
           </div>
         </div>
       </div>
-
-      
-      <br />      
     </div>
   );
 };

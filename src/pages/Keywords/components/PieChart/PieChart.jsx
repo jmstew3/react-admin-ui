@@ -54,7 +54,7 @@ const CustomPieChart = ({ data }) => {
   
   return (
     <div className="pie-chart">
-      <h2>Apollo Market Share & Competitors | August 2024</h2>
+      <h2>Apollo Market Share & Competitors | July 2024</h2>
       <ResponsiveContainer width="100%" height={400}>
         <RechartsPieChart>
           <Pie
