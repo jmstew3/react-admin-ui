@@ -1,35 +1,99 @@
-import React from 'react';
+import React, { useState } from 'react';
 import useGetKeywordList from '../../hooks/useGetKeywordList';
+import {
+    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, CircularProgress
+} from '@mui/material';
 import './keywordList.scss';
 
 const KeywordList = () => {
     const { keywordList, keywordListError, keywordListisLoading } = useGetKeywordList();
+    const [searchTerm, setSearchTerm] = useState('');
 
-    // Handle loading and error states
+    // Filtered keyword list based on search term
+    const filteredKeywordList = keywordList ? keywordList.filter(({ name, keyword, tp_brand }) =>
+        name.toLowerCase().includes(searchTerm.toLowerCase()) || // Filter by `name`
+        keyword.toLowerCase().includes(searchTerm.toLowerCase()) || // Filter by `keyword`
+        (tp_brand && tp_brand.toLowerCase().includes(searchTerm.toLowerCase())) // Optionally filter by `tp_brand`
+    ) : [];
+
+    // Render loading state
     if (keywordListisLoading) {
-        return <p>Loading...</p>;
+        return (
+            <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+                <CircularProgress />
+                <p>Loading...</p>
+            </div>
+        );
     }
 
+    // Render error state
     if (keywordListError) {
-        console.error('Error fetching keyword list:', keywordListError);
-        return <p>Error loading keyword list: {keywordListError}</p>;
-    }
-
-    // Safeguard to prevent .map() on undefined
-    if (!keywordList || keywordList.length === 0) {
-        return <p>No keywords available.</p>;
+        return (
+            <p>Error loading keyword list: {keywordListError.message}</p>
+        );
     }
 
     return (
         <div>
             <h1>Keyword List</h1>
-            <ul>
-                {keywordList.map(({ id, tenant_name, keyword, tp_brand }) => (
-                    <li key={id}>
-                        <strong>Tenant:</strong> {tenant_name} | <strong>Keyword:</strong> {keyword} | <strong>Type:</strong> {tp_brand}
-                    </li>
-                ))}
-            </ul>
+
+            {/* Search bar with white border and text */}
+            <TextField
+                label="Search Keywords or Name"
+                variant="outlined"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                fullWidth
+                margin="normal"
+                InputProps={{
+                    style: { color: '#fff', borderColor: '#fff' },
+                    classes: {
+                        notchedOutline: 'Mui-focused', // to keep the outline white on focus
+                    }
+                }}
+                InputLabelProps={{
+                    style: { color: '#fff' } // Label text color white
+                }}
+                sx={{
+                    '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                            borderColor: '#fff',
+                        },
+                        '&:hover fieldset': {
+                            borderColor: '#fff',
+                        },
+                        '&.Mui-focused fieldset': {
+                            borderColor: '#fff',
+                        },
+                    },
+                }}
+            />
+
+            {/* Check if there are any keywords to display */}
+            {filteredKeywordList.length === 0 ? (
+                <p>No keywords available.</p>
+            ) : (
+                <TableContainer component={Paper}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell><strong>Brand/Name</strong></TableCell>
+                                <TableCell><strong>Keyword</strong></TableCell>
+                                <TableCell><strong>Type</strong></TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {filteredKeywordList.map(({ id, name, keyword, tp_brand }) => (
+                                <TableRow key={id}>
+                                    <TableCell>{name}</TableCell>
+                                    <TableCell>{keyword}</TableCell>
+                                    <TableCell>{tp_brand || 'N/A'}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            )}
         </div>
     );
 };

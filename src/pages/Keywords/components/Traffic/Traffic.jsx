@@ -16,7 +16,7 @@ const Traffic = () => {
     <div>
       <br />
       <Typography variant="h4" gutterBottom>
-        Apollo Traffic 
+        <h1 style={{ fontSize: "20px" }}>Apollo Traffic</h1>
       </Typography>
       <TableContainer component={Paper}>
         <Table>

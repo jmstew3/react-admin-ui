@@ -1,32 +1,58 @@
-// Apollo YoY Growth (No Dayton)
-// !! Data is prefiltered for Apollo
+const Card3 = ({ title, data, year }) => {
 
-const Card3 = ({ title, data, totalKSV }) => {
+    let currentYearData = [];
+    let previousYearData = [];
+    let currentYearVolume = 0;
+    let previousYearVolume = 0;
+    let growthPercentage = 0;
+    let displayMessage = '';
 
-    const searchVolume = data.reduce((acc, item) => acc + parseInt(item.month_year_search_volume), 0);
-    const marketShare = ((searchVolume / totalKSV) * 100).toFixed(2);
+    if (year === "all") {
+        displayMessage = "- %";
+    } else {
+        // Filter data for the selected year and the previous year
+        const currentYear = parseInt(year);
+        const previousYear = currentYear - 1;
 
-    const t2023 = data.filter(item => item.year === "2023");
-    const t2024 = data.filter(item => item.year === "2024");
+        // Filter data for the current year
+        currentYearData = data.filter(item => parseInt(item.year) === currentYear);
+        
+        // Filter data for the previous year, but only for the same months available in the current year
+        const availableMonths = currentYearData.map(item => item.month); // Get months in the current year data
+        previousYearData = data.filter(item => parseInt(item.year) === previousYear && availableMonths.includes(item.month));
 
-    const totalKSV2023 = t2023.reduce((acc, item) => acc + parseInt(item.month_year_search_volume), 0);
-    const totalKSV2024 = t2024.reduce((acc, item) => acc + parseInt(item.month_year_search_volume), 0);
+        // Sum the search volume for the current year
+        currentYearVolume = currentYearData.reduce((acc, item) => acc + parseInt(item.month_year_search_volume || 0), 0);
 
-    // console.log(totalKSV2023, totalKSV2024);
-    
-    const growth = ((totalKSV2024 - totalKSV2023) / totalKSV2023) * 100;
+        // Sum the search volume for the previous year, matching the same months
+        previousYearVolume = previousYearData.reduce((acc, item) => acc + parseInt(item.month_year_search_volume || 0), 0);
 
+        // Calculate YoY growth if previous year volume is greater than 0
+        if (previousYearVolume > 0) {
+            growthPercentage = ((currentYearVolume - previousYearVolume) / previousYearVolume * 100).toFixed(2);
+        } else {
+            displayMessage = `- %`;
+        }
+    }
 
-    // Get sum for 2023
-    // Get sum for 2024
-    // Calculate YoY growth
-
-    // console.log(searchVolume, totalKSV, marketShare);
+    // Determine if the growth is positive or negative
+    const isPositive = growthPercentage >= 0;
 
     return (
         <div className="card">
             <p className="card-title">{title}</p>
-            <p className="card-desc">{growth.toFixed(2)} %</p>
+            {year === "all" || previousYearVolume === 0 ? (
+                <p className="card-desc">{displayMessage}</p>
+            ) : (
+                <p className="card-desc">
+                    {isPositive ? (
+                        <span className="positive-status">▲</span>
+                    ) : (
+                        <span className="negative-status">▼</span>
+                    )}
+                    {` ${growthPercentage} %`}
+                </p>
+            )}
         </div>
     );
 };

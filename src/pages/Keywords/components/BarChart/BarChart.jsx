@@ -37,7 +37,7 @@ const CustomBarChart = ({ data }) => {
   
   return (
     <div className="bar-chart">
-      <h1>Apollo Monthly Search Volume (Jan 2022 - Aug 2024)</h1>
+      <h1 style={{ fontSize:"20px" }}>Apollo Monthly Search Volume (Jan 2020 - Aug 2024)</h1>
       <ResponsiveContainer width="100%" height={400}>
         <BarChart data={processedData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
           <CartesianGrid strokeDasharray="3 3" />
@@ -48,6 +48,7 @@ const CustomBarChart = ({ data }) => {
           <YAxis />
           <Tooltip content={<CustomTooltip />} />
           <Bar dataKey="searchVolume" fill="#8884d8" />
+          {/* <Bar dataKey="searchVolume" fill="#0c5cd4" /> */}
         </BarChart>
       </ResponsiveContainer>
     </div>

@@ -3,6 +3,10 @@ import { PieChart as RechartsPieChart, Pie, Cell, Tooltip, Legend, ResponsiveCon
 
 // Pie chart colors
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A28ACB', '#FF9999', '#84D9D2'];
+// const COLORS = ['#00c373', '#FF6F61', '#FFB84D', '#FFC9B9', '#007F5F', '#FF9999', '#5D9F9B'];
+// const COLORS = ['#00c373', '#5A9F8C', '#E8E288', '#F27A54', '#355C7D', '#6C5B7B', '#C06C84'];
+
+
 
 // Custom tooltip for the pie chart
 const renderCustomPieTooltip = ({ active, payload }) => {
@@ -54,7 +58,7 @@ const CustomPieChart = ({ data }) => {
   
   return (
     <div className="pie-chart">
-      <h2>Apollo Market Share & Competitors | July 2024</h2>
+      <h2 style={{ fontSize: "20px" }}>Apollo Market Share & Competitors | August 2024</h2>
       <ResponsiveContainer width="100%" height={400}>
         <RechartsPieChart>
           <Pie
