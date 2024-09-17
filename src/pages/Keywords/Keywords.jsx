@@ -13,6 +13,7 @@ import CustomPieChart from '../Keywords/components/PieChart/PieChart';
 import BudgetPieChart from './components/Budgets/BudgetPieChart';
 import BudgetTable from './components/Budgets/BudgetTable';
 import BudgetLinChart from './components/Budgets/BudgetLineChart';
+import BudgetStackedBarChart from './components/Budgets/BudgetStackedAreaChart';
 
 import YearSelector from './components/YearSelector/YearSelector';
 
@@ -119,7 +120,8 @@ const Keywords = () => {
     
         <div className="keywords-flex-container">
           <div className="container-left">
-            <BudgetLinChart budgetData={budgetData} />
+            {/* <BudgetLinChart budgetData={budgetData} /> */}
+            <BudgetStackedBarChart budgetData={budgetData} />
           </div>
           <div className="container-right">
             {apolloBudgetData.length > 0 ? (
