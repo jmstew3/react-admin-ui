@@ -120,6 +120,10 @@ const HistoricalKeywords = () => {
               data: chartData.map(item => item.dma_name),
               label: 'DMA Name',
               scaleType: 'band',  // Set scaleType to 'band'
+              tickLabelProps: () => ({
+                angle: -45,  // Rotate labels by -45 degrees
+                textAnchor: 'end',  // Align text to the end
+              }),
             },
           ]}
           yAxis={[
