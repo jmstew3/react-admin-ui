@@ -1,20 +1,28 @@
-const express = require('express');
-const mysql = require('mysql');
-const cors = require('cors'); // Import cors
+import express from 'express';
+import mysql from 'mysql2';
+import cors from 'cors'; // Import cors
+import dotenv from 'dotenv'; // Import dotenv
+
+dotenv.config();
 
 const app = express();
-const port = 5000;
+const port = 9001;
 
 // Use CORS middleware
 app.use(cors());
 
 // MySQL Database configuration
 const dbConfig = {
-  host: 'your-host',  // e.g., 'localhost' or your database host
-  user: 'your-username',  // MySQL username
-  password: 'your-password',  // MySQL password
-  database: 'your-database-name',  // MySQL database name
+  host: process.env.DB_HOST,  // e.g., 'localhost' or your database host
+  user: process.env.DB_USER,  // MySQL username
+  password: process.env.DB_PASSWORD,  // MySQL password
+  database: process.env.DB_DATABASE,  // MySQL database name
 };
+
+console.log('DB_HOST:', process.env.DB_HOST);
+console.log('DB_USER:', process.env.DB_USER);
+console.log('DB_PASSWORD:', process.env.DB_PASSWORD);
+console.log('DB_DATABASE:', process.env.DB_DATABASE);
 
 // Create a connection to MySQL
 const connection = mysql.createConnection(dbConfig);
