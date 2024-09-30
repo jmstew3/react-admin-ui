@@ -1,14 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TableSortLabel, Select, MenuItem, FormControl, InputLabel, Box } from '@mui/material';
-import { BarChart } from '@mui/x-charts/BarChart';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  TableSortLabel,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Box,
+} from "@mui/material";
+import { BarChart } from "@mui/x-charts/BarChart";
 import "./historicalKeywords.scss";
 
 const HistoricalKeywords = () => {
   const [historicalKeywords, setHistoricalKeywords] = useState([]);
-  const [order, setOrder] = useState('asc');  // State for sort order
-  const [orderBy, setOrderBy] = useState('month');  // State for sort column
-  const [filterMonth, setFilterMonth] = useState('');  // State for month filter
+  const [order, setOrder] = useState("asc"); // State for sort order
+  const [orderBy, setOrderBy] = useState("month"); // State for sort column
+  const [filterMonth, setFilterMonth] = useState(""); // State for month filter
 
   // Month mapping from number to name
   const monthNames = {
@@ -89,13 +103,16 @@ const HistoricalKeywords = () => {
   return (
     <div>
       <h1>Historical Keywords</h1>
-      <FormControl variant="outlined" style={{ minWidth: 120, marginBottom: 20 }}>
+      <FormControl
+        variant="outlined"
+        style={{ minWidth: 120, marginBottom: 20 }}
+      >
         <InputLabel>Month</InputLabel>
         <Select
           value={filterMonth}
           onChange={handleFilterChange}
           label="Month"
-          sx={{ backgroundColor: 'white' }}  // Set background color to white
+          sx={{ backgroundColor: "white" }} // Set background color to white
         >
           <MenuItem value="">
             <em>All</em>
@@ -107,28 +124,28 @@ const HistoricalKeywords = () => {
           ))}
         </Select>
       </FormControl>
-      <Box sx={{ height: 400, marginBottom: 4 }}>
+      <Box sx={{ height: 600, marginBottom: 4 }}>
         <BarChart
           series={[
             {
-              data: chartData.map(item => item.total_search_volume),
-              label: 'Total Search Volume',
+              data: chartData.map((item) => item.total_search_volume),
+              label: "Total Search Volume",
             },
           ]}
           xAxis={[
             {
-              data: chartData.map(item => item.dma_name),
-              label: 'DMA Name',
-              scaleType: 'band',  // Set scaleType to 'band'
-              tickLabelProps: () => ({
-                angle: -45,  // Rotate labels by -45 degrees
-                textAnchor: 'end',  // Align text to the end
-              }),
+              data: chartData.map((item) => item.dma_name),
+              label: "DMA Name",
+              scaleType: "band", // Ensure this is set to "band"
+              tickLabelStyle: { fill: "#FFFFFF", fontSize: 12, angle: 45 },
+              labelStyle: { fill: "#FFFFFF", fontSize: 14 },
             },
           ]}
           yAxis={[
             {
-              label: 'Total Search Volume',
+              label: "Total Search Volume",
+              tickLabelStyle: { fill: "#FFFFFF", fontSize: 12 },
+              labelStyle: { fill: "#FFFFFF", fontSize: 14 },
             },
           ]}
         />
@@ -139,27 +156,27 @@ const HistoricalKeywords = () => {
             <TableRow>
               <TableCell>
                 <TableSortLabel
-                  active={orderBy === 'month'}
-                  direction={orderBy === 'month' ? order : 'asc'}
-                  onClick={() => handleRequestSort('month')}
+                  active={orderBy === "month"}
+                  direction={orderBy === "month" ? order : "asc"}
+                  onClick={() => handleRequestSort("month")}
                 >
                   Month
                 </TableSortLabel>
               </TableCell>
               <TableCell>
                 <TableSortLabel
-                  active={orderBy === 'dma_name'}
-                  direction={orderBy === 'dma_name' ? order : 'asc'}
-                  onClick={() => handleRequestSort('dma_name')}
+                  active={orderBy === "dma_name"}
+                  direction={orderBy === "dma_name" ? order : "asc"}
+                  onClick={() => handleRequestSort("dma_name")}
                 >
                   DMA Name
                 </TableSortLabel>
               </TableCell>
               <TableCell>
                 <TableSortLabel
-                  active={orderBy === 'total_search_volume'}
-                  direction={orderBy === 'total_search_volume' ? order : 'asc'}
-                  onClick={() => handleRequestSort('total_search_volume')}
+                  active={orderBy === "total_search_volume"}
+                  direction={orderBy === "total_search_volume" ? order : "asc"}
+                  onClick={() => handleRequestSort("total_search_volume")}
                 >
                   Total Search Volume
                 </TableSortLabel>
@@ -169,9 +186,12 @@ const HistoricalKeywords = () => {
           <TableBody>
             {sortedKeywords.map((keywordData, index) => (
               <TableRow key={index}>
-                <TableCell>{monthNames[keywordData.month]}</TableCell>  {/* Displaying the month */}
-                <TableCell>{keywordData.dma_name}</TableCell>  {/* Displaying the DMA name */}
-                <TableCell>{keywordData.total_search_volume}</TableCell>  {/* Displaying the total search volume */}
+                <TableCell>{monthNames[keywordData.month]}</TableCell>{" "}
+                {/* Displaying the month */}
+                <TableCell>{keywordData.dma_name}</TableCell>{" "}
+                {/* Displaying the DMA name */}
+                <TableCell>{keywordData.total_search_volume}</TableCell>{" "}
+                {/* Displaying the total search volume */}
               </TableRow>
             ))}
           </TableBody>
