@@ -1,7 +1,7 @@
 import express from 'express';
 import mysql from 'mysql2';
-import cors from 'cors'; // Import cors
-import dotenv from 'dotenv'; // Import dotenv
+import cors from 'cors';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -50,7 +50,34 @@ app.get('/api/competitor-brands', (req, res) => {
 
   connection.query(query, (err, results) => {
     if (err) {
+      console.error('Error executing query:', err);
       res.status(500).json({ error: 'Error fetching competitor brands' });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+app.get('/api/historical-keywords', (req, res) => {
+  const query = `
+    SELECT 
+        km.month,
+        d.dma_name,
+        SUM(km.search_volume) AS total_search_volume
+    FROM 
+        keyword_metrics km
+    JOIN 
+        dmas d ON km.dma_id = d.dma_id
+    GROUP BY 
+        km.month, d.dma_name
+    ORDER BY 
+        km.month, d.dma_name;
+  `;
+
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      res.status(500).json({ error: 'Error fetching historical keywords' });
     } else {
       res.json(results);
     }

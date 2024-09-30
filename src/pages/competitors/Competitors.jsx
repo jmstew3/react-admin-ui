@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import "./competitors.scss";
 
 const Competitors = () => {
@@ -21,23 +22,25 @@ const Competitors = () => {
 
   return (
     <div>
-      <h1>TurnPoint Competitor Brands</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Brand Name</th>
-            <th>Type</th>
-          </tr>
-        </thead>
-        <tbody>
-          {competitors.map((competitor, index) => (
-            <tr key={index}>
-              <td>{competitor.brand_name}</td>
-              <td>{competitor.type_value}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <h1>Competitor Brands</h1>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Brand Name</TableCell>
+              <TableCell>Type Value</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {competitors.map((competitor, index) => (
+              <TableRow key={index}>
+                <TableCell>{competitor.brand_name}</TableCell>
+                <TableCell>{competitor.type_value}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 };

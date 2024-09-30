@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import "./historicalKeywords.scss";
 
 const HistoricalKeywords = () => {
@@ -7,37 +8,41 @@ const HistoricalKeywords = () => {
 
   // Fetch data from the backend
   useEffect(() => {
-    const fetchhistoricalKeywords = async () => {
+    const fetchHistoricalKeywords = async () => {
       try {
-        const response = await axios.get('http://localhost:9001/api/competitor-brands');
+        const response = await axios.get('http://localhost:9001/api/historical-keywords');
         setHistoricalKeywords(response.data);  // Set the fetched data to state
       } catch (error) {
-        console.error('Error fetching competitor brands:', error);
+        console.error('Error fetching historical keywords:', error);
       }
     };
 
-    fetchhistoricalKeywords();
+    fetchHistoricalKeywords();
   }, []);  // Empty array ensures this effect runs once when the component mounts
 
   return (
     <div>
       <h1>Historical Keywords</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Month</th>
-            <th>Total Search Volume</th>
-          </tr>
-        </thead>
-        <tbody>
-          {historicalKeywords.map((competitor, index) => (
-            <tr key={index}>
-              <td>{competitor.brand_name}</td>
-              <td>{competitor.type_value}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Month</TableCell>
+              <TableCell>DMA Name</TableCell>
+              <TableCell>Total Search Volume</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {historicalKeywords.map((keywordData, index) => (
+              <TableRow key={index}>
+                <TableCell>{keywordData.month}</TableCell>  {/* Displaying the month */}
+                <TableCell>{keywordData.dma_name}</TableCell>  {/* Displaying the DMA name */}
+                <TableCell>{keywordData.total_search_volume}</TableCell>  {/* Displaying the total search volume */}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 };
