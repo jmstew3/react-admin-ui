@@ -39,3 +39,20 @@ connection.connect((err) => {
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+app.get('/api/competitor-brands', (req, res) => {
+  const query = `
+    SELECT b.brand_name, t.type_value
+    FROM brands b
+    JOIN type t ON b.type_id = t.type_id
+    WHERE t.type_value = 'TP Competitor';
+  `;
+
+  connection.query(query, (err, results) => {
+    if (err) {
+      res.status(500).json({ error: 'Error fetching competitor brands' });
+    } else {
+      res.json(results);
+    }
+  });
+});

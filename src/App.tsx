@@ -15,10 +15,11 @@ import Users from "./pages/users/Users";
 import Products from "./pages/products/Products";
 import Product from "./pages/product/Product";
 import User from "./pages/user/User";
-
+import Competitors from "./pages/competitors/Competitors";
 import Keywords from "./pages/keywords/Keywords";
 import KeywordList from "./pages//KeywordList/keywordList";
 import Quarterly from "./pages/keywords/Quarterly";
+import HistoricalKeywords from "./pages/historicalKeywords/HistoricalKeywords"
 
 import "./styles/global.scss";
 
@@ -94,6 +95,16 @@ function App() {
           // add :id to the end of the slug in order to go to a single product page
           path: "/products/:id",
           element: <Product />,
+        },
+        {
+          // add :id to the end of the slug in order to go to a single product page
+          path: "/competitors/",
+          element: <Competitors />,
+        },
+        {
+          // add :id to the end of the slug in order to go to a single product page
+          path: "/historical-keywords/",
+          element: <HistoricalKeywords />,
         },
       ],
     },

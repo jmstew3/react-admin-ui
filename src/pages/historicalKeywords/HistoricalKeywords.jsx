@@ -1,36 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import "./competitors.scss";
+import "./historicalKeywords.scss";
 
-const Competitors = () => {
-  const [competitors, setCompetitors] = useState([]);
+const HistoricalKeywords = () => {
+  const [historicalKeywords, setHistoricalKeywords] = useState([]);
 
   // Fetch data from the backend
   useEffect(() => {
-    const fetchCompetitors = async () => {
+    const fetchhistoricalKeywords = async () => {
       try {
         const response = await axios.get('http://localhost:9001/api/competitor-brands');
-        setCompetitors(response.data);  // Set the fetched data to state
+        setHistoricalKeywords(response.data);  // Set the fetched data to state
       } catch (error) {
         console.error('Error fetching competitor brands:', error);
       }
     };
 
-    fetchCompetitors();
+    fetchhistoricalKeywords();
   }, []);  // Empty array ensures this effect runs once when the component mounts
 
   return (
     <div>
-      <h1>TurnPoint Competitor Brands</h1>
+      <h1>Historical Keywords</h1>
       <table>
         <thead>
           <tr>
-            <th>Brand Name</th>
-            <th>Type</th>
+            <th>Month</th>
+            <th>Total Search Volume</th>
           </tr>
         </thead>
         <tbody>
-          {competitors.map((competitor, index) => (
+          {historicalKeywords.map((competitor, index) => (
             <tr key={index}>
               <td>{competitor.brand_name}</td>
               <td>{competitor.type_value}</td>
@@ -42,4 +42,4 @@ const Competitors = () => {
   );
 };
 
-export default Competitors;
+export default HistoricalKeywords;

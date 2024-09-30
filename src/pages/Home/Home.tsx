@@ -13,13 +13,12 @@ import BubbleMap from '../../components/BubbleMap/BubbleMap';
 import BubbleMapZipCodeRevenue from '../../components/BubbleMap/BubbleZipCodeRevenue';
 import BubbleZipTechCloseRate from '../../components/BubbleMap/BubbleZipTechCloseRate';
 import ApolloMarketingBudgetTable from '../../components/ApolloMarketingBudgetTable/ApolloMarketingBudgetTable';
-
 import "./home.scss"
 import useGetJobsCompletedDetails from '../../hooks/useGetJobsCompletedDetails';
 import useGetJobsCompletedByCat from '../../hooks/useGetJobsCompletedByCat';
 import useGetJobsCompletedZipCodes from '../../hooks/useGetJobsCompletedZipCodes';
-const Home = () => {
 
+const Home = () => {
 
 const { dateRange } = useContext(DateContext);
 // console.log(dateRange);

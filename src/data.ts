@@ -52,6 +52,18 @@ export const menu =
         url: "/marketing",
         icon: "/marketing.svg",
       },
+      {
+        id: 4,
+        title: "Competitors",
+        url: "/competitors",
+        icon: "/marketing.svg",
+      },
+      {
+        id: 5,
+        title: "Historical Keywords",
+        url: "/historical-keywords",
+        icon: "/marketing.svg",
+      },
     ],
   },
   // {
