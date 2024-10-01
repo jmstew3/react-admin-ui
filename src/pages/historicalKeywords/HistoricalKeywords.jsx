@@ -101,7 +101,7 @@ const HistoricalKeywords = () => {
   }));
 
   return (
-    <div>
+    <div className="historicalKeywords">
       <h1>Historical Keywords</h1>
       <FormControl
         variant="outlined"
@@ -124,8 +124,9 @@ const HistoricalKeywords = () => {
           ))}
         </Select>
       </FormControl>
-      <Box sx={{ height: 600, marginBottom: 4 }}>
+      <Box sx={{ height: 350, marginBottom: 12 }}>
         <BarChart
+          grid= {{ horizontal: true}}
           series={[
             {
               data: chartData.map((item) => item.total_search_volume),
@@ -139,6 +140,7 @@ const HistoricalKeywords = () => {
               scaleType: "band", // Ensure this is set to "band"
               tickLabelStyle: { fill: "#FFFFFF", fontSize: 12, angle: 45 },
               labelStyle: { fill: "#FFFFFF", fontSize: 14 },
+              labelPadding: 100,
             },
           ]}
           yAxis={[

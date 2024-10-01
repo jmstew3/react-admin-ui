@@ -19,7 +19,8 @@ import Competitors from "./pages/competitors/Competitors";
 import Keywords from "./pages/keywords/Keywords";
 import KeywordList from "./pages//KeywordList/keywordList";
 import Quarterly from "./pages/keywords/Quarterly";
-import HistoricalKeywords from "./pages/historicalKeywords/HistoricalKeywords"
+import HistoricalKeywords from "./pages/historicalKeywords/HistoricalKeywords";
+import BrandShare from "./pages/brandShare/BrandShare";
 
 import "./styles/global.scss";
 
@@ -105,6 +106,11 @@ function App() {
           // add :id to the end of the slug in order to go to a single product page
           path: "/historical-keywords/",
           element: <HistoricalKeywords />,
+        },
+        {
+          // add :id to the end of the slug in order to go to a single product page
+          path: "/brand-share/",
+          element: <BrandShare />,
         },
       ],
     },

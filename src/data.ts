@@ -64,6 +64,12 @@ export const menu =
         url: "/historical-keywords",
         icon: "/marketing.svg",
       },
+      {
+        id: 6,
+        title: "Brand Share",
+        url: "/brand-share",
+        icon: "/marketing.svg",
+      }
     ],
   },
   // {
