@@ -168,7 +168,14 @@ app.get("/api/available-months", (req, res) => {
 
 // Endpoint to get available DMA IDs
 app.get("/api/available-dmas", (req, res) => {
-  const query = "SELECT DISTINCT dma_id, dma_name FROM dmas ORDER BY dma_name;";
+  const query = `
+    SELECT DISTINCT d.dma_id, d.dma_name
+    FROM dmas d
+    JOIN keyword_metrics k ON d.dma_id = k.dma_id
+    JOIN brands b ON k.brand_id = b.brand_id
+    WHERE b.type_id = 1
+    ORDER BY d.dma_name;
+  `;
   connection.query(query, (err, results) => {
     if (err) {
       console.error("Error fetching DMAs:", err);
