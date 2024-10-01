@@ -233,43 +233,41 @@ app.get("/api/brand-market-share", (req, res) => {
 
   const query = `
     SELECT
-      b.brand_id,
-      b.brand_name,
-      IFNULL(current_data.current_brand_share, 0) AS current_brand_share,
-      IFNULL(previous_data.previous_brand_share, 0) AS previous_brand_share,
-      (IFNULL(current_data.current_brand_share, 0) - IFNULL(previous_data.previous_brand_share, 0)) AS delta
+  b.brand_id,
+  b.brand_name,
+  current_data.current_brand_share,
+  IFNULL(previous_data.previous_brand_share, 0) AS previous_brand_share,
+  (current_data.current_brand_share - IFNULL(previous_data.previous_brand_share, 0)) AS delta
+FROM
+  (
+    SELECT
+      k.brand_id,
+      SUM(k.search_volume) / total_current.total_search_volume AS current_brand_share
     FROM
-      brands b
-      LEFT JOIN (
-        SELECT
-          k.brand_id,
-          SUM(k.search_volume) / total_current.total_search_volume AS current_brand_share
-        FROM
-          keyword_metrics k,
-          (SELECT SUM(search_volume) AS total_search_volume
-           FROM keyword_metrics
-           WHERE dma_id = ? AND month = ?) total_current
-        WHERE
-          k.dma_id = ? AND k.month = ?
-        GROUP BY
-          k.brand_id
-      ) AS current_data ON b.brand_id = current_data.brand_id
-      LEFT JOIN (
-        SELECT
-          k.brand_id,
-          SUM(k.search_volume) / total_previous.total_search_volume AS previous_brand_share
-        FROM
-          keyword_metrics k,
-          (SELECT SUM(search_volume) AS total_search_volume
-           FROM keyword_metrics
-           WHERE dma_id = ? AND month = ?) total_previous
-        WHERE
-          k.dma_id = ? AND k.month = ?
-        GROUP BY
-          k.brand_id
-      ) AS previous_data ON b.brand_id = previous_data.brand_id
+      keyword_metrics k,
+      (SELECT SUM(search_volume) AS total_search_volume
+       FROM keyword_metrics
+       WHERE dma_id = ? AND month = ?) total_current
     WHERE
-      b.type_id = 1; -- Only TurnPoint brands
+      k.dma_id = ? AND k.month = ?
+    GROUP BY
+      k.brand_id
+  ) AS current_data
+INNER JOIN brands b ON b.brand_id = current_data.brand_id AND b.type_id = 1
+LEFT JOIN (
+    SELECT
+      k.brand_id,
+      SUM(k.search_volume) / total_previous.total_search_volume AS previous_brand_share
+    FROM
+      keyword_metrics k,
+      (SELECT SUM(search_volume) AS total_search_volume
+       FROM keyword_metrics
+       WHERE dma_id = ? AND month = ?) total_previous
+    WHERE
+      k.dma_id = ? AND k.month = ?
+    GROUP BY
+      k.brand_id
+  ) AS previous_data ON b.brand_id = previous_data.brand_id;
   `;
 
   const params = [
