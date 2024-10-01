@@ -1,3 +1,5 @@
+// BrandShare.jsx
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
@@ -14,7 +16,7 @@ import {
   PieChart,
   Pie,
   Cell,
-  Tooltip,
+  Tooltip as RechartsTooltip,
   Legend,
   BarChart,
   Bar,
@@ -64,7 +66,7 @@ const BrandShare = () => {
   // Get the current month number (1-12)
   const currentMonth = new Date().getMonth() + 1;
   const [selectedMonth, setSelectedMonth] = useState(currentMonth);
-  const [selectedDmaId, setSelectedDmaId] = useState(40); // Default DMA ID
+  const [selectedDmaId, setSelectedDmaId] = useState(null); // Initialize as null
 
   const [availableMonths, setAvailableMonths] = useState([]);
   const [availableDmas, setAvailableDmas] = useState([]);
@@ -81,27 +83,56 @@ const BrandShare = () => {
 
   // Fetch available months
   useEffect(() => {
-    axios.get("http://localhost:9001/api/available-months").then((response) => {
-      const sortedMonths = response.data.sort((a, b) => a.month - b.month);
-      setAvailableMonths(sortedMonths);
-    });
+    const fetchAvailableMonths = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:9001/api/available-months"
+        );
+        const sortedMonths = response.data.sort((a, b) => a.month - b.month);
+        setAvailableMonths(sortedMonths);
+        // Optionally set default month to the first available month
+        // setSelectedMonth(sortedMonths[0]?.month);
+      } catch (err) {
+        console.error("Error fetching available months:", err);
+      }
+    };
+
+    fetchAvailableMonths();
   }, []);
 
-  // Fetch available DMAs
+  // Fetch available DMAs and set selectedDmaId
   useEffect(() => {
-    axios.get("http://localhost:9001/api/available-dmas").then((response) => {
-      setAvailableDmas(response.data);
-    });
+    const fetchAvailableDmas = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:9001/api/available-dmas"
+        );
+        setAvailableDmas(response.data);
+
+        // After fetching DMAs, set selectedDmaId
+        // Preferably set to 40 if it exists, else first DMA's ID
+        const defaultDma = response.data.find((dma) => dma.dma_id === 40);
+        if (defaultDma) {
+          setSelectedDmaId(defaultDma.dma_id);
+        } else if (response.data.length > 0) {
+          setSelectedDmaId(response.data[0].dma_id);
+        }
+      } catch (err) {
+        console.error("Error fetching available DMAs:", err);
+      }
+    };
+
+    fetchAvailableDmas();
   }, []);
 
   // Get selected DMA name
-  const selectedDma = availableDmas.find(
-    (dma) => dma.dma_id === selectedDmaId
-  );
+  const selectedDma = availableDmas.find((dma) => dma.dma_id === selectedDmaId);
   const selectedDmaName = selectedDma ? selectedDma.dma_name : "";
 
   // Fetch brand shares data
   useEffect(() => {
+    if (selectedDmaId === null) return; // Don't fetch if DMA ID is not set
+
     const fetchBrandShares = async () => {
       setIsLoading(true);
       try {
@@ -111,6 +142,7 @@ const BrandShare = () => {
             params: { month: selectedMonth, dma_id: selectedDmaId },
           }
         );
+        console.log("API Response (Brand Shares):", response.data);
         setBrandShares(
           response.data.map((item) => ({
             ...item,
@@ -122,6 +154,7 @@ const BrandShare = () => {
       } catch (err) {
         setError(err);
         setIsLoading(false);
+        console.error("Error fetching brand shares:", err);
       }
     };
 
@@ -130,6 +163,8 @@ const BrandShare = () => {
 
   // Fetch data for the bar chart
   useEffect(() => {
+    if (selectedDmaId === null) return; // Don't fetch if DMA ID is not set
+
     const fetchBrandSearchVolumes = async () => {
       try {
         const response = await axios.get(
@@ -138,6 +173,7 @@ const BrandShare = () => {
             params: { month: selectedMonth, dma_id: selectedDmaId },
           }
         );
+        console.log("API Response (Brand Search Volumes):", response.data);
         setBrandSearchVolumes(
           response.data.map((item) => ({
             ...item,
@@ -156,6 +192,8 @@ const BrandShare = () => {
 
   // Fetch market share data and compute competitor share
   useEffect(() => {
+    if (selectedDmaId === null) return; // Don't fetch if DMA ID is not set
+
     const fetchMarketShareData = async () => {
       try {
         const response = await axios.get(
@@ -164,6 +202,7 @@ const BrandShare = () => {
             params: { month: selectedMonth, dma_id: selectedDmaId },
           }
         );
+        console.log("Market Share Data Response:", response.data);
 
         const data = response.data.map((item) => ({
           ...item,
@@ -204,6 +243,8 @@ const BrandShare = () => {
 
   // Fetch total DMA search volume data
   useEffect(() => {
+    if (selectedDmaId === null) return; // Don't fetch if DMA ID is not set
+
     const fetchTotalDmaSearchVolume = async () => {
       try {
         const response = await axios.get(
@@ -272,7 +313,7 @@ const BrandShare = () => {
   return (
     <Box sx={{ padding: 2 }}>
       {/* Dropdowns for Month and DMA ID */}
-      <Box sx={{ marginBottom: 2 }}>
+      <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
         <label style={{ marginRight: "10px" }}>Select Month:</label>
         <select value={selectedMonth} onChange={handleMonthChange}>
           {availableMonths.map((monthObj) => (
@@ -283,7 +324,7 @@ const BrandShare = () => {
         </select>
 
         <label style={{ margin: "0 10px" }}>Select DMA:</label>
-        <select value={selectedDmaId} onChange={handleDmaIdChange}>
+        <select value={selectedDmaId || ""} onChange={handleDmaIdChange}>
           {availableDmas.map((dma) => (
             <option key={dma.dma_id} value={dma.dma_id}>
               {dma.dma_name}
@@ -341,7 +382,7 @@ const BrandShare = () => {
       ) : (
         // Render the table and pie chart only if data is available
         <>
-          <Box sx={{ display: "flex", height: "100%", width: "100%" }}>
+          <Box sx={{ display: "flex", height: "auto", width: "100%" }}>
             <Box sx={{ flex: 1, marginRight: 4 }}>
               <TableContainer component={Paper}>
                 <Table>
@@ -407,7 +448,7 @@ const BrandShare = () => {
                     />
                   ))}
                 </Pie>
-                <Tooltip content={renderTooltip} />
+                <RechartsTooltip content={renderTooltip} />
                 <Legend />
               </PieChart>
             </Box>
@@ -425,7 +466,7 @@ const BrandShare = () => {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="brand_name" />
                 <YAxis />
-                <Tooltip />
+                <RechartsTooltip />
                 <Legend />
                 <Bar dataKey="total_brand_search_volume" fill="#8884d8" />
               </BarChart>
