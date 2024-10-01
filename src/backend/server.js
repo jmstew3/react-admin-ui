@@ -102,36 +102,77 @@ app.get("/api/historical-keywords", (_, res) => {
 });
 
 app.get("/api/brand-share", (req, res) => {
+  // Extract month and dma_id from query parameters
+  const month = req.query.month;
+  const dma_id = req.query.dma_id;
+
+  // Check if month and dma_id are provided
+  if (!month || !dma_id) {
+    return res.status(400).json({ error: "month and dma_id are required query parameters" });
+  }
+
+  // Update your SQL query to use placeholders
   const query = `
     SELECT 
-    b.brand_name,
-    d.dma_name,
-    SUM(k.search_volume) AS total_dma_search_volume,
-    SUM(k.search_volume) * 1.0 / (SELECT SUM(search_volume) 
-                                  FROM keyword_metrics 
-                                  WHERE dma_id = 40 
-                                  AND month = 8) AS brand_share
-FROM 
-    brands b
-JOIN 
-    keyword_metrics k ON b.brand_id = k.brand_id
-JOIN 
-    dmas d ON k.dma_id = d.dma_id
-WHERE 
-    k.dma_id = 40 
-    AND k.month = 8
-GROUP BY 
-    b.brand_name, d.dma_name, k.dma_id;
+      b.brand_name,
+      d.dma_name,
+      SUM(k.search_volume) AS total_dma_search_volume,
+      SUM(k.search_volume) * 1.0 / (
+        SELECT SUM(search_volume) 
+        FROM keyword_metrics 
+        WHERE dma_id = ? AND month = ?
+      ) AS brand_share
+    FROM 
+      brands b
+    JOIN 
+      keyword_metrics k ON b.brand_id = k.brand_id
+    JOIN 
+      dmas d ON k.dma_id = d.dma_id
+    WHERE 
+      k.dma_id = ? AND k.month = ?
+    GROUP BY 
+      b.brand_name, d.dma_name, k.dma_id;
   `;
+
+  // Parameters for the SQL query
+  const params = [dma_id, month, dma_id, month];
 
   if (connection.state === "disconnected") {
     handleDisconnect();
   }
 
-  connection.query(query, (err, results) => {
+  // Execute the query with parameters to prevent SQL injection
+  connection.query(query, params, (err, results) => {
     if (err) {
       console.error("Error executing query:", err);
       res.status(500).json({ error: "Error fetching keyword share" });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+// Move these endpoint definitions outside of the /api/brand-share endpoint
+// Endpoint to get available months
+app.get("/api/available-months", (req, res) => {
+  const query = "SELECT DISTINCT month FROM keyword_metrics ORDER BY month;";
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching months:", err);
+      res.status(500).json({ error: "Error fetching months" });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+// Endpoint to get available DMA IDs
+app.get("/api/available-dmas", (req, res) => {
+  const query = "SELECT DISTINCT dma_id, dma_name FROM dmas ORDER BY dma_name;";
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching DMAs:", err);
+      res.status(500).json({ error: "Error fetching DMAs" });
     } else {
       res.json(results);
     }
