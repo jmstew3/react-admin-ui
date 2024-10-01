@@ -24,8 +24,8 @@ const MarketShareCard = ({ brandName, currentShare, delta }) => {
         </Typography>
         <Box sx={{ display: "flex", alignItems: "center" }}>
           {deltaIcon}
-          <Typography color={isPositive ? "green" : "red"}>
-            {Math.abs(delta * 100).toFixed(2)}%
+          <Typography color={isPositive ? "green" : "red"} sx={{ marginLeft: 0.5 }}>
+            {Math.abs(delta * 100).toFixed(2)}% vs previous period
           </Typography>
         </Box>
       </CardContent>

@@ -108,7 +108,9 @@ app.get("/api/brand-share", (req, res) => {
 
   // Check if month and dma_id are provided
   if (!month || !dma_id) {
-    return res.status(400).json({ error: "month and dma_id are required query parameters" });
+    return res
+      .status(400)
+      .json({ error: "month and dma_id are required query parameters" });
   }
 
   // Update your SQL query to use placeholders
@@ -192,7 +194,9 @@ app.get("/api/brand-search-volume", (req, res) => {
   const dma_id = req.query.dma_id;
 
   if (!month || !dma_id) {
-    return res.status(400).json({ error: "month and dma_id are required query parameters" });
+    return res
+      .status(400)
+      .json({ error: "month and dma_id are required query parameters" });
   }
 
   const query = `
@@ -227,7 +231,9 @@ app.get("/api/brand-market-share", (req, res) => {
   const dma_id = parseInt(req.query.dma_id, 10);
 
   if (isNaN(month) || isNaN(dma_id)) {
-    return res.status(400).json({ error: "month and dma_id must be valid numbers" });
+    return res
+      .status(400)
+      .json({ error: "month and dma_id must be valid numbers" });
   }
 
   // Calculate previous month
@@ -278,10 +284,14 @@ LEFT JOIN (
   `;
 
   const params = [
-    dma_id, month,
-    dma_id, month,
-    dma_id, previousMonth,
-    dma_id, previousMonth
+    dma_id,
+    month,
+    dma_id,
+    month,
+    dma_id,
+    previousMonth,
+    dma_id,
+    previousMonth,
   ];
 
   connection.query(query, params, (err, results) => {
@@ -300,7 +310,9 @@ app.get("/api/total-dma-search-volume", (req, res) => {
   const dma_id = parseInt(req.query.dma_id, 10);
 
   if (isNaN(month) || isNaN(dma_id)) {
-    return res.status(400).json({ error: "month and dma_id must be valid numbers" });
+    return res
+      .status(400)
+      .json({ error: "month and dma_id must be valid numbers" });
   }
 
   // Calculate previous month

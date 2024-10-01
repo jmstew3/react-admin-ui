@@ -25,7 +25,7 @@ const TotalMarketCard = ({ title, currentValue, deltaPercentage }) => {
         <Box sx={{ display: "flex", alignItems: "center", marginTop: 1 }}>
           {deltaIcon}
           <Typography color={isPositive ? "green" : "red"} sx={{ marginLeft: 0.5 }}>
-            {(Math.abs(deltaPercentage) * 100).toFixed(2)}%
+            {(Math.abs(deltaPercentage) * 100).toFixed(2)}% vs previous period
           </Typography>
         </Box>
       </CardContent>
