@@ -293,3 +293,39 @@ LEFT JOIN (
     }
   });
 });
+
+// Endpoint to get total DMA search volume for current and previous months
+app.get("/api/total-dma-search-volume", (req, res) => {
+  const month = parseInt(req.query.month, 10);
+  const dma_id = parseInt(req.query.dma_id, 10);
+
+  if (isNaN(month) || isNaN(dma_id)) {
+    return res.status(400).json({ error: "month and dma_id must be valid numbers" });
+  }
+
+  // Calculate previous month
+  let previousMonth = month - 1;
+  if (previousMonth === 0) {
+    previousMonth = 12;
+    // Handle year adjustment if necessary
+  }
+
+  const query = `
+    SELECT
+      SUM(CASE WHEN month = ? THEN search_volume ELSE 0 END) AS current_total_search_volume,
+      SUM(CASE WHEN month = ? THEN search_volume ELSE 0 END) AS previous_total_search_volume
+    FROM keyword_metrics
+    WHERE dma_id = ? AND (month = ? OR month = ?)
+  `;
+
+  const params = [month, previousMonth, dma_id, month, previousMonth];
+
+  connection.query(query, params, (err, results) => {
+    if (err) {
+      console.error("Error executing total DMA search volume query:", err);
+      res.status(500).json({ error: "Error fetching total DMA search volume" });
+    } else {
+      res.json(results[0]);
+    }
+  });
+});

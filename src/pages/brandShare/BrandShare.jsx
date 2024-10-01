@@ -22,15 +22,24 @@ import {
   YAxis,
   CartesianGrid,
 } from "recharts";
+
 import MarketShareCard from "../../components/MarketShareCard/MarketShareCard";
+import TotalMarketCard from "../../components/TotalMarketCard/TotalMarketCard";
 
 const COLORS = [
-  "#8884d8",
-  "#82ca9d",
-  "#ffc658",
-  "#ff8042",
-  "#8dd1e1",
-  "#d0ed57",
+  "#F78C6B", // Coral
+  "#83D483", // Light Green
+  "#00F5D4", // Turquoise
+  "#9B5DE5", // Purple
+  "#FFD166", // Yellow
+  "#F15BB5", // Pink
+  "#0CB0A9", // Teal
+  "#118AB2", // Blue
+  "#06D6A0", // Green
+  "#EF476F", // Red
+
+
+
 ];
 
 // Month names array
@@ -64,13 +73,21 @@ const BrandShare = () => {
   const [availableMonths, setAvailableMonths] = useState([]);
   const [availableDmas, setAvailableDmas] = useState([]);
 
+  const [competitorShareData, setCompetitorShareData] = useState({
+    currentShare: 0,
+    delta: 0,
+  });
+
+  const [totalDmaSearchVolumeData, setTotalDmaSearchVolumeData] = useState({
+    currentTotal: 0,
+    deltaPercentage: 0,
+  });
+
   // Fetch available months
   useEffect(() => {
     axios.get("http://localhost:9001/api/available-months").then((response) => {
       const sortedMonths = response.data.sort((a, b) => a.month - b.month);
       setAvailableMonths(sortedMonths);
-      // Optionally set default month to the first available month
-      // setSelectedMonth(sortedMonths[0]?.month);
     });
   }, []);
 
@@ -80,6 +97,12 @@ const BrandShare = () => {
       setAvailableDmas(response.data);
     });
   }, []);
+
+  // Get selected DMA name
+  const selectedDma = availableDmas.find(
+    (dma) => dma.dma_id === selectedDmaId
+  );
+  const selectedDmaName = selectedDma ? selectedDma.dma_name : "";
 
   // Fetch brand shares data
   useEffect(() => {
@@ -92,7 +115,6 @@ const BrandShare = () => {
             params: { month: selectedMonth, dma_id: selectedDmaId },
           }
         );
-        console.log("API Response (Brand Shares):", response.data);
         setBrandShares(
           response.data.map((item) => ({
             ...item,
@@ -120,7 +142,6 @@ const BrandShare = () => {
             params: { month: selectedMonth, dma_id: selectedDmaId },
           }
         );
-        console.log("API Response (Brand Search Volumes):", response.data);
         setBrandSearchVolumes(
           response.data.map((item) => ({
             ...item,
@@ -137,7 +158,7 @@ const BrandShare = () => {
     fetchBrandSearchVolumes();
   }, [selectedMonth, selectedDmaId]);
 
-  // Fetch market share data for tombstones
+  // Fetch market share data and compute competitor share
   useEffect(() => {
     const fetchMarketShareData = async () => {
       try {
@@ -147,21 +168,76 @@ const BrandShare = () => {
             params: { month: selectedMonth, dma_id: selectedDmaId },
           }
         );
-        console.log("Market Share Data Response:", response.data); // Added console.log
-        setMarketShareData(
-          response.data.map((item) => ({
-            ...item,
-            current_brand_share: parseFloat(item.current_brand_share),
-            previous_brand_share: parseFloat(item.previous_brand_share),
-            delta: parseFloat(item.delta),
-          }))
+
+        const data = response.data.map((item) => ({
+          ...item,
+          current_brand_share: parseFloat(item.current_brand_share),
+          previous_brand_share: parseFloat(item.previous_brand_share),
+          delta: parseFloat(item.delta),
+        }));
+
+        setMarketShareData(data);
+
+        // Compute total TurnPoint share
+        const totalTurnPointShare = data.reduce(
+          (sum, item) => sum + item.current_brand_share,
+          0
         );
+        const totalPreviousTurnPointShare = data.reduce(
+          (sum, item) => sum + item.previous_brand_share,
+          0
+        );
+
+        // Compute competitor share
+        const competitorShare = 1 - totalTurnPointShare;
+        const previousCompetitorShare = 1 - totalPreviousTurnPointShare;
+        const competitorDelta = competitorShare - previousCompetitorShare;
+
+        // Set competitor share data
+        setCompetitorShareData({
+          currentShare: competitorShare,
+          delta: competitorDelta,
+        });
       } catch (err) {
         console.error("Error fetching market share data:", err);
       }
     };
 
     fetchMarketShareData();
+  }, [selectedMonth, selectedDmaId]);
+
+  // Fetch total DMA search volume data
+  useEffect(() => {
+    const fetchTotalDmaSearchVolume = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:9001/api/total-dma-search-volume",
+          {
+            params: { month: selectedMonth, dma_id: selectedDmaId },
+          }
+        );
+
+        const currentTotal =
+          parseFloat(response.data.current_total_search_volume) || 0;
+        const previousTotal =
+          parseFloat(response.data.previous_total_search_volume) || 0;
+
+        // Calculate delta percentage
+        const deltaPercentage =
+          previousTotal !== 0
+            ? (currentTotal - previousTotal) / previousTotal
+            : 0;
+
+        setTotalDmaSearchVolumeData({
+          currentTotal,
+          deltaPercentage,
+        });
+      } catch (err) {
+        console.error("Error fetching total DMA search volume data:", err);
+      }
+    };
+
+    fetchTotalDmaSearchVolume();
   }, [selectedMonth, selectedDmaId]);
 
   const handleMonthChange = (e) => {
@@ -171,8 +247,6 @@ const BrandShare = () => {
   const handleDmaIdChange = (e) => {
     setSelectedDmaId(Number(e.target.value));
   };
-
-  console.log("Brand Shares Data for Pie Chart:", brandShares); // Debugging
 
   const renderLabel = ({ name }) => name;
 
@@ -198,9 +272,6 @@ const BrandShare = () => {
     (sum, row) => sum + row.brand_share,
     0
   );
-
-  // Debugging: Log marketShareData before rendering
-  console.log("MarketShareData in Render:", marketShareData);
 
   return (
     <Box sx={{ padding: 2 }}>
@@ -235,6 +306,22 @@ const BrandShare = () => {
             marginBottom: 2,
           }}
         >
+          {/* Total Market Card */}
+          <TotalMarketCard
+            key="total-market"
+            title={`Total Market Google Demand for ${selectedDmaName}`}
+            currentValue={totalDmaSearchVolumeData.currentTotal}
+            deltaPercentage={totalDmaSearchVolumeData.deltaPercentage}
+          />
+
+          {/* Competitor Share Card */}
+          <MarketShareCard
+            key="competitor-share"
+            brandName="Competitor Share"
+            currentShare={competitorShareData.currentShare}
+            delta={competitorShareData.delta}
+          />
+
           {marketShareData.map((item) => (
             <MarketShareCard
               key={item.brand_id}
@@ -258,7 +345,7 @@ const BrandShare = () => {
       ) : (
         // Render the table and pie chart only if data is available
         <>
-          <Box sx={{ display: "flex", height: "auto", width: "100%" }}>
+          <Box sx={{ display: "flex", height: "100%", width: "100%" }}>
             <Box sx={{ flex: 1, marginRight: 4 }}>
               <TableContainer component={Paper}>
                 <Table>
@@ -306,7 +393,7 @@ const BrandShare = () => {
                 alignItems: "center",
               }}
             >
-              <PieChart width={700} height={400}>
+              <PieChart width={700} height={500}>
                 <Pie
                   data={brandShares}
                   dataKey="brand_share"

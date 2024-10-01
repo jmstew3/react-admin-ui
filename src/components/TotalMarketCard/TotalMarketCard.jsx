@@ -1,12 +1,12 @@
-// MarketShareCard.jsx
+// TotalMarketCard.jsx
 
 import React from "react";
 import { Card, CardContent, Typography, Box } from "@mui/material";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 
-const MarketShareCard = ({ brandName, currentShare, delta }) => {
-  const isPositive = delta >= 0;
+const TotalMarketCard = ({ title, currentValue, deltaPercentage }) => {
+  const isPositive = deltaPercentage >= 0;
   const deltaIcon = isPositive ? (
     <ArrowUpwardIcon color="success" />
   ) : (
@@ -14,18 +14,18 @@ const MarketShareCard = ({ brandName, currentShare, delta }) => {
   );
 
   return (
-    <Card sx={{ minWidth: 200, margin: 1 }}>
+    <Card sx={{ minWidth: 250, margin: 1 }}>
       <CardContent>
-        <Typography variant="h6" component="div">
-          {brandName}
+        <Typography variant="h6" component="div" gutterBottom>
+          {title}
         </Typography>
         <Typography variant="h4" component="div">
-          {(currentShare * 100).toFixed(2)}%
+          {currentValue.toLocaleString()}
         </Typography>
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Box sx={{ display: "flex", alignItems: "center", marginTop: 1 }}>
           {deltaIcon}
-          <Typography color={isPositive ? "green" : "red"}>
-            {Math.abs(delta * 100).toFixed(2)}%
+          <Typography color={isPositive ? "green" : "red"} sx={{ marginLeft: 0.5 }}>
+            {(Math.abs(deltaPercentage) * 100).toFixed(2)}%
           </Typography>
         </Box>
       </CardContent>
@@ -33,4 +33,4 @@ const MarketShareCard = ({ brandName, currentShare, delta }) => {
   );
 };
 
-export default MarketShareCard;
+export default TotalMarketCard;
