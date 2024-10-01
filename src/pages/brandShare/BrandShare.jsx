@@ -29,17 +29,13 @@ import TotalMarketCard from "../../components/TotalMarketCard/TotalMarketCard";
 const COLORS = [
   "#F78C6B", // Coral
   "#83D483", // Light Green
-  "#00F5D4", // Turquoise
   "#9B5DE5", // Purple
   "#FFD166", // Yellow
   "#F15BB5", // Pink
-  "#0CB0A9", // Teal
   "#118AB2", // Blue
   "#06D6A0", // Green
   "#EF476F", // Red
-
-
-
+  "#00F5D4", // Turquoise
 ];
 
 // Month names array
