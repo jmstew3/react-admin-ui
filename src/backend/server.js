@@ -178,3 +178,113 @@ app.get("/api/available-dmas", (req, res) => {
     }
   });
 });
+
+// Endpoint to get brand searche volumne by brand
+app.get("/api/brand-search-volume", (req, res) => {
+  const month = req.query.month;
+  const dma_id = req.query.dma_id;
+
+  if (!month || !dma_id) {
+    return res.status(400).json({ error: "month and dma_id are required query parameters" });
+  }
+
+  const query = `
+    SELECT 
+      b.brand_name,
+      SUM(k.search_volume) AS total_brand_search_volume
+    FROM 
+      brands b
+    JOIN 
+      keyword_metrics k ON b.brand_id = k.brand_id
+    WHERE 
+      k.dma_id = ? AND k.month = ?
+    GROUP BY 
+      b.brand_name;
+  `;
+
+  const params = [dma_id, month];
+
+  connection.query(query, params, (err, results) => {
+    if (err) {
+      console.error("Error executing query:", err);
+      res.status(500).json({ error: "Error fetching brand search volume" });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+// Endpoint to get brand market share data for tombstones
+app.get("/api/brand-market-share", (req, res) => {
+  const month = parseInt(req.query.month, 10);
+  const dma_id = parseInt(req.query.dma_id, 10);
+
+  if (isNaN(month) || isNaN(dma_id)) {
+    return res.status(400).json({ error: "month and dma_id must be valid numbers" });
+  }
+
+  // Calculate previous month
+  let previousMonth = month - 1;
+  let previousMonthYearAdjustment = 0;
+  if (previousMonth === 0) {
+    previousMonth = 12;
+    previousMonthYearAdjustment = -1; // Adjust year if needed
+  }
+
+  const query = `
+    SELECT
+      b.brand_id,
+      b.brand_name,
+      IFNULL(current_data.current_brand_share, 0) AS current_brand_share,
+      IFNULL(previous_data.previous_brand_share, 0) AS previous_brand_share,
+      (IFNULL(current_data.current_brand_share, 0) - IFNULL(previous_data.previous_brand_share, 0)) AS delta
+    FROM
+      brands b
+      LEFT JOIN (
+        SELECT
+          k.brand_id,
+          SUM(k.search_volume) / total_current.total_search_volume AS current_brand_share
+        FROM
+          keyword_metrics k,
+          (SELECT SUM(search_volume) AS total_search_volume
+           FROM keyword_metrics
+           WHERE dma_id = ? AND month = ?) total_current
+        WHERE
+          k.dma_id = ? AND k.month = ?
+        GROUP BY
+          k.brand_id
+      ) AS current_data ON b.brand_id = current_data.brand_id
+      LEFT JOIN (
+        SELECT
+          k.brand_id,
+          SUM(k.search_volume) / total_previous.total_search_volume AS previous_brand_share
+        FROM
+          keyword_metrics k,
+          (SELECT SUM(search_volume) AS total_search_volume
+           FROM keyword_metrics
+           WHERE dma_id = ? AND month = ?) total_previous
+        WHERE
+          k.dma_id = ? AND k.month = ?
+        GROUP BY
+          k.brand_id
+      ) AS previous_data ON b.brand_id = previous_data.brand_id
+    WHERE
+      b.type_id = 1; -- Only TurnPoint brands
+  `;
+
+  const params = [
+    dma_id, month,
+    dma_id, month,
+    dma_id, previousMonth,
+    dma_id, previousMonth
+  ];
+
+  connection.query(query, params, (err, results) => {
+    if (err) {
+      console.error("Error executing brand market share query:", err);
+      res.status(500).json({ error: "Error fetching brand market share" });
+    } else {
+      res.json(results);
+    }
+  });
+});
