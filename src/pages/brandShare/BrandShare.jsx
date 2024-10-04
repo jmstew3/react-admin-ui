@@ -10,38 +10,11 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip as RechartsTooltip,
-  Legend,
-  ComposedChart,
-  Bar,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-} from "recharts";
 
 import MarketShareCard from "../../components/MarketShareCard/MarketShareCard";
 import TotalMarketCard from "../../components/TotalMarketCard/TotalMarketCard";
-import BarChartComposed from "../../components/BarChartComposed/BarChartComposed";
-
-const COLORS = [
-  "#F78C6B", // 1 Coral
-  "#83D483", // 2 Light Green
-  "#9B5DE5", // 3 Purple
-  "#FFD166", // 4 Yellow
-  "#F15BB5", // 5 Pink
-  "#118AB2", // 6 Blue
-  "#06D6A0", // 7 Green
-  "#EF476F", // 8 Red
-  "#00F5D4", // 9 Turquoise
-  "#FF006E", // 10 Hot Pink
-  "#33A1FD", // 11 Teal Blue
-];
+import BarChartComponent from "../../components/muix/BarChartComponent/BarChartComponent";
+import PieChartComponent from "../../components/recharts/PieChartComponent/PieChartComponent";
 
 // Month names array
 const monthNames = [
@@ -327,41 +300,6 @@ const BrandShare = () => {
 
   const renderLabel = ({ name }) => name;
 
-  const renderTooltip = ({ payload }) => {
-    if (payload && payload.length) {
-      const { name, value } = payload[0];
-      return (
-        <div>
-          <p>{name}</p>
-          <p>{`Brand Share: ${(value * 100).toFixed(2)}%`}</p>
-        </div>
-      );
-    }
-    return null;
-  };
-
-  const renderBarTooltip = ({ payload }) => {
-    if (payload && payload.length) {
-      const data = payload[0].payload;
-      return (
-        <div
-          style={{
-            backgroundColor: "#fff",
-            padding: "10px",
-            border: "1px solid #ccc",
-          }}
-        >
-          <p>
-            <strong>{data.brand_name}</strong>
-          </p>
-          <p>{`Total Search Volume: ${data.total_brand_search_volume.toLocaleString()}`}</p>
-          <p>{`Budget Amount: $${data.amount.toLocaleString()}`}</p>
-        </div>
-      );
-    }
-    return null;
-  };
-
   // Calculate totals based on the displayed data
   const totalSearchVolume = brandShares.reduce(
     (sum, row) => sum + row.total_dma_search_volume,
@@ -492,33 +430,12 @@ const BrandShare = () => {
                 alignItems: "center",
               }}
             >
-              <PieChart width={700} height={500}>
-                <Pie
-                  data={brandShares}
-                  dataKey="brand_share"
-                  nameKey="brand_name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={150}
-                  fill="#8884d8"
-                  label={renderLabel}
-                >
-                  {brandShares.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
-                  ))}
-                </Pie>
-                <RechartsTooltip content={renderTooltip} />
-                <Legend />
-              </PieChart>
+              <PieChartComponent data={brandShares} />
             </Box>
           </Box>
-          {/* Use the BarChartComposed */}
           {combinedChartData.length > 0 ? (
             <Box sx={{ width: "100%", marginTop: 4 }}>
-              <BarChartComposed data={combinedChartData} />
+              <BarChartComponent data={combinedChartData} />
             </Box>
           ) : (
             <div>No data available for the bar chart.</div>

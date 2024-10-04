@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   ComposedChart,
   Bar,
@@ -8,7 +8,7 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-} from 'recharts';
+} from "recharts";
 
 const BarChartComposed = ({ data }) => {
   const renderBarTooltip = ({ payload }) => {
@@ -17,9 +17,9 @@ const BarChartComposed = ({ data }) => {
       return (
         <div
           style={{
-            backgroundColor: '#fff',
-            padding: '10px',
-            border: '1px solid #ccc',
+            backgroundColor: "#fff",
+            padding: "10px",
+            border: "1px solid #ccc",
           }}
         >
           <p>
@@ -43,13 +43,16 @@ const BarChartComposed = ({ data }) => {
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="brand_name" />
       <YAxis yAxisId="left" />
-      <YAxis yAxisId="right" orientation="right" />
+      <YAxis 
+        yAxisId="right"
+        orientation="right" 
+      />
       <Tooltip content={renderBarTooltip} />
       <Legend />
-      <Bar
+      <Bar 
         yAxisId="left"
         dataKey="total_brand_search_volume"
-        fill="#8884d8"
+        fill="#8884d8" 
       />
       <Line
         yAxisId="right"
