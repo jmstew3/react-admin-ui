@@ -1,5 +1,3 @@
-// BrandShare.jsx
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
@@ -18,26 +16,31 @@ import {
   Cell,
   Tooltip as RechartsTooltip,
   Legend,
-  BarChart,
+  ComposedChart,
   Bar,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
+  Tooltip,
 } from "recharts";
 
 import MarketShareCard from "../../components/MarketShareCard/MarketShareCard";
 import TotalMarketCard from "../../components/TotalMarketCard/TotalMarketCard";
+import BarChartComposed from "../../components/BarChartComposed/BarChartComposed";
 
 const COLORS = [
-  "#F78C6B", // Coral
-  "#83D483", // Light Green
-  "#9B5DE5", // Purple
-  "#FFD166", // Yellow
-  "#F15BB5", // Pink
-  "#118AB2", // Blue
-  "#06D6A0", // Green
-  "#EF476F", // Red
-  "#00F5D4", // Turquoise
+  "#F78C6B", // 1 Coral
+  "#83D483", // 2 Light Green
+  "#9B5DE5", // 3 Purple
+  "#FFD166", // 4 Yellow
+  "#F15BB5", // 5 Pink
+  "#118AB2", // 6 Blue
+  "#06D6A0", // 7 Green
+  "#EF476F", // 8 Red
+  "#00F5D4", // 9 Turquoise
+  "#FF006E", // 10 Hot Pink
+  "#33A1FD", // 11 Teal Blue
 ];
 
 // Month names array
@@ -59,6 +62,8 @@ const monthNames = [
 const BrandShare = () => {
   const [brandShares, setBrandShares] = useState([]);
   const [brandSearchVolumes, setBrandSearchVolumes] = useState([]);
+  const [budgetsData, setBudgetsData] = useState([]); // Added state for budgets data
+  const [combinedChartData, setCombinedChartData] = useState([]); // Added state for combined data
   const [marketShareData, setMarketShareData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -180,6 +185,7 @@ const BrandShare = () => {
             total_brand_search_volume: parseFloat(
               item.total_brand_search_volume
             ),
+            brand_id: item.brand_id, // Ensure brand_id is included
           }))
         );
       } catch (err) {
@@ -189,6 +195,40 @@ const BrandShare = () => {
 
     fetchBrandSearchVolumes();
   }, [selectedMonth, selectedDmaId]);
+
+  // Fetch budget data
+  useEffect(() => {
+    const fetchBudgetsData = async () => {
+      try {
+        const response = await axios.get("http://localhost:9001/api/budgets", {
+          params: { month: selectedMonth, dma_id: selectedDmaId },
+        });
+        setBudgetsData(response.data);
+      } catch (err) {
+        console.error("Error fetching budgets data:", err);
+      }
+    };
+
+    if (selectedDmaId) {
+      fetchBudgetsData();
+    }
+  }, [selectedMonth, selectedDmaId]);
+
+  // Merge brandSearchVolumes and budgetsData
+  useEffect(() => {
+    if (brandSearchVolumes.length > 0) {
+      const mergedData = brandSearchVolumes.map((bsv) => {
+        const budget = budgetsData.find((b) => b.brand_id === bsv.brand_id);
+        return {
+          ...bsv,
+          amount: budget ? budget.amount : 0,
+        };
+      });
+      setCombinedChartData(mergedData);
+    } else {
+      setCombinedChartData([]);
+    }
+  }, [brandSearchVolumes, budgetsData]);
 
   // Fetch market share data and compute competitor share
   useEffect(() => {
@@ -294,6 +334,28 @@ const BrandShare = () => {
         <div>
           <p>{name}</p>
           <p>{`Brand Share: ${(value * 100).toFixed(2)}%`}</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const renderBarTooltip = ({ payload }) => {
+    if (payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div
+          style={{
+            backgroundColor: "#fff",
+            padding: "10px",
+            border: "1px solid #ccc",
+          }}
+        >
+          <p>
+            <strong>{data.brand_name}</strong>
+          </p>
+          <p>{`Total Search Volume: ${data.total_brand_search_volume.toLocaleString()}`}</p>
+          <p>{`Budget Amount: $${data.amount.toLocaleString()}`}</p>
         </div>
       );
     }
@@ -453,23 +515,10 @@ const BrandShare = () => {
               </PieChart>
             </Box>
           </Box>
-
-          {/* Bar Chart */}
-          {brandSearchVolumes.length > 0 ? (
+          {/* Use the BarChartComposed */}
+          {combinedChartData.length > 0 ? (
             <Box sx={{ width: "100%", marginTop: 4 }}>
-              <BarChart
-                width={800}
-                height={400}
-                data={brandSearchVolumes}
-                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="brand_name" />
-                <YAxis />
-                <RechartsTooltip />
-                <Legend />
-                <Bar dataKey="total_brand_search_volume" fill="#8884d8" />
-              </BarChart>
+              <BarChartComposed data={combinedChartData} />
             </Box>
           ) : (
             <div>No data available for the bar chart.</div>
