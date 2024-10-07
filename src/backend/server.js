@@ -60,12 +60,14 @@ app.get("/api/brand-share-data", async (req, res) => {
       budgetsData,
       marketShareData,
       totalDmaSearchVolumeData,
+      competitorSearchVolumeData, // Add this line
     ] = await Promise.all([
       getBrandShares(month, dma_id),
       getBrandSearchVolumes(month, dma_id),
       getBudgetsData(month, dma_id),
       getMarketShareData(month, dma_id),
       getTotalDmaSearchVolumeData(month, dma_id),
+      getCompetitorSearchVolumeData(month, dma_id), // And this line
     ]);
 
     // Send all the data in a single response
@@ -75,6 +77,7 @@ app.get("/api/brand-share-data", async (req, res) => {
       budgetsData,
       marketShareData,
       totalDmaSearchVolumeData,
+      competitorSearchVolumeData, // Include this in the response
     });
   } catch (err) {
     console.error("Error fetching data:", err);
@@ -265,7 +268,13 @@ const getTotalDmaSearchVolumeData = (month, dma_id) => {
       WHERE dma_id = ? AND (month = ? OR month = ?)
     `;
 
-    const params = [currentMonth, previousMonth, dma_id, currentMonth, previousMonth];
+    const params = [
+      currentMonth,
+      previousMonth,
+      dma_id,
+      currentMonth,
+      previousMonth,
+    ];
 
     pool.query(query, params, (err, results) => {
       if (err) {
@@ -312,3 +321,33 @@ app.get("/api/available-dmas", (req, res) => {
     }
   });
 });
+
+// Function to get competitor search volume data
+const getCompetitorSearchVolumeData = (month, dma_id) => {
+  return new Promise((resolve, reject) => {
+    const currentMonth = parseInt(month, 10);
+    let previousMonth = currentMonth - 1;
+    if (previousMonth === 0) {
+      previousMonth = 12;
+    }
+
+    const query = `
+      SELECT
+        SUM(CASE WHEN k.month = ? THEN k.search_volume ELSE 0 END) AS current_competitor_search_volume,
+        SUM(CASE WHEN k.month = ? THEN k.search_volume ELSE 0 END) AS previous_competitor_search_volume
+      FROM keyword_metrics k
+      JOIN brands b ON k.brand_id = b.brand_id
+      WHERE k.dma_id = ? AND (k.month = ? OR k.month = ?) AND b.type_id = 2
+    `;
+
+    const params = [currentMonth, previousMonth, dma_id, currentMonth, previousMonth];
+
+    pool.query(query, params, (err, results) => {
+      if (err) {
+        console.error("Error executing getCompetitorSearchVolumeData query:", err);
+        return reject(err);
+      }
+      resolve(results[0]); // results is an array with one object
+    });
+  });
+};

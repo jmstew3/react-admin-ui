@@ -23,7 +23,7 @@ const TotalMarketCard = ({ title, currentValue, deltaPercentage }) => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Card sx={{ minWidth: 150, margin: 1 }}>
+      <Card sx={{ minWidth: 150, maxWidth: 350, margin: 1 }}>
         <CardContent>
           <Typography variant="h8" component="div" color="text.primary">
             {title}

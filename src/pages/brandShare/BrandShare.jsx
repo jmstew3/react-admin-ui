@@ -107,7 +107,7 @@ const BrandShare = () => {
 
   // Fetch all data using the unified endpoint
   useEffect(() => {
-    if (selectedDmaId === null) return;
+    if (selectedDmaId === null || selectedMonth === null) return;
 
     const fetchData = async () => {
       setIsLoading(true);
@@ -144,9 +144,6 @@ const BrandShare = () => {
         // Process combined chart data
         processCombinedChartData(data.brandSearchVolumes, data.budgetsData);
 
-        // Compute competitor share and set market share data
-        computeCompetitorShare(data.marketShareData);
-
         // Set total DMA search volume data
         const currentTotal =
           parseFloat(
@@ -166,6 +163,34 @@ const BrandShare = () => {
           currentTotal,
           deltaPercentage,
         });
+
+        // Extract competitor search volume data
+        const currentCompetitorVolume =
+          parseFloat(
+            data.competitorSearchVolumeData.current_competitor_search_volume
+          ) || 0;
+        const previousCompetitorVolume =
+          parseFloat(
+            data.competitorSearchVolumeData.previous_competitor_search_volume
+          ) || 0;
+
+        // Compute competitor share
+        computeCompetitorShare(
+          currentCompetitorVolume,
+          previousCompetitorVolume,
+          currentTotal,
+          previousTotal
+        );
+
+        // Set market share data (brands)
+        const marketData = data.marketShareData.map((item) => ({
+          ...item,
+          current_brand_share: parseFloat(item.current_brand_share),
+          previous_brand_share: parseFloat(item.previous_brand_share),
+          delta: parseFloat(item.delta),
+        }));
+
+        setMarketShareData(marketData);
 
         setIsLoading(false);
       } catch (err) {
@@ -205,32 +230,25 @@ const BrandShare = () => {
   };
 
   // Function to compute competitor share
-  const computeCompetitorShare = (marketShareData) => {
-    const data = marketShareData.map((item) => ({
-      ...item,
-      current_brand_share: parseFloat(item.current_brand_share),
-      previous_brand_share: parseFloat(item.previous_brand_share),
-      delta: parseFloat(item.delta),
-    }));
-
-    setMarketShareData(data);
-
-    const totalTurnPointShare = data.reduce(
-      (sum, item) => sum + item.current_brand_share,
-      0
-    );
-    const totalPreviousTurnPointShare = data.reduce(
-      (sum, item) => sum + item.previous_brand_share,
-      0
-    );
-
-    const competitorShare = 1 - totalTurnPointShare;
-    const previousCompetitorShare = 1 - totalPreviousTurnPointShare;
-    const competitorDelta = competitorShare - previousCompetitorShare;
+  const computeCompetitorShare = (
+    currentCompetitorVolume,
+    previousCompetitorVolume,
+    currentTotalVolume,
+    previousTotalVolume
+  ) => {
+    const currentShare =
+      currentTotalVolume !== 0
+        ? currentCompetitorVolume / currentTotalVolume
+        : 0;
+    const previousShare =
+      previousTotalVolume !== 0
+        ? previousCompetitorVolume / previousTotalVolume
+        : 0;
+    const delta = currentShare - previousShare;
 
     setCompetitorShareData({
-      currentShare: competitorShare,
-      delta: competitorDelta,
+      currentShare,
+      delta,
     });
   };
 
@@ -288,7 +306,8 @@ const BrandShare = () => {
           {/* Total Market Card */}
           <TotalMarketCard
             key="total-market"
-            title={`Total Market Google Demand for ${selectedDmaName}`}
+            // title={`Total Market Google Demand for ${selectedDmaName}`}
+            title={`Total Keyword Demand in DMA`}
             currentValue={totalDmaSearchVolumeData.currentTotal}
             deltaPercentage={totalDmaSearchVolumeData.deltaPercentage}
           />
