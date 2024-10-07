@@ -1,68 +1,80 @@
-import React from "react";
-import {
-  ComposedChart,
-  Bar,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-} from "recharts";
+import { Box, ThemeProvider, createTheme } from '@mui/material';
+import { ResponsiveChartContainer } from '@mui/x-charts/ResponsiveChartContainer';
+import { LinePlot } from '@mui/x-charts/LineChart';
+import { BarPlot } from '@mui/x-charts/BarChart';
+import { ChartsXAxis } from '@mui/x-charts/ChartsXAxis';
+import { ChartsYAxis } from '@mui/x-charts/ChartsYAxis';
+import { axisClasses } from '@mui/x-charts/ChartsAxis';
 
-const BarChartComposed = ({ data }) => {
-  const renderBarTooltip = ({ payload }) => {
-    if (payload && payload.length) {
-      const data = payload[0].payload;
-      return (
-        <div
-          style={{
-            backgroundColor: "#fff",
-            padding: "10px",
-            border: "1px solid #ccc",
-          }}
-        >
-          <p>
-            <strong>{data.brand_name}</strong>
-          </p>
-          <p>{`Total Search Volume: ${data.total_brand_search_volume.toLocaleString()}`}</p>
-          <p>{`Budget Amount: $${data.amount.toLocaleString()}`}</p>
-        </div>
-      );
-    }
-    return null;
-  };
+// Define a custom theme to apply white text
+const theme = createTheme({
+  palette: {
+    text: {
+      primary: '#FFFFFF', // Set the primary text to white
+    },
+  },
+});
+
+const BarChartComponent = ({ data }) => {
+  const brandNames = data.map((item) => item.brand_name);
+  const searchVolumes = data.map((item) => item.total_brand_search_volume);
+  const amounts = data.map((item) => item.amount);
 
   return (
-    <ComposedChart
-      width={1200}
-      height={400}
-      data={data}
-      margin={{ top: 20, right: 80, left: 20, bottom: 5 }}
-    >
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="brand_name" />
-      <YAxis yAxisId="left" />
-      <YAxis 
-        yAxisId="right"
-        orientation="right" 
-      />
-      <Tooltip content={renderBarTooltip} />
-      <Legend />
-      <Bar 
-        yAxisId="left"
-        dataKey="total_brand_search_volume"
-        fill="#8884d8" 
-      />
-      <Line
-        yAxisId="right"
-        type="monotone"
-        dataKey="amount"
-        stroke="#ff7300"
-        strokeWidth={2}
-      />
-    </ComposedChart>
+    <ThemeProvider theme={theme}>
+      <Box sx={{ width: '100%', maxWidth: 1400 }}>
+        <ResponsiveChartContainer
+          xAxis={[
+            {
+              scaleType: 'band',
+              data: brandNames,
+              id: 'brands',
+              label: 'Brands',
+            },
+          ]}
+          yAxis={[{ id: 'searchVolume' }, { id: 'amount' }]}
+          series={[
+            {
+              type: 'line',
+              id: 'amount',
+              yAxisId: 'amount',
+              data: amounts,
+            },
+            {
+              type: 'bar',
+              id: 'searchVolume',
+              yAxisId: 'searchVolume',
+              data: searchVolumes,
+            },
+          ]}
+          height={400}
+          margin={{ left: 70, right: 70 }}
+          sx={{
+            [`.${axisClasses.left} .${axisClasses.label}`]: {
+              transform: 'translate(-25px, 0)',
+              fill: 'white', // Left Y axis label color
+              color: 'white', // Left Y axis ticks color
+            },
+            [`.${axisClasses.right} .${axisClasses.label}`]: {
+              transform: 'translate(30px, 0)',
+              fill: 'white', // Right Y axis label color
+              color: 'white', // Right Y axis ticks color
+            },
+            [`.${axisClasses.bottom} .${axisClasses.label}`]: {
+              fill: 'white', // X axis label color
+              color: 'white', // X axis ticks color
+            },
+          }}
+        >
+          <BarPlot />
+          <LinePlot />
+          <ChartsXAxis axisId="brands" label="Market Brands" />
+          <ChartsYAxis axisId="searchVolume" label="Total Search Volume" />
+          <ChartsYAxis axisId="amount" position="right" label="Marketing Budget" />
+        </ResponsiveChartContainer>
+      </Box>
+    </ThemeProvider>
   );
 };
 
-export default BarChartComposed;
+export default BarChartComponent;

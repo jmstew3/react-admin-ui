@@ -161,6 +161,8 @@ const BrandShare = () => {
             brand_id: item.brand_id, // Ensure brand_id is included
           }))
         );
+        // Add this line
+        console.log("Processed Brand Search Volumes:", response.data);
       } catch (err) {
         console.error("Error fetching brand search volumes:", err);
       }
@@ -177,6 +179,8 @@ const BrandShare = () => {
           params: { month: selectedMonth, dma_id: selectedDmaId },
         });
         setBudgetsData(response.data);
+        // Add this line
+        console.log("Budgets Data:", response.data);
       } catch (err) {
         console.error("Error fetching budgets data:", err);
       }
@@ -289,6 +293,35 @@ const BrandShare = () => {
 
     fetchTotalDmaSearchVolume();
   }, [selectedMonth, selectedDmaId]);
+
+  useEffect(() => {
+    // Aggregate budget amounts by brand_name
+    const aggregatedBudgets = budgetsData.reduce((acc, budget) => {
+      if (!acc[budget.brand_name]) {
+        acc[budget.brand_name] = 0;
+      }
+      acc[budget.brand_name] += parseFloat(budget.amount); // Sum the amount for each brand
+      return acc;
+    }, {});
+  
+    console.log("Aggregated Budgets:", aggregatedBudgets); // Check the aggregated data
+  
+    // Merge brandSearchVolumes and aggregatedBudgets
+    if (brandSearchVolumes.length > 0) {
+      const mergedData = brandSearchVolumes.map((bsv) => {
+        const budgetAmount = aggregatedBudgets[bsv.brand_name] || 0; // Use aggregated amount
+        return {
+          ...bsv,
+          amount: budgetAmount, // Assign the aggregated budget amount
+        };
+      });
+  
+      console.log("Merged Chart Data:", mergedData); // Log merged data for verification
+      setCombinedChartData(mergedData);
+    } else {
+      setCombinedChartData([]);
+    }
+  }, [brandSearchVolumes, budgetsData]);
 
   const handleMonthChange = (e) => {
     setSelectedMonth(Number(e.target.value));
