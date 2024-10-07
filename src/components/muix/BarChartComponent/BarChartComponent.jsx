@@ -1,16 +1,16 @@
-import { Box, ThemeProvider, createTheme } from '@mui/material';
-import { ResponsiveChartContainer } from '@mui/x-charts/ResponsiveChartContainer';
-import { LinePlot } from '@mui/x-charts/LineChart';
-import { BarPlot } from '@mui/x-charts/BarChart';
-import { ChartsXAxis } from '@mui/x-charts/ChartsXAxis';
-import { ChartsYAxis } from '@mui/x-charts/ChartsYAxis';
-import { axisClasses } from '@mui/x-charts/ChartsAxis';
+import { Box, ThemeProvider, createTheme } from "@mui/material";
+import { ResponsiveChartContainer } from "@mui/x-charts/ResponsiveChartContainer";
+import { LinePlot } from "@mui/x-charts/LineChart";
+import { BarPlot } from "@mui/x-charts/BarChart";
+import { ChartsXAxis } from "@mui/x-charts/ChartsXAxis";
+import { ChartsYAxis } from "@mui/x-charts/ChartsYAxis";
+import { axisClasses } from "@mui/x-charts/ChartsAxis";
 
 // Define a custom theme to apply white text
 const theme = createTheme({
   palette: {
     text: {
-      primary: '#FFFFFF', // Set the primary text to white
+      primary: "#FFFFFF", // Set the primary text to white
     },
   },
 });
@@ -22,28 +22,28 @@ const BarChartComponent = ({ data }) => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box sx={{ width: '100%', maxWidth: 1400 }}>
+      <Box sx={{ width: "100%", maxWidth: 1400 }}>
         <ResponsiveChartContainer
           xAxis={[
             {
-              scaleType: 'band',
+              scaleType: "band",
               data: brandNames,
-              id: 'brands',
-              label: 'Brands',
+              id: "brands",
+              label: "Brands",
             },
           ]}
-          yAxis={[{ id: 'searchVolume' }, { id: 'amount' }]}
+          yAxis={[{ id: "searchVolume" }, { id: "amount" }]}
           series={[
             {
-              type: 'line',
-              id: 'amount',
-              yAxisId: 'amount',
+              type: "line",
+              id: "amount",
+              yAxisId: "amount",
               data: amounts,
             },
             {
-              type: 'bar',
-              id: 'searchVolume',
-              yAxisId: 'searchVolume',
+              type: "bar",
+              id: "searchVolume",
+              yAxisId: "searchVolume",
               data: searchVolumes,
             },
           ]}
@@ -51,18 +51,18 @@ const BarChartComponent = ({ data }) => {
           margin={{ left: 70, right: 70 }}
           sx={{
             [`.${axisClasses.left} .${axisClasses.label}`]: {
-              transform: 'translate(-25px, 0)',
-              fill: 'white', // Left Y axis label color
-              color: 'white', // Left Y axis ticks color
+              transform: "translate(-25px, 0)",
+              fill: "white", // Left Y axis label color
+              color: "white", // Left Y axis ticks color
             },
             [`.${axisClasses.right} .${axisClasses.label}`]: {
-              transform: 'translate(30px, 0)',
-              fill: 'white', // Right Y axis label color
-              color: 'white', // Right Y axis ticks color
+              transform: "translate(30px, 0)",
+              fill: "white", // Right Y axis label color
+              color: "white", // Right Y axis ticks color
             },
             [`.${axisClasses.bottom} .${axisClasses.label}`]: {
-              fill: 'white', // X axis label color
-              color: 'white', // X axis ticks color
+              fill: "white", // X axis label color
+              color: "white", // X axis ticks color
             },
           }}
         >
@@ -70,7 +70,11 @@ const BarChartComponent = ({ data }) => {
           <LinePlot />
           <ChartsXAxis axisId="brands" label="Market Brands" />
           <ChartsYAxis axisId="searchVolume" label="Total Search Volume" />
-          <ChartsYAxis axisId="amount" position="right" label="Marketing Budget" />
+          <ChartsYAxis
+            axisId="amount"
+            position="right"
+            label="Marketing Budget"
+          />
         </ResponsiveChartContainer>
       </Box>
     </ThemeProvider>
