@@ -1,3 +1,4 @@
+// BrandShare.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
@@ -35,8 +36,8 @@ const monthNames = [
 const BrandShare = () => {
   const [brandShares, setBrandShares] = useState([]);
   const [brandSearchVolumes, setBrandSearchVolumes] = useState([]);
-  const [budgetsData, setBudgetsData] = useState([]); // Added state for budgets data
-  const [combinedChartData, setCombinedChartData] = useState([]); // Added state for combined data
+  const [budgetsData, setBudgetsData] = useState([]);
+  const [combinedChartData, setCombinedChartData] = useState([]);
   const [marketShareData, setMarketShareData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -44,7 +45,7 @@ const BrandShare = () => {
   // Get the current month number (1-12)
   const currentMonth = new Date().getMonth() + 1;
   const [selectedMonth, setSelectedMonth] = useState(currentMonth);
-  const [selectedDmaId, setSelectedDmaId] = useState(null); // Initialize as null
+  const [selectedDmaId, setSelectedDmaId] = useState(null);
 
   const [availableMonths, setAvailableMonths] = useState([]);
   const [availableDmas, setAvailableDmas] = useState([]);
@@ -68,8 +69,6 @@ const BrandShare = () => {
         );
         const sortedMonths = response.data.sort((a, b) => a.month - b.month);
         setAvailableMonths(sortedMonths);
-        // Optionally set default month to the first available month
-        // setSelectedMonth(sortedMonths[0]?.month);
       } catch (err) {
         console.error("Error fetching available months:", err);
       }
@@ -87,8 +86,7 @@ const BrandShare = () => {
         );
         setAvailableDmas(response.data);
 
-        // After fetching DMAs, set selectedDmaId
-        // Preferably set to 40 if it exists, else first DMA's ID
+        // Set default DMA ID
         const defaultDma = response.data.find((dma) => dma.dma_id === 40);
         if (defaultDma) {
           setSelectedDmaId(defaultDma.dma_id);
@@ -107,176 +105,58 @@ const BrandShare = () => {
   const selectedDma = availableDmas.find((dma) => dma.dma_id === selectedDmaId);
   const selectedDmaName = selectedDma ? selectedDma.dma_name : "";
 
-  // Fetch brand shares data
+  // Fetch all data using the unified endpoint
   useEffect(() => {
-    if (selectedDmaId === null) return; // Don't fetch if DMA ID is not set
+    if (selectedDmaId === null) return;
 
-    const fetchBrandShares = async () => {
+    const fetchData = async () => {
       setIsLoading(true);
       try {
         const response = await axios.get(
-          "http://localhost:9001/api/brand-share",
+          "http://localhost:9001/api/brand-share-data",
           {
             params: { month: selectedMonth, dma_id: selectedDmaId },
           }
         );
-        console.log("API Response (Brand Shares):", response.data);
+        const data = response.data;
+
+        // Set the state variables
         setBrandShares(
-          response.data.map((item) => ({
+          data.brandShares.map((item) => ({
             ...item,
             brand_share: parseFloat(item.brand_share),
             total_dma_search_volume: parseFloat(item.total_dma_search_volume),
           }))
         );
-        setIsLoading(false);
-      } catch (err) {
-        setError(err);
-        setIsLoading(false);
-        console.error("Error fetching brand shares:", err);
-      }
-    };
 
-    fetchBrandShares();
-  }, [selectedMonth, selectedDmaId]);
-
-  // Fetch data for the bar chart
-  useEffect(() => {
-    if (selectedDmaId === null) return; // Don't fetch if DMA ID is not set
-
-    const fetchBrandSearchVolumes = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:9001/api/brand-search-volume",
-          {
-            params: { month: selectedMonth, dma_id: selectedDmaId },
-          }
-        );
-        console.log("API Response (Brand Search Volumes):", response.data);
         setBrandSearchVolumes(
-          response.data.map((item) => ({
+          data.brandSearchVolumes.map((item) => ({
             ...item,
             total_brand_search_volume: parseFloat(
               item.total_brand_search_volume
             ),
-            brand_id: item.brand_id, // Ensure brand_id is included
+            brand_id: item.brand_id,
           }))
         );
-        // Add this line
-        console.log("Processed Brand Search Volumes:", response.data);
-      } catch (err) {
-        console.error("Error fetching brand search volumes:", err);
-      }
-    };
 
-    fetchBrandSearchVolumes();
-  }, [selectedMonth, selectedDmaId]);
+        setBudgetsData(data.budgetsData);
 
-  // Fetch budget data
-  useEffect(() => {
-    const fetchBudgetsData = async () => {
-      try {
-        const response = await axios.get("http://localhost:9001/api/budgets", {
-          params: { month: selectedMonth, dma_id: selectedDmaId },
-        });
-        setBudgetsData(response.data);
-        // Add this line
-        console.log("Budgets Data:", response.data);
-      } catch (err) {
-        console.error("Error fetching budgets data:", err);
-      }
-    };
+        // Process combined chart data
+        processCombinedChartData(data.brandSearchVolumes, data.budgetsData);
 
-    if (selectedDmaId) {
-      fetchBudgetsData();
-    }
-  }, [selectedMonth, selectedDmaId]);
+        // Compute competitor share and set market share data
+        computeCompetitorShare(data.marketShareData);
 
-  // Merge brandSearchVolumes and budgetsData
-  useEffect(() => {
-    if (brandSearchVolumes.length > 0) {
-      const mergedData = brandSearchVolumes.map((bsv) => {
-        const budget = budgetsData.find((b) => b.brand_id === bsv.brand_id);
-        return {
-          ...bsv,
-          amount: budget ? budget.amount : 0,
-        };
-      });
-      setCombinedChartData(mergedData);
-    } else {
-      setCombinedChartData([]);
-    }
-  }, [brandSearchVolumes, budgetsData]);
-
-  // Fetch market share data and compute competitor share
-  useEffect(() => {
-    if (selectedDmaId === null) return; // Don't fetch if DMA ID is not set
-
-    const fetchMarketShareData = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:9001/api/brand-market-share",
-          {
-            params: { month: selectedMonth, dma_id: selectedDmaId },
-          }
-        );
-        console.log("Market Share Data Response:", response.data);
-
-        const data = response.data.map((item) => ({
-          ...item,
-          current_brand_share: parseFloat(item.current_brand_share),
-          previous_brand_share: parseFloat(item.previous_brand_share),
-          delta: parseFloat(item.delta),
-        }));
-
-        setMarketShareData(data);
-
-        // Compute total TurnPoint share
-        const totalTurnPointShare = data.reduce(
-          (sum, item) => sum + item.current_brand_share,
-          0
-        );
-        const totalPreviousTurnPointShare = data.reduce(
-          (sum, item) => sum + item.previous_brand_share,
-          0
-        );
-
-        // Compute competitor share
-        const competitorShare = 1 - totalTurnPointShare;
-        const previousCompetitorShare = 1 - totalPreviousTurnPointShare;
-        const competitorDelta = competitorShare - previousCompetitorShare;
-
-        // Set competitor share data
-        setCompetitorShareData({
-          currentShare: competitorShare,
-          delta: competitorDelta,
-        });
-      } catch (err) {
-        console.error("Error fetching market share data:", err);
-      }
-    };
-
-    fetchMarketShareData();
-  }, [selectedMonth, selectedDmaId]);
-
-  // Fetch total DMA search volume data
-  useEffect(() => {
-    if (selectedDmaId === null) return; // Don't fetch if DMA ID is not set
-
-    const fetchTotalDmaSearchVolume = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:9001/api/total-dma-search-volume",
-          {
-            params: { month: selectedMonth, dma_id: selectedDmaId },
-          }
-        );
-
+        // Set total DMA search volume data
         const currentTotal =
-          parseFloat(response.data.current_total_search_volume) || 0;
+          parseFloat(
+            data.totalDmaSearchVolumeData.current_total_search_volume
+          ) || 0;
         const previousTotal =
-          parseFloat(response.data.previous_total_search_volume) || 0;
+          parseFloat(
+            data.totalDmaSearchVolumeData.previous_total_search_volume
+          ) || 0;
 
-        // Calculate delta percentage
         const deltaPercentage =
           previousTotal !== 0
             ? (currentTotal - previousTotal) / previousTotal
@@ -286,42 +166,73 @@ const BrandShare = () => {
           currentTotal,
           deltaPercentage,
         });
+
+        setIsLoading(false);
       } catch (err) {
-        console.error("Error fetching total DMA search volume data:", err);
+        console.error("Error fetching data:", err);
+        setError(err);
+        setIsLoading(false);
       }
     };
 
-    fetchTotalDmaSearchVolume();
+    fetchData();
   }, [selectedMonth, selectedDmaId]);
 
-  useEffect(() => {
-    // Aggregate budget amounts by brand_name
+  // Function to process combined chart data
+  const processCombinedChartData = (brandSearchVolumes, budgetsData) => {
+    // Aggregate budget amounts by brand_id
     const aggregatedBudgets = budgetsData.reduce((acc, budget) => {
-      if (!acc[budget.brand_name]) {
-        acc[budget.brand_name] = 0;
+      if (!acc[budget.brand_id]) {
+        acc[budget.brand_id] = 0;
       }
-      acc[budget.brand_name] += parseFloat(budget.amount); // Sum the amount for each brand
+      acc[budget.brand_id] += parseFloat(budget.amount);
       return acc;
     }, {});
-  
-    console.log("Aggregated Budgets:", aggregatedBudgets); // Check the aggregated data
-  
+
     // Merge brandSearchVolumes and aggregatedBudgets
     if (brandSearchVolumes.length > 0) {
       const mergedData = brandSearchVolumes.map((bsv) => {
-        const budgetAmount = aggregatedBudgets[bsv.brand_name] || 0; // Use aggregated amount
+        const budgetAmount = aggregatedBudgets[bsv.brand_id] || 0;
         return {
           ...bsv,
-          amount: budgetAmount, // Assign the aggregated budget amount
+          amount: budgetAmount,
         };
       });
-  
-      console.log("Merged Chart Data:", mergedData); // Log merged data for verification
       setCombinedChartData(mergedData);
     } else {
       setCombinedChartData([]);
     }
-  }, [brandSearchVolumes, budgetsData]);
+  };
+
+  // Function to compute competitor share
+  const computeCompetitorShare = (marketShareData) => {
+    const data = marketShareData.map((item) => ({
+      ...item,
+      current_brand_share: parseFloat(item.current_brand_share),
+      previous_brand_share: parseFloat(item.previous_brand_share),
+      delta: parseFloat(item.delta),
+    }));
+
+    setMarketShareData(data);
+
+    const totalTurnPointShare = data.reduce(
+      (sum, item) => sum + item.current_brand_share,
+      0
+    );
+    const totalPreviousTurnPointShare = data.reduce(
+      (sum, item) => sum + item.previous_brand_share,
+      0
+    );
+
+    const competitorShare = 1 - totalTurnPointShare;
+    const previousCompetitorShare = 1 - totalPreviousTurnPointShare;
+    const competitorDelta = competitorShare - previousCompetitorShare;
+
+    setCompetitorShareData({
+      currentShare: competitorShare,
+      delta: competitorDelta,
+    });
+  };
 
   const handleMonthChange = (e) => {
     setSelectedMonth(Number(e.target.value));
@@ -330,8 +241,6 @@ const BrandShare = () => {
   const handleDmaIdChange = (e) => {
     setSelectedDmaId(Number(e.target.value));
   };
-
-  const renderLabel = ({ name }) => name;
 
   // Calculate totals based on the displayed data
   const totalSearchVolume = brandShares.reduce(

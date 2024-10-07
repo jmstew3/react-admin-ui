@@ -1,3 +1,4 @@
+// server.js
 import express from "express";
 import mysql from "mysql2";
 import cors from "cors";
@@ -23,8 +24,15 @@ const pool = mysql.createPool({
 });
 
 // Ensure environment variables are set
-if (!process.env.DB_HOST || !process.env.DB_USER || !process.env.DB_PASSWORD || !process.env.DB_DATABASE) {
-  console.error('Missing one or more required environment variables: DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE');
+if (
+  !process.env.DB_HOST ||
+  !process.env.DB_USER ||
+  !process.env.DB_PASSWORD ||
+  !process.env.DB_DATABASE
+) {
+  console.error(
+    "Missing one or more required environment variables: DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE"
+  );
   process.exit(1); // Exit the process with a failure code
 }
 
@@ -32,93 +40,245 @@ app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 
-// Route for /api/competitor-brands
-app.get("/api/competitor-brands", (req, res) => {
-  const query = `
-    SELECT b.brand_name, t.type_value
-    FROM brands b
-    JOIN type t ON b.type_id = t.type_id
-    WHERE t.type_value = 'TP Competitor';
-  `;
+// Existing endpoints (if any) remain unchanged
 
-  pool.query(query, (err, results) => {
-    if (err) {
-      console.error("Error executing query:", err);
-      res.status(500).json({ error: "Error fetching competitor brands" });
-    } else {
-      res.json(results);
-    }
-  });
-});
-
-// Route for /api/historical-keywords
-app.get("/api/historical-keywords", (_, res) => {
-  const query = `
-    SELECT 
-        km.month,
-        d.dma_name,
-        SUM(km.search_volume) AS total_search_volume
-    FROM 
-        keyword_metrics km
-    JOIN 
-        dmas d ON km.dma_id = d.dma_id
-    GROUP BY 
-        km.month, d.dma_name
-    ORDER BY 
-        km.month, d.dma_name;
-  `;
-
-  pool.query(query, (err, results) => {
-    if (err) {
-      console.error("Error executing query:", err);
-      res.status(500).json({ error: "Error fetching historical keywords" });
-    } else {
-      res.json(results);
-    }
-  });
-});
-
-// Route for /api/brand-share
-app.get("/api/brand-share", (req, res) => {
+// Unified endpoint for BrandShare data
+app.get("/api/brand-share-data", async (req, res) => {
   const { month, dma_id } = req.query;
 
   if (!month || !dma_id) {
-    return res.status(400).json({ error: "month and dma_id are required query parameters" });
+    return res
+      .status(400)
+      .json({ error: "month and dma_id are required query parameters" });
   }
 
-  const query = `
-    SELECT 
-      b.brand_name,
-      d.dma_name,
-      SUM(k.search_volume) AS total_dma_search_volume,
-      SUM(k.search_volume) * 1.0 / (
-        SELECT SUM(search_volume) 
-        FROM keyword_metrics 
-        WHERE dma_id = ? AND month = ?
-      ) AS brand_share
-    FROM 
-      brands b
-    JOIN 
-      keyword_metrics k ON b.brand_id = k.brand_id
-    JOIN 
-      dmas d ON k.dma_id = d.dma_id
-    WHERE 
-      k.dma_id = ? AND k.month = ?
-    GROUP BY 
-      b.brand_name, d.dma_name;
-  `;
+  try {
+    // Execute all the necessary queries in parallel
+    const [
+      brandShares,
+      brandSearchVolumes,
+      budgetsData,
+      marketShareData,
+      totalDmaSearchVolumeData,
+    ] = await Promise.all([
+      getBrandShares(month, dma_id),
+      getBrandSearchVolumes(month, dma_id),
+      getBudgetsData(month, dma_id),
+      getMarketShareData(month, dma_id),
+      getTotalDmaSearchVolumeData(month, dma_id),
+    ]);
 
-  const params = [dma_id, month, dma_id, month];
-
-  pool.query(query, params, (err, results) => {
-    if (err) {
-      console.error("Error executing query:", err);
-      res.status(500).json({ error: "Error fetching keyword share" });
-    } else {
-      res.json(results);
-    }
-  });
+    // Send all the data in a single response
+    res.json({
+      brandShares,
+      brandSearchVolumes,
+      budgetsData,
+      marketShareData,
+      totalDmaSearchVolumeData,
+    });
+  } catch (err) {
+    console.error("Error fetching data:", err);
+    res.status(500).json({ error: "Error fetching data" });
+  }
 });
+
+// Helper functions for database queries
+
+// Function to get brand shares
+const getBrandShares = (month, dma_id) => {
+  return new Promise((resolve, reject) => {
+    const query = `
+      SELECT 
+        b.brand_name,
+        d.dma_name,
+        SUM(k.search_volume) AS total_dma_search_volume,
+        SUM(k.search_volume) * 1.0 / (
+          SELECT SUM(search_volume) 
+          FROM keyword_metrics 
+          WHERE dma_id = ? AND month = ?
+        ) AS brand_share
+      FROM 
+        brands b
+      JOIN 
+        keyword_metrics k ON b.brand_id = k.brand_id
+      JOIN 
+        dmas d ON k.dma_id = d.dma_id
+      WHERE 
+        k.dma_id = ? AND k.month = ?
+      GROUP BY 
+        b.brand_name, d.dma_name;
+    `;
+
+    const params = [dma_id, month, dma_id, month];
+
+    pool.query(query, params, (err, results) => {
+      if (err) {
+        console.error("Error executing getBrandShares query:", err);
+        return reject(err);
+      }
+      resolve(results);
+    });
+  });
+};
+
+// Function to get brand search volumes
+const getBrandSearchVolumes = (month, dma_id) => {
+  return new Promise((resolve, reject) => {
+    const query = `
+      SELECT 
+        b.brand_name,
+        b.brand_id,
+        SUM(k.search_volume) AS total_brand_search_volume
+      FROM 
+        brands b
+      JOIN 
+        keyword_metrics k ON b.brand_id = k.brand_id
+      WHERE 
+        k.dma_id = ? AND k.month = ?
+      GROUP BY 
+        b.brand_name, b.brand_id;
+    `;
+
+    const params = [dma_id, month];
+
+    pool.query(query, params, (err, results) => {
+      if (err) {
+        console.error("Error executing getBrandSearchVolumes query:", err);
+        return reject(err);
+      }
+      resolve(results);
+    });
+  });
+};
+
+// Function to get budgets data
+const getBudgetsData = (month, dma_id) => {
+  return new Promise((resolve, reject) => {
+    const query = `
+      SELECT 
+        b.brand_name,
+        b.brand_id,
+        bu.amount
+      FROM 
+        budgets bu
+      JOIN 
+        brands b ON bu.brand_id = b.brand_id
+      WHERE 
+        bu.month = ? AND bu.dma_id = ?;
+    `;
+
+    const params = [month, dma_id];
+
+    pool.query(query, params, (err, results) => {
+      if (err) {
+        console.error("Error executing getBudgetsData query:", err);
+        return reject(err);
+      }
+      resolve(results);
+    });
+  });
+};
+
+// Function to get market share data
+const getMarketShareData = (month, dma_id) => {
+  return new Promise((resolve, reject) => {
+    const currentMonth = parseInt(month, 10);
+    let previousMonth = currentMonth - 1;
+    if (previousMonth === 0) {
+      previousMonth = 12;
+    }
+
+    const query = `
+      SELECT
+        b.brand_id,
+        b.brand_name,
+        current_data.current_brand_share,
+        IFNULL(previous_data.previous_brand_share, 0) AS previous_brand_share,
+        (current_data.current_brand_share - IFNULL(previous_data.previous_brand_share, 0)) AS delta
+      FROM
+        (
+          SELECT
+            k.brand_id,
+            SUM(k.search_volume) / total_current.total_search_volume AS current_brand_share
+          FROM
+            keyword_metrics k,
+            (SELECT SUM(search_volume) AS total_search_volume
+             FROM keyword_metrics
+             WHERE dma_id = ? AND month = ?) total_current
+          WHERE
+            k.dma_id = ? AND k.month = ?
+          GROUP BY
+            k.brand_id
+        ) AS current_data
+      INNER JOIN brands b ON b.brand_id = current_data.brand_id AND b.type_id = 1
+      LEFT JOIN (
+          SELECT
+            k.brand_id,
+            SUM(k.search_volume) / total_previous.total_search_volume AS previous_brand_share
+          FROM
+            keyword_metrics k,
+            (SELECT SUM(search_volume) AS total_search_volume
+             FROM keyword_metrics
+             WHERE dma_id = ? AND month = ?) total_previous
+          WHERE
+            k.dma_id = ? AND k.month = ?
+          GROUP BY
+            k.brand_id
+        ) AS previous_data ON b.brand_id = previous_data.brand_id;
+    `;
+
+    const params = [
+      dma_id,
+      currentMonth,
+      dma_id,
+      currentMonth,
+      dma_id,
+      previousMonth,
+      dma_id,
+      previousMonth,
+    ];
+
+    pool.query(query, params, (err, results) => {
+      if (err) {
+        console.error("Error executing getMarketShareData query:", err);
+        return reject(err);
+      }
+      resolve(results);
+    });
+  });
+};
+
+// Function to get total DMA search volume data
+const getTotalDmaSearchVolumeData = (month, dma_id) => {
+  return new Promise((resolve, reject) => {
+    const currentMonth = parseInt(month, 10);
+    let previousMonth = currentMonth - 1;
+    if (previousMonth === 0) {
+      previousMonth = 12;
+    }
+
+    const query = `
+      SELECT
+        SUM(CASE WHEN month = ? THEN search_volume ELSE 0 END) AS current_total_search_volume,
+        SUM(CASE WHEN month = ? THEN search_volume ELSE 0 END) AS previous_total_search_volume
+      FROM keyword_metrics
+      WHERE dma_id = ? AND (month = ? OR month = ?)
+    `;
+
+    const params = [currentMonth, previousMonth, dma_id, currentMonth, previousMonth];
+
+    pool.query(query, params, (err, results) => {
+      if (err) {
+        console.error(
+          "Error executing getTotalDmaSearchVolumeData query:",
+          err
+        );
+        return reject(err);
+      }
+      resolve(results[0]); // results is an array with one object
+    });
+  });
+};
 
 // Endpoint to get available months
 app.get("/api/available-months", (req, res) => {
@@ -133,7 +293,7 @@ app.get("/api/available-months", (req, res) => {
   });
 });
 
-// Endpoint to get available DMA IDs
+// Endpoint to get available DMAs
 app.get("/api/available-dmas", (req, res) => {
   const query = `
     SELECT DISTINCT d.dma_id, d.dma_name
@@ -151,236 +311,4 @@ app.get("/api/available-dmas", (req, res) => {
       res.json(results);
     }
   });
-});
-
-// Endpoint to get brand search volume by brand
-app.get("/api/brand-search-volume", (req, res) => {
-  const { month, dma_id } = req.query;
-
-  if (!month || !dma_id) {
-    return res.status(400).json({ error: "month and dma_id are required query parameters" });
-  }
-
-  const query = `
-    SELECT 
-      b.brand_name,
-      SUM(k.search_volume) AS total_brand_search_volume
-    FROM 
-      brands b
-    JOIN 
-      keyword_metrics k ON b.brand_id = k.brand_id
-    WHERE 
-      k.dma_id = ? AND k.month = ?
-    GROUP BY 
-      b.brand_name;
-  `;
-
-  const params = [dma_id, month];
-
-  pool.query(query, params, (err, results) => {
-    if (err) {
-      console.error("Error executing query:", err);
-      res.status(500).json({ error: "Error fetching brand search volume" });
-    } else {
-      res.json(results);
-    }
-  });
-});
-
-// Endpoint to get brand market share data for tombstones
-app.get("/api/brand-market-share", (req, res) => {
-  const month = parseInt(req.query.month, 10);
-  const dma_id = parseInt(req.query.dma_id, 10);
-
-  if (isNaN(month) || isNaN(dma_id)) {
-    return res.status(400).json({ error: "month and dma_id must be valid numbers" });
-  }
-
-  let previousMonth = month - 1;
-  if (previousMonth === 0) {
-    previousMonth = 12;
-  }
-
-  const query = `
-    SELECT
-      b.brand_id,
-      b.brand_name,
-      current_data.current_brand_share,
-      IFNULL(previous_data.previous_brand_share, 0) AS previous_brand_share,
-      (current_data.current_brand_share - IFNULL(previous_data.previous_brand_share, 0)) AS delta
-    FROM
-      (
-        SELECT
-          k.brand_id,
-          SUM(k.search_volume) / total_current.total_search_volume AS current_brand_share
-        FROM
-          keyword_metrics k,
-          (SELECT SUM(search_volume) AS total_search_volume
-           FROM keyword_metrics
-           WHERE dma_id = ? AND month = ?) total_current
-        WHERE
-          k.dma_id = ? AND k.month = ?
-        GROUP BY
-          k.brand_id
-      ) AS current_data
-    INNER JOIN brands b ON b.brand_id = current_data.brand_id AND b.type_id = 1
-    LEFT JOIN (
-        SELECT
-          k.brand_id,
-          SUM(k.search_volume) / total_previous.total_search_volume AS previous_brand_share
-        FROM
-          keyword_metrics k,
-          (SELECT SUM(search_volume) AS total_search_volume
-           FROM keyword_metrics
-           WHERE dma_id = ? AND month = ?) total_previous
-        WHERE
-          k.dma_id = ? AND k.month = ?
-        GROUP BY
-          k.brand_id
-      ) AS previous_data ON b.brand_id = previous_data.brand_id;
-  `;
-
-  const params = [
-    dma_id,
-    month,
-    dma_id,
-    month,
-    dma_id,
-    previousMonth,
-    dma_id,
-    previousMonth,
-  ];
-
-  pool.query(query, params, (err, results) => {
-    if (err) {
-      console.error("Error executing brand market share query:", err);
-      res.status(500).json({ error: "Error fetching brand market share" });
-    } else {
-      res.json(results);
-    }
-  });
-});
-
-// Endpoint to get total DMA search volume for current and previous months
-app.get("/api/total-dma-search-volume", (req, res) => {
-  const month = parseInt(req.query.month, 10);
-  const dma_id = parseInt(req.query.dma_id, 10);
-
-  if (isNaN(month) || isNaN(dma_id)) {
-    return res.status(400).json({ error: "month and dma_id must be valid numbers" });
-  }
-
-  let previousMonth = month - 1;
-  if (previousMonth === 0) {
-    previousMonth = 12;
-  }
-
-  const query = `
-    SELECT
-      SUM(CASE WHEN month = ? THEN search_volume ELSE 0 END) AS current_total_search_volume,
-      SUM(CASE WHEN month = ? THEN search_volume ELSE 0 END) AS previous_total_search_volume
-    FROM keyword_metrics
-    WHERE dma_id = ? AND (month = ? OR month = ?)
-  `;
-
-  const params = [month, previousMonth, dma_id, month, previousMonth];
-
-  pool.query(query, params, (err, results) => {
-    if (err) {
-      console.error("Error executing total DMA search volume query:", err);
-      res.status(500).json({ error: "Error fetching total DMA search volume" });
-    } else {
-      res.json(results[0]);
-    }
-  });
-});
-
-// Define the getBudgetsData function
-const getBudgetsData = (month, dma_id) => {
-  return new Promise((resolve, reject) => {
-    const query = `
-      SELECT 
-        b.brand_name,
-        bu.amount
-      FROM 
-        budgets bu
-      JOIN 
-        brands b ON bu.brand_id = b.brand_id
-      WHERE 
-        bu.month = ? AND bu.dma_id = ?;
-    `;
-
-    const params = [month, dma_id];
-
-    pool.query(query, params, (err, results) => {
-      if (err) {
-        return reject(err);
-      }
-      resolve(results);
-    });
-  });
-};
-// Endpoint to get budgets data
-app.get('/api/budgets', async (req, res) => {
-  const { month, dma_id } = req.query;
-
-  // Validate query parameters
-  if (!month || !dma_id) {
-    return res.status(400).json({ error: 'Missing month or dma_id parameter' });
-  }
-
-  try {
-    // Fetch budgets data from the database
-    const budgets = await getBudgetsData(month, dma_id);
-    res.json(budgets);
-  } catch (error) {
-    console.error('Error fetching budgets data:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-const getCombinedData = (month, dma_id) => {
-  return new Promise((resolve, reject) => {
-    const query = `
-      SELECT 
-        b.brand_name,
-        SUM(km.search_volume) AS total_search_volume,
-        bu.amount
-      FROM 
-        brands b
-      JOIN 
-        keyword_metrics km ON b.brand_id = km.brand_id
-      LEFT JOIN 
-        budgets bu ON b.brand_id = bu.brand_id AND bu.month = km.month
-      WHERE 
-        km.month = ? AND km.dma_id = ?
-      GROUP BY 
-        b.brand_name, bu.amount;
-    `;
-
-    const params = [month, dma_id];
-
-    pool.query(query, params, (err, results) => {
-      if (err) {
-        return reject(err);
-      }
-      resolve(results);
-    });
-  });
-};
-
-app.get('/api/combined-data', async (req, res) => {
-  const { month, dma_id } = req.query;
-
-  if (!month || !dma_id) {
-    return res.status(400).json({ error: 'Missing month or dma_id parameter' });
-  }
-
-  try {
-    const data = await getCombinedData(month, dma_id);
-    res.json(data);
-  } catch (error) {
-    console.error('Error fetching combined data:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
 });

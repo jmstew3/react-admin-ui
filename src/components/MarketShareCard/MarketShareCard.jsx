@@ -25,7 +25,7 @@ const MarketShareCard = ({ brandName, currentShare, delta }) => {
     <ThemeProvider theme={theme}>
       <Card sx={{ minWidth: 150, margin: 1 }}>
         <CardContent>
-          <Typography variant="h8" component="div" color="text.primary">
+          <Typography variant="h7" component="div" color="text.primary">
             {brandName}
           </Typography>
           <Typography variant="h5" component="div" color="text.primary">
