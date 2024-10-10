@@ -69,6 +69,12 @@ export const menu =
         title: "Brand Share",
         url: "/brand-share",
         icon: "/marketing.svg",
+      },
+      {
+        id: 7,
+        title: "Sort By Brand",
+        url: "/sort-by-brand",
+        icon: "/marketing.svg",
       }
     ],
   },

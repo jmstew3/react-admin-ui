@@ -21,6 +21,7 @@ import KeywordList from "./pages//KeywordList/keywordList";
 import Quarterly from "./pages/keywords/Quarterly";
 import HistoricalKeywords from "./pages/historicalKeywords/HistoricalKeywords";
 import BrandShare from "./pages/brandShare/BrandShare";
+import SortByBrand from "./pages/sortByBrand/SortByBrand";
 
 import "./styles/global.scss";
 
@@ -111,6 +112,11 @@ function App() {
           // add :id to the end of the slug in order to go to a single product page
           path: "/brand-share/",
           element: <BrandShare />,
+        },
+        {
+          // add :id to the end of the slug in order to go to a single product page
+          path: "/sort-by-brand/",
+          element: <SortByBrand />,
         },
       ],
     },

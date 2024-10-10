@@ -351,3 +351,101 @@ const getCompetitorSearchVolumeData = (month, dma_id) => {
     });
   });
 };
+// Endpoint to get available brands
+app.get("/api/available-brands", (req, res) => {
+  const query = `
+    SELECT 
+      brand_id, 
+      brand_name 
+    FROM 
+      brands 
+    ORDER BY 
+      brand_name;
+  `;
+  
+  pool.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching brands:", err);
+      res.status(500).json({ error: "Error fetching brands" });
+    } else {
+      res.json(results);
+    }
+  });
+});
+app.get("/api/brand-share-data-by-brand", async (req, res) => {
+  const { month, brand_id } = req.query;
+
+  if (!month || !brand_id) {
+    return res
+      .status(400)
+      .json({ error: "month and brand_id are required query parameters" });
+  }
+
+  try {
+    // Execute all necessary queries in a
+    const [
+      brandShares,
+      brandSearchVolumes,
+      budgetsData,
+      marketShareData,
+      totalBrandSearchVolumeData,
+      competitorSearchVolumeData,
+    ] = await Promise.all([
+      getBrandSharesByBrand(month, brand_id),
+      getBrandSearchVolumesByBrand(month, brand_id),
+      getBudgetsDataByBrand(month, brand_id),
+      getMarketShareDataByBrand(month, brand_id),
+      getTotalBrandSearchVolumeData(month, brand_id),
+      getCompetitorSearchVolumeData(month, brand_id),
+    ]);
+
+    // Send all the data in a single response
+    res.json({
+      brandShares,
+      brandSearchVolumes,
+      budgetsData,
+      marketShareData,
+      totalBrandSearchVolumeData,
+      competitorSearchVolumeData,
+    });
+  } catch (err) {
+    console.error("Error fetching data:", err);
+    res.status(500).json({ error: "Error fetching data" });
+  }
+});
+// Function to get brand shares by brand
+const getBrandSharesByBrand = (month, brand_id) => {
+  return new Promise((resolve, reject) => {
+    const query = `
+      SELECT 
+        b.brand_name,
+        d.dma_name,
+        SUM(k.search_volume) AS total_dma_search_volume,
+        SUM(k.search_volume) * 1.0 / (
+          SELECT SUM(search_volume) 
+          FROM keyword_metrics 
+          WHERE brand_id = ? AND month = ?
+        ) AS brand_share
+      FROM 
+        brands b
+      JOIN 
+        keyword_metrics k ON b.brand_id = k.brand_id
+      JOIN 
+        dmas d ON k.dma_id = d.dma_id
+      WHERE 
+        k.brand_id = ? AND k.month = ?
+      GROUP BY 
+        b.brand_name, d.dma_name;
+    `;
+
+    const params = [brand_id, month, brand_id, month];
+
+    pool.query(query, params, (err, results) => {
+      if (err) {
+        console.error("Error executing getBrandSharesByBrand query:", err);
+        return reject(err);
+      }
+      resolve(results);
+    });
+  });
+};
