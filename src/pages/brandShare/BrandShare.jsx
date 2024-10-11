@@ -20,7 +20,6 @@ import {
 import MarketShareCard from "../../components/MarketShareCard/MarketShareCard";
 import TotalMarketCard from "../../components/TotalMarketCard/TotalMarketCard";
 import BarChartComponent from "../../components/muix/BarChartComponent/BarChartComponent";
-import BarChartComponentByMonth from "../../components/muix/BarChartComponentByMonth/BarChartComponentByMonth";
 import PieChartComponent from "../../components/recharts/PieChartComponent/PieChartComponent";
 
 // Month names array
@@ -40,6 +39,8 @@ const monthNames = [
 ];
 
 const BrandShare = () => {
+  const [effectiveMaxSearchVolume, setEffectiveMaxSearchVolume] =
+    useState(15000);
   const [brandShares, setBrandShares] = useState([]);
   const [brandSearchVolumes, setBrandSearchVolumes] = useState([]);
   const [budgetsData, setBudgetsData] = useState([]);
@@ -68,6 +69,44 @@ const BrandShare = () => {
     deltaPercentage: 0,
   });
 
+  // Calculate the total DMA Search Volume
+  const totalSearchVolume = brandShares.reduce(
+    (sum, row) => sum + (row.total_dma_search_volume || 0),
+    0
+  );
+
+  // Calculate the total Brand Share
+  const totalBrandShare = brandShares.reduce(
+    (sum, row) => sum + (row.brand_share || 0),
+    0
+  );
+
+  useEffect(() => {
+    console.log("Combined Chart Data:", combinedChartData);
+
+    // Calculate effectiveMaxSearchVolume whenever combinedChartData changes
+    if (combinedChartData.length > 0) {
+      const maxVolumeInData = Math.max(
+        ...combinedChartData.map((item) => item.total_brand_search_volume)
+      );
+
+      // Start with minimum maximum value
+      let newMaxSearchVolume = 15000;
+
+      // Increase in increments of 2,500 until it surpasses maxVolumeInData
+      while (newMaxSearchVolume < maxVolumeInData) {
+        newMaxSearchVolume += 2500;
+      }
+
+      setEffectiveMaxSearchVolume(newMaxSearchVolume);
+      console.log("New Effective Max Search Volume:", newMaxSearchVolume);
+    } else {
+      // Default value if there's no data
+      setEffectiveMaxSearchVolume(15000);
+      console.log("Default Effective Max Search Volume: 15000");
+    }
+  }, [combinedChartData]);
+
   // Fetch available months
   useEffect(() => {
     const fetchAvailableMonths = async () => {
@@ -84,6 +123,8 @@ const BrandShare = () => {
 
     fetchAvailableMonths();
   }, []);
+
+  // Removed fetchMaxSearchVolume function and its useEffect since it's redundant
 
   // Fetch available DMAs and set selectedDmaId
   useEffect(() => {
@@ -158,6 +199,8 @@ const BrandShare = () => {
         const budgetAmount = aggregatedBudgets[bsv.brand_id] || 0;
         return {
           ...bsv,
+          total_brand_search_volume:
+            parseFloat(bsv.total_brand_search_volume) || 0,
           amount: budgetAmount,
         };
       });
@@ -166,6 +209,10 @@ const BrandShare = () => {
       setCombinedChartData([]);
     }
   };
+
+  useEffect(() => {
+    console.log("Combined Chart Data:", combinedChartData);
+  }, [combinedChartData]);
 
   const handleMonthChange = (e) => {
     setSelectedMonth(Number(e.target.value));
@@ -176,39 +223,39 @@ const BrandShare = () => {
   };
 
   const handleBrandIdsChange = (event) => {
-  const {
-    target: { value },
-  } = event;
+    const {
+      target: { value },
+    } = event;
 
-  setSelectedBrandIds((prevSelectedBrandIds) => {
-    const selected = typeof value === "string" ? value.split(",") : value;
+    setSelectedBrandIds((prevSelectedBrandIds) => {
+      const selected = typeof value === "string" ? value.split(",") : value;
 
-    if (selected.includes("ALL")) {
-      if (selected.length === 1) {
-        // Only "ALL" is selected
-        return ["ALL"];
-      } else {
-        // "ALL" and other brands are selected
-        if (!prevSelectedBrandIds.includes("ALL")) {
-          // "ALL" was just selected, select only "ALL"
+      if (selected.includes("ALL")) {
+        if (selected.length === 1) {
+          // Only "ALL" is selected
           return ["ALL"];
         } else {
-          // "ALL" was deselected, remove "ALL" from selection
-          const newSelection = selected.filter((val) => val !== "ALL");
-          return newSelection;
+          // "ALL" and other brands are selected
+          if (!prevSelectedBrandIds.includes("ALL")) {
+            // "ALL" was just selected, select only "ALL"
+            return ["ALL"];
+          } else {
+            // "ALL" was deselected, remove "ALL" from selection
+            const newSelection = selected.filter((val) => val !== "ALL");
+            return newSelection;
+          }
         }
       }
-    }
 
-    // If selection is empty, default to ["ALL"]
-    if (selected.length === 0) {
-      return ["ALL"];
-    }
+      // If selection is empty, default to ["ALL"]
+      if (selected.length === 0) {
+        return ["ALL"];
+      }
 
-    // Set selected brands
-    return selected;
-  });
-};
+      // Set selected brands
+      return selected;
+    });
+  };
 
   useEffect(() => {
     if (selectedDmaId === null || selectedMonth === null) return;
@@ -232,6 +279,9 @@ const BrandShare = () => {
 
         const data = response.data;
 
+        // Log the data fetched
+        console.log("Fetched data:", data);
+
         // Process data as needed
         setBrandShares(
           data.brandShares.map((item) => ({
@@ -240,18 +290,45 @@ const BrandShare = () => {
             total_dma_search_volume: parseFloat(item.total_dma_search_volume),
           }))
         );
+
+        // After fetching data
+        const currentTotal =
+          data.totalDmaSearchVolumeData?.current_total_search_volume || 0;
+        const previousTotal =
+          data.totalDmaSearchVolumeData?.previous_total_search_volume || 0;
+
+        // Calculate deltaPercentage
+        const deltaPercentage = previousTotal
+          ? ((currentTotal - previousTotal) / previousTotal) * 100
+          : 0;
+
+        // Update state
         setTotalDmaSearchVolumeData({
-          currentTotal:
-            data.totalDmaSearchVolumeData?.current_total_search_volume || 0,
-          deltaPercentage: data.totalDmaSearchVolumeData?.deltaPercentage || 0,
+          currentTotal,
+          deltaPercentage,
         });
+
+        console.log("Current Total:", currentTotal);
+        console.log("Previous Total:", previousTotal);
+        console.log("Delta Percentage:", deltaPercentage);
+
         setCompetitorShareData({
           currentShare:
-            data.competitorSearchVolumeData?.current_competitor_search_volume ||
-            0,
+            data.competitorSearchVolumeData?.currentMarketShare || 0,
           delta: data.competitorSearchVolumeData?.delta || 0,
         });
         setMarketShareData(data.marketShareData);
+
+        // Log brandSearchVolumes and budgetsData
+        console.log("brandSearchVolumes:", data.brandSearchVolumes);
+        console.log("budgetsData:", data.budgetsData);
+
+        // Update states
+        setBrandSearchVolumes(data.brandSearchVolumes);
+        setBudgetsData(data.budgetsData);
+
+        // Process combined chart data
+        processCombinedChartData(data.brandSearchVolumes, data.budgetsData);
 
         setIsLoading(false);
       } catch (err) {
@@ -266,26 +343,69 @@ const BrandShare = () => {
 
   return (
     <Box sx={{ padding: 2 }}>
-      {/* Dropdowns for Month, View Type, and DMA/Brand ID */}
-      <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
-        <label style={{ marginRight: "10px" }}>Select Month:</label>
-        <select value={selectedMonth} onChange={handleMonthChange}>
-          {availableMonths.map((monthObj) => (
-            <option key={monthObj.month} value={monthObj.month}>
-              {monthNames[monthObj.month - 1]}
-            </option>
-          ))}
-        </select>
-        <>
-          <label style={{ margin: "0 10px" }}>Select DMA:</label>
-          <select value={selectedDmaId || ""} onChange={handleDmaIdChange}>
-            {availableDmas.map((dma) => (
-              <option key={dma.dma_id} value={dma.dma_id}>
-                {dma.dma_name}
-              </option>
+      {/* Dropdowns for Month, DMA, and Brand ID */}
+      <Box sx={{ marginBottom: 4, display: "flex", alignItems: "center" }}>
+        {/* Select Month */}
+        <FormControl sx={{ m: 1, width: 300 }}>
+          <InputLabel id="month-select-label">Select Month</InputLabel>
+          <Select
+            labelId="month-select-label"
+            id="month-select"
+            value={selectedMonth}
+            onChange={handleMonthChange}
+            label="Select Month"
+            sx={{
+              backgroundColor: "#f5f5f5", // Light grey background
+              "& .MuiSelect-select": {
+                padding: "10px", // Add padding for better spacing
+              },
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#007BFF", // Change border color
+              },
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#0056b3", // Darker border color on hover
+              },
+            }}
+          >
+            {availableMonths.map((monthObj) => (
+              <MenuItem key={monthObj.month} value={monthObj.month}>
+                {monthNames[monthObj.month - 1]}
+              </MenuItem>
             ))}
-          </select>
-        </>
+          </Select>
+        </FormControl>
+
+        {/* Select DMA */}
+        <FormControl sx={{ m: 1, width: 300 }}>
+          <InputLabel id="dma-select-label">Select DMA</InputLabel>
+          <Select
+            labelId="dma-select-label"
+            id="dma-select"
+            value={selectedDmaId || ""}
+            onChange={handleDmaIdChange}
+            label="Select DMA"
+            sx={{
+              backgroundColor: "#f5f5f5", // Light grey background
+              "& .MuiSelect-select": {
+                padding: "10px", // Add padding for better spacing
+              },
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#007BFF", // Change border color
+              },
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#0056b3", // Darker border color on hover
+              },
+            }}
+          >
+            {availableDmas.map((dma) => (
+              <MenuItem key={dma.dma_id} value={dma.dma_id}>
+                {dma.dma_name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        {/* Select Brand */}
         <FormControl sx={{ m: 1, width: 300 }}>
           <InputLabel id="brand-select-label">Select Brand</InputLabel>
           <Select
@@ -302,6 +422,18 @@ const BrandShare = () => {
                 .filter((brand) => selected.includes(brand.brand_id))
                 .map((brand) => brand.brand_name)
                 .join(", ");
+            }}
+            sx={{
+              backgroundColor: "#f5f5f5", // Light grey background
+              "& .MuiSelect-select": {
+                padding: "10px", // Add padding for better spacing
+              },
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#007BFF", // Change border color
+              },
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#0056b3", // Darker border color on hover
+              },
             }}
           >
             <MenuItem key="ALL" value="ALL">
@@ -337,8 +469,8 @@ const BrandShare = () => {
             <TotalMarketCard
               key="total-market"
               title={`Total Google Demand for ${selectedDmaName}`}
-              currentValue={totalDmaSearchVolumeData.currentTotal || 0}
-              deltaPercentage={totalDmaSearchVolumeData.deltaPercentage || 0}
+              currentValue={totalDmaSearchVolumeData.currentTotal}
+              deltaPercentage={totalDmaSearchVolumeData.deltaPercentage}
             />
 
             <MarketShareCard
@@ -383,6 +515,19 @@ const BrandShare = () => {
                         </TableCell>
                       </TableRow>
                     ))}
+
+                    {/* Totals Row */}
+                    <TableRow>
+                      <TableCell colSpan={2} sx={{ fontWeight: "bold" }}>
+                        Totals
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: "bold" }}>
+                        {totalSearchVolume.toLocaleString()}
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: "bold" }}>
+                        {(totalBrandShare * 100).toFixed(2)}%
+                      </TableCell>
+                    </TableRow>
                   </TableBody>
                 </Table>
               </TableContainer>
@@ -400,7 +545,11 @@ const BrandShare = () => {
           </Box>
 
           <Box sx={{ width: "100%", marginTop: 4 }}>
-            <BarChartComponentByMonth data={combinedChartData} />
+            <BarChartComponent
+              data={combinedChartData}
+              maxSearchVolume={effectiveMaxSearchVolume}
+              yAxisInterval={2500}
+            />
           </Box>
         </>
       ) : (

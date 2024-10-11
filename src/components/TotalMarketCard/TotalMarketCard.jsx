@@ -4,22 +4,24 @@ import { Card, CardContent, Typography } from "@mui/material";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 
-// Define a custom theme to apply white text
+// Define a custom theme to apply black text (as per your code)
 const theme = createTheme({
   palette: {
     text: {
-      primary: "#000000", // Set the primary text to black
+      primary: "#000000",
     },
   },
 });
 
 const TotalMarketCard = ({ title, currentValue, deltaPercentage }) => {
   const isPositive = deltaPercentage >= 0;
-  const deltaIcon = isPositive ? (
-    <ArrowUpwardIcon color="success" />
-  ) : (
-    <ArrowDownwardIcon color="error" />
-  );
+  const triangleStyle = {
+    width: 0,
+    height: 0,
+    borderLeft: "5px solid transparent",
+    borderRight: "5px solid transparent",
+    borderBottom: isPositive ? "10px solid green" : "10px solid #d32f2f",
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -29,15 +31,16 @@ const TotalMarketCard = ({ title, currentValue, deltaPercentage }) => {
             {title}
           </Typography>
           <Typography variant="h5" component="div" color="text.primary">
-            {currentValue.toLocaleString()}
+            {Number(currentValue).toLocaleString()}
           </Typography>
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            {deltaIcon}
+          <Box sx={triangleStyle} />
             <Typography
               sx={{ marginLeft: 0.5 }}
               color={isPositive ? "success.main" : "error.main"}
             >
-              {(Math.abs(deltaPercentage) * 100).toFixed(2)}% vs previous period
+              {isPositive ? "+" : "-"}
+              {Math.abs(deltaPercentage).toFixed(2)}% vs previous period
             </Typography>
           </Box>
         </CardContent>

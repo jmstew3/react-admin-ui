@@ -15,11 +15,13 @@ const theme = createTheme({
 
 const MarketShareCard = ({ brandName, currentShare, delta }) => {
   const isPositive = delta >= 0;
-  const deltaIcon = isPositive ? (
-    <ArrowUpwardIcon color="success" />
-  ) : (
-    <ArrowDownwardIcon color="error" />
-  );
+  const triangleStyle = {
+    width: 0,
+    height: 0,
+    borderLeft: "5px solid transparent",
+    borderRight: "5px solid transparent",
+    borderBottom: isPositive ? "10px solid green" : "10px solid #d32f2f",
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -32,11 +34,12 @@ const MarketShareCard = ({ brandName, currentShare, delta }) => {
             {(currentShare * 100).toFixed(2)}%
           </Typography>
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            {deltaIcon}
+          <Box sx={triangleStyle} />
             <Typography
               sx={{ marginLeft: 0.5 }}
               color={isPositive ? "success.main" : "error.main"}
             >
+              {isPositive ? "+" : "-"}
               {Math.abs(delta * 100).toFixed(2)}% vs previous period
             </Typography>
           </Box>

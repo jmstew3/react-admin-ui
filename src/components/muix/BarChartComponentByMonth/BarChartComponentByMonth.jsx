@@ -17,13 +17,14 @@ const theme = createTheme({
 });
 
 const BarChartComponentByMonth = ({ data }) => {
-  const months = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-  ];
-  
-  const monthlySearchVolumes = data.map((item) => item.total_brand_search_volume);
-  const monthlyBudgets = data.map((item) => item.amount);
+  // Add a console log to verify data
+  console.log("Data received by BarChartComponentByMonth:", data);
+
+  const brands = data.map((item) => item.brand_name);
+  const searchVolumes = data.map((item) =>
+    parseFloat(item.total_brand_search_volume)
+  );
+  const budgets = data.map((item) => parseFloat(item.amount));
 
   return (
     <ThemeProvider theme={theme}>
@@ -32,24 +33,26 @@ const BarChartComponentByMonth = ({ data }) => {
           xAxis={[
             {
               scaleType: "band",
-              data: months,
-              id: "months",
-              label: "Months",
+              data: brands,
+              id: "brands",
+              label: "Brands",
             },
           ]}
           yAxis={[{ id: "searchVolume" }, { id: "amount" }]}
           series={[
             {
-              type: "line",
-              id: "amount",
-              yAxisId: "amount",
-              data: monthlyBudgets,
-            },
-            {
               type: "bar",
               id: "searchVolume",
               yAxisId: "searchVolume",
-              data: monthlySearchVolumes,
+              xAxisId: "brands",
+              data: searchVolumes,
+            },
+            {
+              type: "line",
+              id: "amount",
+              yAxisId: "amount",
+              xAxisId: "brands",
+              data: budgets,
             },
           ]}
           height={400}
@@ -73,7 +76,7 @@ const BarChartComponentByMonth = ({ data }) => {
         >
           <BarPlot />
           <LinePlot />
-          <ChartsXAxis axisId="months" label="Months" />
+          <ChartsXAxis axisId="brands" label="Brands" />
           <ChartsYAxis axisId="searchVolume" label="Total Search Volume" />
           <ChartsYAxis
             axisId="amount"

@@ -15,10 +15,18 @@ const theme = createTheme({
   },
 });
 
-const BarChartComponent = ({ data }) => {
-  const brandNames = data.map((item) => item.brand_name);
+const BarChartComponent = ({ data, maxSearchVolume, yAxisInterval }) => {
+  console.log("Data received by BarChartComponent:", data);
+
+  // Extract brands, search volumes, and budgets
+  const brands = data.map((item) => item.brand_name);
   const searchVolumes = data.map((item) => item.total_brand_search_volume);
-  const amounts = data.map((item) => item.amount);
+  const budgets = data.map((item) => item.amount);
+
+  // Use default values if props are not provided
+  const effectiveMaxSearchVolume =
+    maxSearchVolume && maxSearchVolume > 0 ? maxSearchVolume : 15000;
+  const yAxisTickInterval = yAxisInterval || 2500;
 
   return (
     <ThemeProvider theme={theme}>
@@ -27,24 +35,44 @@ const BarChartComponent = ({ data }) => {
           xAxis={[
             {
               scaleType: "band",
-              data: brandNames,
+              data: brands,
               id: "brands",
               label: "Brands",
             },
           ]}
-          yAxis={[{ id: "searchVolume" }, { id: "amount" }]}
-          series={[
+          yAxis={[
             {
-              type: "line",
-              id: "amount",
-              yAxisId: "amount",
-              data: amounts,
+              id: "searchVolume",
+              min: 0,
+              max: effectiveMaxSearchVolume,
+              tickInterval: yAxisTickInterval,
             },
+            {
+              id: "amount",
+              position: "right",
+              // You can set min and max for amount if needed
+            },
+          ]}
+          series={[
             {
               type: "bar",
               id: "searchVolume",
               yAxisId: "searchVolume",
+              xAxisId: "brands",
               data: searchVolumes,
+              tooltip: {
+                formatter: (value) => `Total Search Volume: ${value.toLocaleString()}`,
+              },
+            },
+            {
+              type: "line",
+              id: "amount",
+              yAxisId: "amount",
+              xAxisId: "brands",
+              data: budgets,
+              tooltip: {
+                formatter: (value) => `Marketing Budget: ${value.toLocaleString()}`,
+              },
             },
           ]}
           height={400}
@@ -52,24 +80,28 @@ const BarChartComponent = ({ data }) => {
           sx={{
             [`.${axisClasses.left} .${axisClasses.label}`]: {
               transform: "translate(-25px, 0)",
-              fill: "white", // Left Y axis label color
-              color: "white", // Left Y axis ticks color
+              fill: "white",
+              color: "white",
             },
             [`.${axisClasses.right} .${axisClasses.label}`]: {
               transform: "translate(30px, 0)",
-              fill: "white", // Right Y axis label color
-              color: "white", // Right Y axis ticks color
+              fill: "white",
+              color: "white",
             },
             [`.${axisClasses.bottom} .${axisClasses.label}`]: {
-              fill: "white", // X axis label color
-              color: "white", // X axis ticks color
+              fill: "white",
+              color: "white",
             },
           }}
         >
           <BarPlot />
           <LinePlot />
-          <ChartsXAxis axisId="brands" label="Market Brands" />
-          <ChartsYAxis axisId="searchVolume" label="Total Search Volume" />
+          <ChartsXAxis axisId="brands" label="Brands" />
+          <ChartsYAxis
+            axisId="searchVolume"
+            label="Total Search Volume"
+            tickInterval={yAxisTickInterval}
+          />
           <ChartsYAxis
             axisId="amount"
             position="right"

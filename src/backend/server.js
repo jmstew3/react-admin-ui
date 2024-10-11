@@ -149,7 +149,7 @@ const getBrandSearchVolumes = (month, dma_id, brandIdsArray) => {
         k.dma_id = ? AND k.month = ?
     `;
 
-    const params = [dma_id, month];
+    const params = [dma_id, month]; // Ensure the order matches the placeholders
 
     if (brandIdsArray && brandIdsArray.length > 0) {
       query += ` AND k.brand_id IN (${brandIdsArray.map(() => "?").join(",")})`;
@@ -187,12 +187,10 @@ const getBudgetsData = (month, dma_id, brandIdsArray) => {
         bu.month = ? AND bu.dma_id = ?
     `;
 
-    const params = [month, dma_id];
+    const params = [month, dma_id]; // Ensure the order matches the placeholders
 
     if (brandIdsArray && brandIdsArray.length > 0) {
-      query += ` AND bu.brand_id IN (${brandIdsArray
-        .map(() => "?")
-        .join(",")})`;
+      query += ` AND bu.brand_id IN (${brandIdsArray.map(() => "?").join(",")})`;
       params.push(...brandIdsArray);
     }
 
@@ -374,9 +372,21 @@ const getCompetitorSearchVolumeData = (month, dma_id, brandIdsArray) => {
     let query = `
       SELECT
         SUM(CASE WHEN k.month = ? THEN k.search_volume ELSE 0 END) AS current_competitor_search_volume,
-        SUM(CASE WHEN k.month = ? THEN k.search_volume ELSE 0 END) AS previous_competitor_search_volume
+        SUM(CASE WHEN k.month = ? THEN k.search_volume ELSE 0 END) AS previous_competitor_search_volume,
+        total_current.total_search_volume AS current_total_search_volume,
+        total_previous.total_search_volume AS previous_total_search_volume
       FROM keyword_metrics k
       JOIN brands b ON k.brand_id = b.brand_id
+      CROSS JOIN (
+        SELECT SUM(search_volume) AS total_search_volume
+        FROM keyword_metrics
+        WHERE dma_id = ? AND month = ?
+      ) total_current
+      CROSS JOIN (
+        SELECT SUM(search_volume) AS total_search_volume
+        FROM keyword_metrics
+        WHERE dma_id = ? AND month = ?
+      ) total_previous
       WHERE k.dma_id = ? AND (k.month = ? OR k.month = ?) AND b.type_id = 2
     `;
 
@@ -385,11 +395,15 @@ const getCompetitorSearchVolumeData = (month, dma_id, brandIdsArray) => {
       previousMonth,
       dma_id,
       currentMonth,
+      dma_id,
+      previousMonth,
+      dma_id,
+      currentMonth,
       previousMonth,
     ];
 
     if (brandIdsArray && brandIdsArray.length > 0) {
-      query += ` AND k.brand_id IN (${brandIdsArray.map(() => '?').join(',')})`;
+      query += ` AND k.brand_id IN (${brandIdsArray.map(() => "?").join(",")})`;
       params.push(...brandIdsArray);
     }
 
@@ -401,7 +415,21 @@ const getCompetitorSearchVolumeData = (month, dma_id, brandIdsArray) => {
         );
         return reject(err);
       }
-      resolve(results[0]); // results is an array with one object
+      const result = results[0];
+
+      // Calculate market shares and deltas
+      const currentMarketShare =
+        result.current_competitor_search_volume /
+          result.current_total_search_volume || 0;
+      const previousMarketShare =
+        result.previous_competitor_search_volume /
+          result.previous_total_search_volume || 0;
+      const delta = currentMarketShare - previousMarketShare;
+
+      resolve({
+        currentMarketShare,
+        delta,
+      });
     });
   });
 };
@@ -425,11 +453,11 @@ app.get("/api/available-brands", (req, res) => {
   const params = [];
 
   if (dma_id) {
-    query += ' AND bd.dma_id = ?';
+    query += " AND bd.dma_id = ?";
     params.push(dma_id);
   }
 
-  query += ' ORDER BY b.brand_name;';
+  query += " ORDER BY b.brand_name;";
 
   pool.query(query, params, (err, results) => {
     if (err) {
@@ -685,3 +713,32 @@ const getTotalBrandSearchVolumeData = (month, brand_id) => {
     });
   });
 };
+
+app.get("/api/max-total-search-volume", (req, res) => {
+  const dma_id = req.query.dma_id;
+
+  if (!dma_id) {
+    return res.status(400).json({ error: "dma_id parameter is required" });
+  }
+
+  const query = `
+    SELECT MAX(total_volume) AS max_total_search_volume
+    FROM (
+      SELECT SUM(search_volume) AS total_volume
+      FROM keyword_metrics
+      WHERE dma_id = ?
+      GROUP BY brand_id, month
+    ) AS subquery;
+  `;
+
+  const params = [dma_id];
+
+  pool.query(query, params, (err, results) => {
+    if (err) {
+      console.error("Error fetching max total search volume:", err);
+      res.status(500).json({ error: "Error fetching max total search volume" });
+    } else {
+      res.json(results[0]);
+    }
+  });
+});
