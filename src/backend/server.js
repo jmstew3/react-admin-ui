@@ -449,3 +449,164 @@ const getBrandSharesByBrand = (month, brand_id) => {
     });
   });
 };
+// Function to get brand search volumes by brand
+const getBrandSearchVolumesByBrand = (month, brand_id) => {
+  return new Promise((resolve, reject) => {
+    const query = `
+      SELECT 
+        b.brand_name,
+        b.brand_id,
+        SUM(k.search_volume) AS total_brand_search_volume
+      FROM 
+        brands b
+      JOIN 
+        keyword_metrics k ON b.brand_id = k.brand_id
+      WHERE 
+        k.brand_id = ? AND k.month = ?
+      GROUP BY 
+        b.brand_name, b.brand_id;
+    `;
+
+    const params = [brand_id, month];
+
+    pool.query(query, params, (err, results) => {
+      if (err) {
+        console.error("Error executing getBrandSearchVolumesByBrand query:", err);
+        return reject(err);
+      }
+      resolve(results);
+    });
+  });
+};
+
+// Function to get budgets data by brand
+const getBudgetsDataByBrand = (month, brand_id) => {
+  return new Promise((resolve, reject) => {
+    const query = `
+      SELECT 
+        b.brand_name,
+        b.brand_id,
+        bu.amount
+      FROM 
+        budgets bu
+      JOIN 
+        brands b ON bu.brand_id = b.brand_id
+      WHERE 
+        bu.month = ? AND bu.brand_id = ?;
+    `;
+
+    const params = [month, brand_id];
+
+    pool.query(query, params, (err, results) => {
+      if (err) {
+        console.error("Error executing getBudgetsDataByBrand query:", err);
+        return reject(err);
+      }
+      resolve(results);
+    });
+  });
+};
+
+// Function to get market share data by brand
+const getMarketShareDataByBrand = (month, brand_id) => {
+  return new Promise((resolve, reject) => {
+    const currentMonth = parseInt(month, 10);
+    let previousMonth = currentMonth - 1;
+    if (previousMonth === 0) {
+      previousMonth = 12;
+    }
+
+    const query = `
+      SELECT
+        b.brand_id,
+        b.brand_name,
+        current_data.current_brand_share,
+        IFNULL(previous_data.previous_brand_share, 0) AS previous_brand_share,
+        (current_data.current_brand_share - IFNULL(previous_data.previous_brand_share, 0)) AS delta
+      FROM
+        (
+          SELECT
+            k.brand_id,
+            SUM(k.search_volume) / total_current.total_search_volume AS current_brand_share
+          FROM
+            keyword_metrics k,
+            (SELECT SUM(search_volume) AS total_search_volume
+             FROM keyword_metrics
+             WHERE brand_id = ? AND month = ?) total_current
+          WHERE
+            k.brand_id = ? AND k.month = ?
+          GROUP BY
+            k.brand_id
+        ) AS current_data
+      INNER JOIN brands b ON b.brand_id = current_data.brand_id
+      LEFT JOIN (
+          SELECT
+            k.brand_id,
+            SUM(k.search_volume) / total_previous.total_search_volume AS previous_brand_share
+          FROM
+            keyword_metrics k,
+            (SELECT SUM(search_volume) AS total_search_volume
+             FROM keyword_metrics
+             WHERE brand_id = ? AND month = ?) total_previous
+          WHERE
+            k.brand_id = ? AND k.month = ?
+          GROUP BY
+            k.brand_id
+        ) AS previous_data ON b.brand_id = previous_data.brand_id;
+    `;
+
+    const params = [
+      brand_id,
+      currentMonth,
+      brand_id,
+      currentMonth,
+      brand_id,
+      previousMonth,
+      brand_id,
+      previousMonth,
+    ];
+
+    pool.query(query, params, (err, results) => {
+      if (err) {
+        console.error("Error executing getMarketShareDataByBrand query:", err);
+        return reject(err);
+      }
+      resolve(results);
+    });
+  });
+};
+
+// Function to get total brand search volume data
+const getTotalBrandSearchVolumeData = (month, brand_id) => {
+  return new Promise((resolve, reject) => {
+    const currentMonth = parseInt(month, 10);
+    let previousMonth = currentMonth - 1;
+    if (previousMonth === 0) {
+      previousMonth = 12;
+    }
+
+    const query = `
+      SELECT
+        SUM(CASE WHEN month = ? THEN search_volume ELSE 0 END) AS current_total_search_volume,
+        SUM(CASE WHEN month = ? THEN search_volume ELSE 0 END) AS previous_total_search_volume
+      FROM keyword_metrics
+      WHERE brand_id = ? AND (month = ? OR month = ?)
+    `;
+
+    const params = [
+      currentMonth,
+      previousMonth,
+      brand_id,
+      currentMonth,
+      previousMonth,
+    ];
+
+    pool.query(query, params, (err, results) => {
+      if (err) {
+        console.error("Error executing getTotalBrandSearchVolumeData query:", err);
+        return reject(err);
+      }
+      resolve(results[0]); // results is an array with one object
+    });
+  });
+};

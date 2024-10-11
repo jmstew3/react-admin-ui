@@ -1,4 +1,3 @@
-// BrandShare.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
@@ -15,6 +14,7 @@ import {
 import MarketShareCard from "../../components/MarketShareCard/MarketShareCard";
 import TotalMarketCard from "../../components/TotalMarketCard/TotalMarketCard";
 import BarChartComponent from "../../components/muix/BarChartComponent/BarChartComponent";
+import BarChartComponentByMonth from "../../components/muix/BarChartComponentByMonth/BarChartComponentByMonth";
 import PieChartComponent from "../../components/recharts/PieChartComponent/PieChartComponent";
 
 // Month names array
@@ -46,9 +46,12 @@ const BrandShare = () => {
   const currentMonth = new Date().getMonth() + 1;
   const [selectedMonth, setSelectedMonth] = useState(currentMonth);
   const [selectedDmaId, setSelectedDmaId] = useState(null);
+  const [selectedBrandId, setSelectedBrandId] = useState(null);
+  const [viewType, setViewType] = useState("dma"); // "dma" or "brand"
 
   const [availableMonths, setAvailableMonths] = useState([]);
   const [availableDmas, setAvailableDmas] = useState([]);
+  const [availableBrands, setAvailableBrands] = useState([]);
 
   const [competitorShareData, setCompetitorShareData] = useState({
     currentShare: 0,
@@ -101,96 +104,98 @@ const BrandShare = () => {
     fetchAvailableDmas();
   }, []);
 
-  // Get selected DMA name
+  // Fetch available Brands and set selectedBrandId
+  useEffect(() => {
+    const fetchAvailableBrands = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:9001/api/available-brands"
+        );
+        setAvailableBrands(response.data);
+
+        // Set default Brand ID
+        if (response.data.length > 0) {
+          setSelectedBrandId(response.data[0].brand_id);
+        }
+      } catch (err) {
+        console.error("Error fetching available brands:", err);
+      }
+    };
+
+    fetchAvailableBrands();
+  }, []);
+
+  // Get selected DMA or Brand name
   const selectedDma = availableDmas.find((dma) => dma.dma_id === selectedDmaId);
   const selectedDmaName = selectedDma ? selectedDma.dma_name : "";
+  const selectedBrand = availableBrands.find(
+    (brand) => brand.brand_id === selectedBrandId
+  );
+  const selectedBrandName = selectedBrand ? selectedBrand.brand_name : "";
 
   // Fetch all data using the unified endpoint
   useEffect(() => {
-    if (selectedDmaId === null || selectedMonth === null) return;
+    if (
+      (viewType === "dma" && selectedDmaId === null) ||
+      (viewType === "brand" && selectedBrandId === null) ||
+      selectedMonth === null
+    )
+      return;
 
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get(
-          "http://localhost:9001/api/brand-share-data",
-          {
-            params: { month: selectedMonth, dma_id: selectedDmaId },
-          }
-        );
+        let response;
+        if (viewType === "dma") {
+          response = await axios.get(
+            "http://localhost:9001/api/brand-share-data",
+            {
+              params: { month: selectedMonth, dma_id: selectedDmaId },
+            }
+          );
+        } else if (viewType === "brand") {
+          response = await axios.get(
+            "http://localhost:9001/api/brand-share-data-by-brand",
+            {
+              params: { month: selectedMonth, brand_id: selectedBrandId },
+            }
+          );
+        }
+
         const data = response.data;
 
-        // Set the state variables
-        setBrandShares(
-          data.brandShares.map((item) => ({
-            ...item,
-            brand_share: parseFloat(item.brand_share),
-            total_dma_search_volume: parseFloat(item.total_dma_search_volume),
-          }))
-        );
-
-        setBrandSearchVolumes(
-          data.brandSearchVolumes.map((item) => ({
-            ...item,
-            total_brand_search_volume: parseFloat(
-              item.total_brand_search_volume
-            ),
-            brand_id: item.brand_id,
-          }))
-        );
-
-        setBudgetsData(data.budgetsData);
-
-        // Process combined chart data
-        processCombinedChartData(data.brandSearchVolumes, data.budgetsData);
-
-        // Set total DMA search volume data
-        const currentTotal =
-          parseFloat(
-            data.totalDmaSearchVolumeData.current_total_search_volume
-          ) || 0;
-        const previousTotal =
-          parseFloat(
-            data.totalDmaSearchVolumeData.previous_total_search_volume
-          ) || 0;
-
-        const deltaPercentage =
-          previousTotal !== 0
-            ? (currentTotal - previousTotal) / previousTotal
-            : 0;
-
-        setTotalDmaSearchVolumeData({
-          currentTotal,
-          deltaPercentage,
-        });
-
-        // Extract competitor search volume data
-        const currentCompetitorVolume =
-          parseFloat(
-            data.competitorSearchVolumeData.current_competitor_search_volume
-          ) || 0;
-        const previousCompetitorVolume =
-          parseFloat(
-            data.competitorSearchVolumeData.previous_competitor_search_volume
-          ) || 0;
-
-        // Compute competitor share
-        computeCompetitorShare(
-          currentCompetitorVolume,
-          previousCompetitorVolume,
-          currentTotal,
-          previousTotal
-        );
-
-        // Set market share data (brands)
-        const marketData = data.marketShareData.map((item) => ({
-          ...item,
-          current_brand_share: parseFloat(item.current_brand_share),
-          previous_brand_share: parseFloat(item.previous_brand_share),
-          delta: parseFloat(item.delta),
-        }));
-
-        setMarketShareData(marketData);
+        if (viewType === "dma") {
+          // Handle DMA-specific data
+          setBrandShares(
+            data.brandShares.map((item) => ({
+              ...item,
+              brand_share: parseFloat(item.brand_share),
+              total_dma_search_volume: parseFloat(item.total_dma_search_volume),
+            }))
+          );
+          setTotalDmaSearchVolumeData({
+            currentTotal: data.totalDmaSearchVolumeData?.current_total_search_volume || 0,
+            deltaPercentage: data.totalDmaSearchVolumeData?.deltaPercentage || 0,
+          });
+          setCompetitorShareData({
+            currentShare: data.competitorSearchVolumeData?.current_competitor_search_volume || 0,
+            delta: data.competitorSearchVolumeData?.delta || 0,
+          });
+          setMarketShareData(data.marketShareData);
+        } else if (viewType === "brand") {
+          // Handle brand-specific data
+          setBrandSearchVolumes(
+            data.brandSearchVolumes.map((item) => ({
+              ...item,
+              total_brand_search_volume: parseFloat(
+                item.total_brand_search_volume
+              ),
+              brand_id: item.brand_id,
+            }))
+          );
+          setBudgetsData(data.budgetsData);
+          processCombinedChartData(data.brandSearchVolumes, data.budgetsData);
+        }
 
         setIsLoading(false);
       } catch (err) {
@@ -201,7 +206,7 @@ const BrandShare = () => {
     };
 
     fetchData();
-  }, [selectedMonth, selectedDmaId]);
+  }, [selectedMonth, selectedDmaId, selectedBrandId, viewType]);
 
   // Function to process combined chart data
   const processCombinedChartData = (brandSearchVolumes, budgetsData) => {
@@ -229,29 +234,6 @@ const BrandShare = () => {
     }
   };
 
-  // Function to compute competitor share
-  const computeCompetitorShare = (
-    currentCompetitorVolume,
-    previousCompetitorVolume,
-    currentTotalVolume,
-    previousTotalVolume
-  ) => {
-    const currentShare =
-      currentTotalVolume !== 0
-        ? currentCompetitorVolume / currentTotalVolume
-        : 0;
-    const previousShare =
-      previousTotalVolume !== 0
-        ? previousCompetitorVolume / previousTotalVolume
-        : 0;
-    const delta = currentShare - previousShare;
-
-    setCompetitorShareData({
-      currentShare,
-      delta,
-    });
-  };
-
   const handleMonthChange = (e) => {
     setSelectedMonth(Number(e.target.value));
   };
@@ -260,19 +242,17 @@ const BrandShare = () => {
     setSelectedDmaId(Number(e.target.value));
   };
 
-  // Calculate totals based on the displayed data
-  const totalSearchVolume = brandShares.reduce(
-    (sum, row) => sum + row.total_dma_search_volume,
-    0
-  );
-  const totalBrandShare = brandShares.reduce(
-    (sum, row) => sum + row.brand_share,
-    0
-  );
+  const handleBrandIdChange = (e) => {
+    setSelectedBrandId(Number(e.target.value));
+  };
+
+  const handleViewChange = (e) => {
+    setViewType(e.target.value);
+  };
 
   return (
     <Box sx={{ padding: 2 }}>
-      {/* Dropdowns for Month and DMA ID */}
+      {/* Dropdowns for Month, View Type, and DMA/Brand ID */}
       <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
         <label style={{ marginRight: "10px" }}>Select Month:</label>
         <select value={selectedMonth} onChange={handleMonthChange}>
@@ -283,66 +263,79 @@ const BrandShare = () => {
           ))}
         </select>
 
-        <label style={{ margin: "0 10px" }}>Select DMA:</label>
-        <select value={selectedDmaId || ""} onChange={handleDmaIdChange}>
-          {availableDmas.map((dma) => (
-            <option key={dma.dma_id} value={dma.dma_id}>
-              {dma.dma_name}
-            </option>
-          ))}
+        <label style={{ margin: "0 10px" }}>View Type:</label>
+        <select value={viewType} onChange={handleViewChange}>
+          <option value="dma">View by DMA</option>
+          <option value="brand">View by Brand</option>
         </select>
+
+        {viewType === "dma" && (
+          <>
+            <label style={{ margin: "0 10px" }}>Select DMA:</label>
+            <select value={selectedDmaId || ""} onChange={handleDmaIdChange}>
+              {availableDmas.map((dma) => (
+                <option key={dma.dma_id} value={dma.dma_id}>
+                  {dma.dma_name}
+                </option>
+              ))}
+            </select>
+          </>
+        )}
+
+        {viewType === "brand" && (
+          <>
+            <label style={{ margin: "0 10px" }}>Select Brand:</label>
+            <select value={selectedBrandId || ""} onChange={handleBrandIdChange}>
+              {availableBrands.map((brand) => (
+                <option key={brand.brand_id} value={brand.brand_id}>
+                  {brand.brand_name}
+                </option>
+              ))}
+            </select>
+          </>
+        )}
       </Box>
-
-      {/* Tombstone Cards */}
-      {marketShareData.length > 0 ? (
-        <Box
-          sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
-            marginBottom: 2,
-          }}
-        >
-          {/* Total Market Card */}
-          <TotalMarketCard
-            key="total-market"
-            // title={`Total Market Google Demand for ${selectedDmaName}`}
-            title={`Total Google Demand in DMA`}
-            currentValue={totalDmaSearchVolumeData.currentTotal}
-            deltaPercentage={totalDmaSearchVolumeData.deltaPercentage}
-          />
-
-          {/* Competitor Share Card */}
-          <MarketShareCard
-            key="competitor-share"
-            brandName="Competitor Share"
-            currentShare={competitorShareData.currentShare}
-            delta={competitorShareData.delta}
-          />
-
-          {marketShareData.map((item) => (
-            <MarketShareCard
-              key={item.brand_id}
-              brandName={item.brand_name}
-              currentShare={item.current_brand_share}
-              delta={item.delta}
-            />
-          ))}
-        </Box>
-      ) : (
-        <div>No market share data available.</div>
-      )}
 
       {/* Conditional rendering based on data state */}
       {isLoading ? (
         <div>Loading...</div>
       ) : error ? (
         <div>Error loading data</div>
-      ) : !brandShares.length ? (
-        <div>No data available.</div>
-      ) : (
-        // Render the table and pie chart only if data is available
+      ) : viewType === "dma" && brandShares.length > 0 ? (
         <>
+          {/* DMA-specific UI */}
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "center",
+              marginBottom: 2,
+            }}
+          >
+            <TotalMarketCard
+              key="total-market"
+              title={`Total Google Demand for ${selectedDmaName}`}
+              currentValue={totalDmaSearchVolumeData.currentTotal || 0}
+              deltaPercentage={totalDmaSearchVolumeData.deltaPercentage || 0}
+            />
+
+            <MarketShareCard
+              key="competitor-share"
+              brandName="Competitor Share"
+              currentShare={competitorShareData.currentShare || 0}
+              delta={competitorShareData.delta || 0}
+            />
+
+            {marketShareData.map((item) => (
+              <MarketShareCard
+                key={item.brand_id}
+                brandName={item.brand_name}
+                currentShare={item.current_brand_share}
+                delta={item.delta}
+              />
+            ))}
+          </Box>
+
           <Box sx={{ display: "flex", height: "auto", width: "100%" }}>
             <Box sx={{ flex: 1, marginRight: 4 }}>
               <TableContainer component={Paper}>
@@ -361,24 +354,13 @@ const BrandShare = () => {
                         <TableCell>{row.brand_name}</TableCell>
                         <TableCell>{row.dma_name}</TableCell>
                         <TableCell>
-                          {row.total_dma_search_volume.toLocaleString()}
+                          {(row.total_dma_search_volume || 0).toLocaleString()}
                         </TableCell>
                         <TableCell>
                           {(row.brand_share * 100).toFixed(2)}%
                         </TableCell>
                       </TableRow>
                     ))}
-                    <TableRow>
-                      <TableCell colSpan={2}>
-                        <strong>Total</strong>
-                      </TableCell>
-                      <TableCell>
-                        <strong>{totalSearchVolume.toLocaleString()}</strong>
-                      </TableCell>
-                      <TableCell>
-                        <strong>{(totalBrandShare * 100).toFixed(2)}%</strong>
-                      </TableCell>
-                    </TableRow>
                   </TableBody>
                 </Table>
               </TableContainer>
@@ -394,14 +376,20 @@ const BrandShare = () => {
               <PieChartComponent data={brandShares} />
             </Box>
           </Box>
-          {combinedChartData.length > 0 ? (
-            <Box sx={{ width: "100%", marginTop: 4 }}>
-              <BarChartComponent data={combinedChartData} />
-            </Box>
-          ) : (
-            <div>No data available for the bar chart.</div>
-          )}
+
+          <Box sx={{ width: "100%", marginTop: 4 }}>
+            <BarChartComponentByMonth data={combinedChartData} />
+          </Box>
         </>
+      ) : viewType === "brand" && combinedChartData.length > 0 ? (
+        <>
+          {/* Brand-specific UI */}
+          <Box sx={{ width: "100%", marginTop: 4 }}>
+            <BarChartComponent data={combinedChartData} />
+          </Box>
+        </>
+      ) : (
+        <div>No data available.</div>
       )}
     </Box>
   );
