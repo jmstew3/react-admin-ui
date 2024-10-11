@@ -9,6 +9,12 @@ import {
   TableHead,
   TableRow,
   Paper,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Checkbox,
+  ListItemText,
 } from "@mui/material";
 
 import MarketShareCard from "../../components/MarketShareCard/MarketShareCard";
@@ -46,8 +52,7 @@ const BrandShare = () => {
   const currentMonth = new Date().getMonth() + 1;
   const [selectedMonth, setSelectedMonth] = useState(currentMonth);
   const [selectedDmaId, setSelectedDmaId] = useState(null);
-  const [selectedBrandId, setSelectedBrandId] = useState(null);
-  const [viewType, setViewType] = useState("dma"); // "dma" or "brand"
+  const [selectedBrandIds, setSelectedBrandIds] = useState(["ALL"]);
 
   const [availableMonths, setAvailableMonths] = useState([]);
   const [availableDmas, setAvailableDmas] = useState([]);
@@ -104,7 +109,7 @@ const BrandShare = () => {
     fetchAvailableDmas();
   }, []);
 
-  // Fetch available Brands and set selectedBrandId
+  // Fetch available Brands and set selectedBrandIds
   useEffect(() => {
     const fetchAvailableBrands = async () => {
       try {
@@ -113,104 +118,25 @@ const BrandShare = () => {
         );
         setAvailableBrands(response.data);
 
-        // Set default Brand ID
-        if (response.data.length > 0) {
-          setSelectedBrandId(response.data[0].brand_id);
-        }
-      } catch (err) {
-        console.error("Error fetching available brands:", err);
-      }
-    };
+        // Reset selectedBrandIds to ["ALL"] whenever the DMA changes
+      setSelectedBrandIds(["ALL"]);
+    } catch (err) {
+      console.error("Error fetching available brands:", err);
+    }
+  };
 
+  if (selectedDmaId) {
     fetchAvailableBrands();
-  }, []);
+  }
+}, [selectedDmaId]);
 
   // Get selected DMA or Brand name
   const selectedDma = availableDmas.find((dma) => dma.dma_id === selectedDmaId);
   const selectedDmaName = selectedDma ? selectedDma.dma_name : "";
   const selectedBrand = availableBrands.find(
-    (brand) => brand.brand_id === selectedBrandId
+    (brand) => brand.brand_id === selectedBrandIds
   );
   const selectedBrandName = selectedBrand ? selectedBrand.brand_name : "";
-
-  // Fetch all data using the unified endpoint
-  useEffect(() => {
-    if (
-      (viewType === "dma" && selectedDmaId === null) ||
-      (viewType === "brand" && selectedBrandId === null) ||
-      selectedMonth === null
-    )
-      return;
-
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        let response;
-        if (viewType === "dma") {
-          response = await axios.get(
-            "http://localhost:9001/api/brand-share-data",
-            {
-              params: { month: selectedMonth, dma_id: selectedDmaId },
-            }
-          );
-        } else if (viewType === "brand") {
-          response = await axios.get(
-            "http://localhost:9001/api/brand-share-data-by-brand",
-            {
-              params: { month: selectedMonth, brand_id: selectedBrandId },
-            }
-          );
-        }
-
-        const data = response.data;
-
-        if (viewType === "dma") {
-          // Handle DMA-specific data
-          setBrandShares(
-            data.brandShares.map((item) => ({
-              ...item,
-              brand_share: parseFloat(item.brand_share),
-              total_dma_search_volume: parseFloat(item.total_dma_search_volume),
-            }))
-          );
-          setTotalDmaSearchVolumeData({
-            currentTotal:
-              data.totalDmaSearchVolumeData?.current_total_search_volume || 0,
-            deltaPercentage:
-              data.totalDmaSearchVolumeData?.deltaPercentage || 0,
-          });
-          setCompetitorShareData({
-            currentShare:
-              data.competitorSearchVolumeData
-                ?.current_competitor_search_volume || 0,
-            delta: data.competitorSearchVolumeData?.delta || 0,
-          });
-          setMarketShareData(data.marketShareData);
-        } else if (viewType === "brand") {
-          // Handle brand-specific data
-          setBrandSearchVolumes(
-            data.brandSearchVolumes.map((item) => ({
-              ...item,
-              total_brand_search_volume: parseFloat(
-                item.total_brand_search_volume
-              ),
-              brand_id: item.brand_id,
-            }))
-          );
-          setBudgetsData(data.budgetsData);
-          processCombinedChartData(data.brandSearchVolumes, data.budgetsData);
-        }
-
-        setIsLoading(false);
-      } catch (err) {
-        console.error("Error fetching data:", err);
-        setError(err);
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [selectedMonth, selectedDmaId, selectedBrandId, viewType]);
 
   // Function to process combined chart data
   const processCombinedChartData = (brandSearchVolumes, budgetsData) => {
@@ -247,11 +173,23 @@ const BrandShare = () => {
   };
 
   const handleBrandIdChange = (e) => {
-    setSelectedBrandId(Number(e.target.value));
+    selectedBrandIds(Number(e.target.value));
   };
 
-  const handleViewChange = (e) => {
-    setViewType(e.target.value);
+  const handleBrandIdsChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+  
+    let selected = typeof value === "string" ? value.split(",") : value;
+  
+    if (selected.includes("ALL")) {
+      // If "ALL" is selected, deselect others
+      setSelectedBrandIds(["ALL"]);
+    } else {
+      // Remove "ALL" if it's in the selectedBrandIds
+      setSelectedBrandIds(selected.filter((val) => val !== "ALL"));
+    }
   };
 
   return (
@@ -266,34 +204,46 @@ const BrandShare = () => {
             </option>
           ))}
         </select>
-
-        <label style={{ margin: "0 10px" }}>View Type:</label>
-        <select value={viewType} onChange={handleViewChange}>
-          <option value="dma">View by DMA</option>
-          <option value="brand">View by Brand</option>
-        </select>
-
-        {viewType === "dma" && (
-          <>
-            <label style={{ margin: "0 10px" }}>Select DMA:</label>
-            <select value={selectedDmaId || ""} onChange={handleDmaIdChange}>
-              {availableDmas.map((dma) => (
-                <option key={dma.dma_id} value={dma.dma_id}>
-                  {dma.dma_name}
-                </option>
-              ))}
-            </select>
-          </>
-        )}
-
-        <label style={{ margin: "0 10px" }}>Select Brand:</label>
-        <select value={selectedBrandId || ""} onChange={handleBrandIdChange}>
-          {availableBrands.map((brand) => (
-            <option key={brand.brand_id} value={brand.brand_id}>
-              {brand.brand_name}
-            </option>
-          ))}
-        </select>
+        <>
+          <label style={{ margin: "0 10px" }}>Select DMA:</label>
+          <select value={selectedDmaId || ""} onChange={handleDmaIdChange}>
+            {availableDmas.map((dma) => (
+              <option key={dma.dma_id} value={dma.dma_id}>
+                {dma.dma_name}
+              </option>
+            ))}
+          </select>
+        </>
+        <FormControl sx={{ m: 1, width: 300 }}>
+          <InputLabel id="brand-select-label">Select Brand</InputLabel>
+          <Select
+            labelId="brand-select-label"
+            id="brand-select"
+            multiple
+            value={selectedBrandIds}
+            onChange={handleBrandIdsChange}
+            renderValue={(selected) => {
+              if (selected.includes("ALL")) {
+                return "ALL";
+              }
+              return availableBrands
+                .filter((brand) => selected.includes(brand.brand_id))
+                .map((brand) => brand.brand_name)
+                .join(", ");
+            }}
+          >
+            <MenuItem key="ALL" value="ALL">
+              <Checkbox checked={selectedBrandIds.includes("ALL")} />
+              <ListItemText primary="ALL" />
+            </MenuItem>
+            {availableBrands.map((brand) => (
+              <MenuItem key={brand.brand_id} value={brand.brand_id}>
+                <Checkbox checked={selectedBrandIds.includes(brand.brand_id)} />
+                <ListItemText primary={brand.brand_name} />
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </Box>
 
       {/* Conditional rendering based on data state */}
@@ -301,7 +251,7 @@ const BrandShare = () => {
         <div>Loading...</div>
       ) : error ? (
         <div>Error loading data</div>
-      ) : viewType === "dma" && brandShares.length > 0 ? (
+      ) : brandShares.length > 0 ? (
         <>
           {/* DMA-specific UI */}
           <Box
@@ -381,7 +331,7 @@ const BrandShare = () => {
             <BarChartComponentByMonth data={combinedChartData} />
           </Box>
         </>
-      ) : viewType === "brand" && combinedChartData.length > 0 ? (
+      ) : combinedChartData.length > 0 ? (
         <>
           {/* Brand-specific UI */}
           <Box sx={{ width: "100%", marginTop: 4 }}>

@@ -355,12 +355,17 @@ const getCompetitorSearchVolumeData = (month, dma_id) => {
 app.get("/api/available-brands", (req, res) => {
   const query = `
     SELECT 
-      brand_id, 
-      brand_name 
+      b.brand_id, 
+      b.brand_name,
+      bd.dma_id
     FROM 
-      brands 
+      brands b
+    JOIN
+      brand_dmas bd on b.brand_id = bd.brand_id
+    WHERE
+      b. type_id = 1
     ORDER BY 
-      brand_name;
+      b. brand_name;
   `;
   
   pool.query(query, (err, results) => {
