@@ -44,7 +44,7 @@ app.listen(port, () => {
 
 // Unified endpoint for BrandShare data
 app.get("/api/brand-share-data", async (req, res) => {
-  const { month, dma_id } = req.query;
+  const { month, dma_id, brand_ids } = req.query;
 
   if (!month || !dma_id) {
     return res
@@ -53,31 +53,32 @@ app.get("/api/brand-share-data", async (req, res) => {
   }
 
   try {
-    // Execute all the necessary queries in parallel
+    const brandIdsArray = brand_ids ? brand_ids.split(",") : null;
+
+    // Pass brandIdsArray to your data fetching functions
     const [
       brandShares,
       brandSearchVolumes,
       budgetsData,
       marketShareData,
       totalDmaSearchVolumeData,
-      competitorSearchVolumeData, // Add this line
+      competitorSearchVolumeData,
     ] = await Promise.all([
-      getBrandShares(month, dma_id),
-      getBrandSearchVolumes(month, dma_id),
-      getBudgetsData(month, dma_id),
-      getMarketShareData(month, dma_id),
-      getTotalDmaSearchVolumeData(month, dma_id),
-      getCompetitorSearchVolumeData(month, dma_id), // And this line
+      getBrandShares(month, dma_id, brandIdsArray),
+      getBrandSearchVolumes(month, dma_id, brandIdsArray),
+      getBudgetsData(month, dma_id, brandIdsArray),
+      getMarketShareData(month, dma_id, brandIdsArray),
+      getTotalDmaSearchVolumeData(month, dma_id, brandIdsArray),
+      getCompetitorSearchVolumeData(month, dma_id, brandIdsArray), // Adjusted
     ]);
 
-    // Send all the data in a single response
     res.json({
       brandShares,
       brandSearchVolumes,
       budgetsData,
       marketShareData,
       totalDmaSearchVolumeData,
-      competitorSearchVolumeData, // Include this in the response
+      competitorSearchVolumeData,
     });
   } catch (err) {
     console.error("Error fetching data:", err);
@@ -88,9 +89,9 @@ app.get("/api/brand-share-data", async (req, res) => {
 // Helper functions for database queries
 
 // Function to get brand shares
-const getBrandShares = (month, dma_id) => {
+const getBrandShares = (month, dma_id, brandIdsArray) => {
   return new Promise((resolve, reject) => {
-    const query = `
+    let query = `
       SELECT 
         b.brand_name,
         d.dma_name,
@@ -108,11 +109,19 @@ const getBrandShares = (month, dma_id) => {
         dmas d ON k.dma_id = d.dma_id
       WHERE 
         k.dma_id = ? AND k.month = ?
-      GROUP BY 
-        b.brand_name, d.dma_name;
     `;
 
     const params = [dma_id, month, dma_id, month];
+
+    if (brandIdsArray && brandIdsArray.length > 0) {
+      query += ` AND k.brand_id IN (${brandIdsArray.map(() => "?").join(",")})`;
+      params.push(...brandIdsArray);
+    }
+
+    query += `
+      GROUP BY 
+        b.brand_name, d.dma_name;
+    `;
 
     pool.query(query, params, (err, results) => {
       if (err) {
@@ -125,9 +134,9 @@ const getBrandShares = (month, dma_id) => {
 };
 
 // Function to get brand search volumes
-const getBrandSearchVolumes = (month, dma_id) => {
+const getBrandSearchVolumes = (month, dma_id, brandIdsArray) => {
   return new Promise((resolve, reject) => {
-    const query = `
+    let query = `
       SELECT 
         b.brand_name,
         b.brand_id,
@@ -138,11 +147,19 @@ const getBrandSearchVolumes = (month, dma_id) => {
         keyword_metrics k ON b.brand_id = k.brand_id
       WHERE 
         k.dma_id = ? AND k.month = ?
-      GROUP BY 
-        b.brand_name, b.brand_id;
     `;
 
     const params = [dma_id, month];
+
+    if (brandIdsArray && brandIdsArray.length > 0) {
+      query += ` AND k.brand_id IN (${brandIdsArray.map(() => "?").join(",")})`;
+      params.push(...brandIdsArray);
+    }
+
+    query += `
+      GROUP BY 
+        b.brand_name, b.brand_id;
+    `;
 
     pool.query(query, params, (err, results) => {
       if (err) {
@@ -155,9 +172,9 @@ const getBrandSearchVolumes = (month, dma_id) => {
 };
 
 // Function to get budgets data
-const getBudgetsData = (month, dma_id) => {
+const getBudgetsData = (month, dma_id, brandIdsArray) => {
   return new Promise((resolve, reject) => {
-    const query = `
+    let query = `
       SELECT 
         b.brand_name,
         b.brand_id,
@@ -167,10 +184,19 @@ const getBudgetsData = (month, dma_id) => {
       JOIN 
         brands b ON bu.brand_id = b.brand_id
       WHERE 
-        bu.month = ? AND bu.dma_id = ?;
+        bu.month = ? AND bu.dma_id = ?
     `;
 
     const params = [month, dma_id];
+
+    if (brandIdsArray && brandIdsArray.length > 0) {
+      query += ` AND bu.brand_id IN (${brandIdsArray
+        .map(() => "?")
+        .join(",")})`;
+      params.push(...brandIdsArray);
+    }
+
+    query += ";";
 
     pool.query(query, params, (err, results) => {
       if (err) {
@@ -183,7 +209,7 @@ const getBudgetsData = (month, dma_id) => {
 };
 
 // Function to get market share data
-const getMarketShareData = (month, dma_id) => {
+const getMarketShareData = (month, dma_id, brandIdsArray) => {
   return new Promise((resolve, reject) => {
     const currentMonth = parseInt(month, 10);
     let previousMonth = currentMonth - 1;
@@ -191,7 +217,7 @@ const getMarketShareData = (month, dma_id) => {
       previousMonth = 12;
     }
 
-    const query = `
+    let query = `
       SELECT
         b.brand_id,
         b.brand_name,
@@ -210,6 +236,16 @@ const getMarketShareData = (month, dma_id) => {
              WHERE dma_id = ? AND month = ?) total_current
           WHERE
             k.dma_id = ? AND k.month = ?
+    `;
+
+    const params = [dma_id, currentMonth, dma_id, currentMonth];
+
+    if (brandIdsArray && brandIdsArray.length > 0) {
+      query += ` AND k.brand_id IN (${brandIdsArray.map(() => "?").join(",")})`;
+      params.push(...brandIdsArray);
+    }
+
+    query += `
           GROUP BY
             k.brand_id
         ) AS current_data
@@ -225,21 +261,20 @@ const getMarketShareData = (month, dma_id) => {
              WHERE dma_id = ? AND month = ?) total_previous
           WHERE
             k.dma_id = ? AND k.month = ?
+    `;
+
+    params.push(dma_id, previousMonth, dma_id, previousMonth);
+
+    if (brandIdsArray && brandIdsArray.length > 0) {
+      query += ` AND k.brand_id IN (${brandIdsArray.map(() => "?").join(",")})`;
+      params.push(...brandIdsArray);
+    }
+
+    query += `
           GROUP BY
             k.brand_id
         ) AS previous_data ON b.brand_id = previous_data.brand_id;
     `;
-
-    const params = [
-      dma_id,
-      currentMonth,
-      dma_id,
-      currentMonth,
-      dma_id,
-      previousMonth,
-      dma_id,
-      previousMonth,
-    ];
 
     pool.query(query, params, (err, results) => {
       if (err) {
@@ -252,7 +287,7 @@ const getMarketShareData = (month, dma_id) => {
 };
 
 // Function to get total DMA search volume data
-const getTotalDmaSearchVolumeData = (month, dma_id) => {
+const getTotalDmaSearchVolumeData = (month, dma_id, brandIdsArray) => {
   return new Promise((resolve, reject) => {
     const currentMonth = parseInt(month, 10);
     let previousMonth = currentMonth - 1;
@@ -260,7 +295,7 @@ const getTotalDmaSearchVolumeData = (month, dma_id) => {
       previousMonth = 12;
     }
 
-    const query = `
+    let query = `
       SELECT
         SUM(CASE WHEN month = ? THEN search_volume ELSE 0 END) AS current_total_search_volume,
         SUM(CASE WHEN month = ? THEN search_volume ELSE 0 END) AS previous_total_search_volume
@@ -275,6 +310,11 @@ const getTotalDmaSearchVolumeData = (month, dma_id) => {
       currentMonth,
       previousMonth,
     ];
+
+    if (brandIdsArray && brandIdsArray.length > 0) {
+      query += ` AND brand_id IN (${brandIdsArray.map(() => "?").join(",")})`;
+      params.push(...brandIdsArray);
+    }
 
     pool.query(query, params, (err, results) => {
       if (err) {
@@ -323,7 +363,7 @@ app.get("/api/available-dmas", (req, res) => {
 });
 
 // Function to get competitor search volume data
-const getCompetitorSearchVolumeData = (month, dma_id) => {
+const getCompetitorSearchVolumeData = (month, dma_id, brandIdsArray) => {
   return new Promise((resolve, reject) => {
     const currentMonth = parseInt(month, 10);
     let previousMonth = currentMonth - 1;
@@ -331,7 +371,7 @@ const getCompetitorSearchVolumeData = (month, dma_id) => {
       previousMonth = 12;
     }
 
-    const query = `
+    let query = `
       SELECT
         SUM(CASE WHEN k.month = ? THEN k.search_volume ELSE 0 END) AS current_competitor_search_volume,
         SUM(CASE WHEN k.month = ? THEN k.search_volume ELSE 0 END) AS previous_competitor_search_volume
@@ -340,35 +380,58 @@ const getCompetitorSearchVolumeData = (month, dma_id) => {
       WHERE k.dma_id = ? AND (k.month = ? OR k.month = ?) AND b.type_id = 2
     `;
 
-    const params = [currentMonth, previousMonth, dma_id, currentMonth, previousMonth];
+    const params = [
+      currentMonth,
+      previousMonth,
+      dma_id,
+      currentMonth,
+      previousMonth,
+    ];
+
+    if (brandIdsArray && brandIdsArray.length > 0) {
+      query += ` AND k.brand_id IN (${brandIdsArray.map(() => '?').join(',')})`;
+      params.push(...brandIdsArray);
+    }
 
     pool.query(query, params, (err, results) => {
       if (err) {
-        console.error("Error executing getCompetitorSearchVolumeData query:", err);
+        console.error(
+          "Error executing getCompetitorSearchVolumeData query:",
+          err
+        );
         return reject(err);
       }
       resolve(results[0]); // results is an array with one object
     });
   });
 };
+
 // Endpoint to get available brands
 app.get("/api/available-brands", (req, res) => {
-  const query = `
+  const { dma_id } = req.query;
+
+  let query = `
     SELECT 
       b.brand_id, 
-      b.brand_name,
-      bd.dma_id
+      b.brand_name
     FROM 
       brands b
     JOIN
-      brand_dmas bd on b.brand_id = bd.brand_id
+      brand_dmas bd ON b.brand_id = bd.brand_id
     WHERE
-      b. type_id = 1
-    ORDER BY 
-      b. brand_name;
+      b.type_id = 1
   `;
-  
-  pool.query(query, (err, results) => {
+
+  const params = [];
+
+  if (dma_id) {
+    query += ' AND bd.dma_id = ?';
+    params.push(dma_id);
+  }
+
+  query += ' ORDER BY b.brand_name;';
+
+  pool.query(query, params, (err, results) => {
     if (err) {
       console.error("Error fetching brands:", err);
       res.status(500).json({ error: "Error fetching brands" });
@@ -377,6 +440,7 @@ app.get("/api/available-brands", (req, res) => {
     }
   });
 });
+
 app.get("/api/brand-share-data-by-brand", async (req, res) => {
   const { month, brand_id } = req.query;
 
@@ -476,7 +540,10 @@ const getBrandSearchVolumesByBrand = (month, brand_id) => {
 
     pool.query(query, params, (err, results) => {
       if (err) {
-        console.error("Error executing getBrandSearchVolumesByBrand query:", err);
+        console.error(
+          "Error executing getBrandSearchVolumesByBrand query:",
+          err
+        );
         return reject(err);
       }
       resolve(results);
@@ -608,7 +675,10 @@ const getTotalBrandSearchVolumeData = (month, brand_id) => {
 
     pool.query(query, params, (err, results) => {
       if (err) {
-        console.error("Error executing getTotalBrandSearchVolumeData query:", err);
+        console.error(
+          "Error executing getTotalBrandSearchVolumeData query:",
+          err
+        );
         return reject(err);
       }
       resolve(results[0]); // results is an array with one object

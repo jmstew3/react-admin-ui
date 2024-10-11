@@ -114,29 +114,32 @@ const BrandShare = () => {
     const fetchAvailableBrands = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:9001/api/available-brands"
+          "http://localhost:9001/api/available-brands",
+          { params: { dma_id: selectedDmaId } }
         );
         setAvailableBrands(response.data);
 
         // Reset selectedBrandIds to ["ALL"] whenever the DMA changes
-      setSelectedBrandIds(["ALL"]);
-    } catch (err) {
-      console.error("Error fetching available brands:", err);
-    }
-  };
+        setSelectedBrandIds(["ALL"]);
+      } catch (err) {
+        console.error("Error fetching available brands:", err);
+      }
+    };
 
-  if (selectedDmaId) {
-    fetchAvailableBrands();
-  }
-}, [selectedDmaId]);
+    if (selectedDmaId) {
+      fetchAvailableBrands();
+    }
+  }, [selectedDmaId]);
 
   // Get selected DMA or Brand name
   const selectedDma = availableDmas.find((dma) => dma.dma_id === selectedDmaId);
   const selectedDmaName = selectedDma ? selectedDma.dma_name : "";
-  const selectedBrand = availableBrands.find(
-    (brand) => brand.brand_id === selectedBrandIds
+  const selectedBrands = availableBrands.filter((brand) =>
+    selectedBrandIds.includes(brand.brand_id)
   );
-  const selectedBrandName = selectedBrand ? selectedBrand.brand_name : "";
+  const selectedBrandNames = selectedBrands
+    .map((brand) => brand.brand_name)
+    .join(", ");
 
   // Function to process combined chart data
   const processCombinedChartData = (brandSearchVolumes, budgetsData) => {
@@ -172,25 +175,94 @@ const BrandShare = () => {
     setSelectedDmaId(Number(e.target.value));
   };
 
-  const handleBrandIdChange = (e) => {
-    selectedBrandIds(Number(e.target.value));
-  };
-
   const handleBrandIdsChange = (event) => {
-    const {
-      target: { value },
-    } = event;
-  
-    let selected = typeof value === "string" ? value.split(",") : value;
-  
+  const {
+    target: { value },
+  } = event;
+
+  setSelectedBrandIds((prevSelectedBrandIds) => {
+    const selected = typeof value === "string" ? value.split(",") : value;
+
     if (selected.includes("ALL")) {
-      // If "ALL" is selected, deselect others
-      setSelectedBrandIds(["ALL"]);
-    } else {
-      // Remove "ALL" if it's in the selectedBrandIds
-      setSelectedBrandIds(selected.filter((val) => val !== "ALL"));
+      if (selected.length === 1) {
+        // Only "ALL" is selected
+        return ["ALL"];
+      } else {
+        // "ALL" and other brands are selected
+        if (!prevSelectedBrandIds.includes("ALL")) {
+          // "ALL" was just selected, select only "ALL"
+          return ["ALL"];
+        } else {
+          // "ALL" was deselected, remove "ALL" from selection
+          const newSelection = selected.filter((val) => val !== "ALL");
+          return newSelection;
+        }
+      }
     }
-  };
+
+    // If selection is empty, default to ["ALL"]
+    if (selected.length === 0) {
+      return ["ALL"];
+    }
+
+    // Set selected brands
+    return selected;
+  });
+};
+
+  useEffect(() => {
+    if (selectedDmaId === null || selectedMonth === null) return;
+
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const params = {
+          month: selectedMonth,
+          dma_id: selectedDmaId,
+        };
+
+        if (!selectedBrandIds.includes("ALL")) {
+          params.brand_ids = selectedBrandIds.join(",");
+        }
+
+        const response = await axios.get(
+          "http://localhost:9001/api/brand-share-data",
+          { params }
+        );
+
+        const data = response.data;
+
+        // Process data as needed
+        setBrandShares(
+          data.brandShares.map((item) => ({
+            ...item,
+            brand_share: parseFloat(item.brand_share),
+            total_dma_search_volume: parseFloat(item.total_dma_search_volume),
+          }))
+        );
+        setTotalDmaSearchVolumeData({
+          currentTotal:
+            data.totalDmaSearchVolumeData?.current_total_search_volume || 0,
+          deltaPercentage: data.totalDmaSearchVolumeData?.deltaPercentage || 0,
+        });
+        setCompetitorShareData({
+          currentShare:
+            data.competitorSearchVolumeData?.current_competitor_search_volume ||
+            0,
+          delta: data.competitorSearchVolumeData?.delta || 0,
+        });
+        setMarketShareData(data.marketShareData);
+
+        setIsLoading(false);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setError(err);
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [selectedMonth, selectedDmaId, selectedBrandIds]);
 
   return (
     <Box sx={{ padding: 2 }}>
@@ -246,13 +318,13 @@ const BrandShare = () => {
         </FormControl>
       </Box>
 
-      {/* Conditional rendering based on data state */}
       {isLoading ? (
         <div>Loading...</div>
       ) : error ? (
         <div>Error loading data</div>
       ) : brandShares.length > 0 ? (
         <>
+          {/* UI Components */}
           {/* DMA-specific UI */}
           <Box
             sx={{
@@ -329,13 +401,6 @@ const BrandShare = () => {
 
           <Box sx={{ width: "100%", marginTop: 4 }}>
             <BarChartComponentByMonth data={combinedChartData} />
-          </Box>
-        </>
-      ) : combinedChartData.length > 0 ? (
-        <>
-          {/* Brand-specific UI */}
-          <Box sx={{ width: "100%", marginTop: 4 }}>
-            <BarChartComponent data={combinedChartData} />
           </Box>
         </>
       ) : (
