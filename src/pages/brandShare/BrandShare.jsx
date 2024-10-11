@@ -174,11 +174,15 @@ const BrandShare = () => {
             }))
           );
           setTotalDmaSearchVolumeData({
-            currentTotal: data.totalDmaSearchVolumeData?.current_total_search_volume || 0,
-            deltaPercentage: data.totalDmaSearchVolumeData?.deltaPercentage || 0,
+            currentTotal:
+              data.totalDmaSearchVolumeData?.current_total_search_volume || 0,
+            deltaPercentage:
+              data.totalDmaSearchVolumeData?.deltaPercentage || 0,
           });
           setCompetitorShareData({
-            currentShare: data.competitorSearchVolumeData?.current_competitor_search_volume || 0,
+            currentShare:
+              data.competitorSearchVolumeData
+                ?.current_competitor_search_volume || 0,
             delta: data.competitorSearchVolumeData?.delta || 0,
           });
           setMarketShareData(data.marketShareData);
@@ -282,18 +286,14 @@ const BrandShare = () => {
           </>
         )}
 
-        {viewType === "brand" && (
-          <>
-            <label style={{ margin: "0 10px" }}>Select Brand:</label>
-            <select value={selectedBrandId || ""} onChange={handleBrandIdChange}>
-              {availableBrands.map((brand) => (
-                <option key={brand.brand_id} value={brand.brand_id}>
-                  {brand.brand_name}
-                </option>
-              ))}
-            </select>
-          </>
-        )}
+        <label style={{ margin: "0 10px" }}>Select Brand:</label>
+        <select value={selectedBrandId || ""} onChange={handleBrandIdChange}>
+          {availableBrands.map((brand) => (
+            <option key={brand.brand_id} value={brand.brand_id}>
+              {brand.brand_name}
+            </option>
+          ))}
+        </select>
       </Box>
 
       {/* Conditional rendering based on data state */}
