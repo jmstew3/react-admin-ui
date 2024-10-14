@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import MarketShareCard from "../../components/MarketShareCard/MarketShareCard";
+import TotalMarketCard from "../../components/TotalMarketCard/TotalMarketCard";
+import BarChartComponent from "../../components/muix/BarChartComponent/BarChartComponent";
+import PieChartComponent from "../../components/recharts/PieChartComponent/PieChartComponent";
+import BrandShareTable from "../../components/BrandShareTable/BrandShareTable";
 import {
   Box,
   Table,
@@ -16,11 +21,6 @@ import {
   Checkbox,
   ListItemText,
 } from "@mui/material";
-
-import MarketShareCard from "../../components/MarketShareCard/MarketShareCard";
-import TotalMarketCard from "../../components/TotalMarketCard/TotalMarketCard";
-import BarChartComponent from "../../components/muix/BarChartComponent/BarChartComponent";
-import PieChartComponent from "../../components/recharts/PieChartComponent/PieChartComponent";
 
 // Month names array
 const monthNames = [
@@ -492,52 +492,18 @@ const BrandShare = () => {
 
           <Box sx={{ display: "flex", height: "auto", width: "100%" }}>
             <Box sx={{ flex: 1, marginRight: 4 }}>
-              <TableContainer component={Paper}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Brand Name</TableCell>
-                      <TableCell>DMA Name</TableCell>
-                      <TableCell>Total DMA Search Volume</TableCell>
-                      <TableCell>Brand Share</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {brandShares.map((row) => (
-                      <TableRow key={row.brand_name + row.dma_name}>
-                        <TableCell>{row.brand_name}</TableCell>
-                        <TableCell>{row.dma_name}</TableCell>
-                        <TableCell>
-                          {(row.total_dma_search_volume || 0).toLocaleString()}
-                        </TableCell>
-                        <TableCell>
-                          {(row.brand_share * 100).toFixed(2)}%
-                        </TableCell>
-                      </TableRow>
-                    ))}
-
-                    {/* Totals Row */}
-                    <TableRow>
-                      <TableCell colSpan={2} sx={{ fontWeight: "bold" }}>
-                        Totals
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>
-                        {totalSearchVolume.toLocaleString()}
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>
-                        {(totalBrandShare * 100).toFixed(2)}%
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </TableContainer>
+              <BrandShareTable 
+                brandShares={brandShares}
+                totalSearchVolume={totalSearchVolume}
+                totalBrandShare={totalBrandShare}
+              />
             </Box>
             <Box
               sx={{
                 flex: 1,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
             >
               <PieChartComponent data={brandShares} />
