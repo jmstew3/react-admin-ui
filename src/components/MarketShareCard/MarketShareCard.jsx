@@ -20,7 +20,9 @@ const MarketShareCard = ({ brandName, currentShare, delta }) => {
     height: 0,
     borderLeft: "5px solid transparent",
     borderRight: "5px solid transparent",
-    borderBottom: isPositive ? "10px solid green" : "10px solid #d32f2f",
+    ...(isPositive
+      ? { borderBottom: "10px solid green" } // Arrow pointing up
+      : { borderTop: "10px solid #d32f2f" }), // Arrow pointing down
   };
 
   return (

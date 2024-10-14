@@ -15,12 +15,16 @@ const theme = createTheme({
 
 const TotalMarketCard = ({ title, currentValue, deltaPercentage }) => {
   const isPositive = deltaPercentage >= 0;
+
+  // Adjust triangleStyle to point up or down based on isPositive
   const triangleStyle = {
     width: 0,
     height: 0,
     borderLeft: "5px solid transparent",
     borderRight: "5px solid transparent",
-    borderBottom: isPositive ? "10px solid green" : "10px solid #d32f2f",
+    ...(isPositive
+      ? { borderBottom: "10px solid green" } // Arrow pointing up
+      : { borderTop: "10px solid #d32f2f" }), // Arrow pointing down
   };
 
   return (
@@ -34,12 +38,11 @@ const TotalMarketCard = ({ title, currentValue, deltaPercentage }) => {
             {Number(currentValue).toLocaleString()}
           </Typography>
           <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box sx={triangleStyle} />
+            <Box sx={triangleStyle} />
             <Typography
               sx={{ marginLeft: 0.5 }}
               color={isPositive ? "success.main" : "error.main"}
             >
-              {isPositive ? "+" : "-"}
               {Math.abs(deltaPercentage).toFixed(2)}% vs previous period
             </Typography>
           </Box>
